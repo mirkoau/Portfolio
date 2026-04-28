@@ -1,0 +1,158 @@
+/* ── Gallery Overlay ────────────────────────────────── */
+
+.gallery-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.gallery-overlay[hidden] { display: none; }
+
+/* Backdrop */
+.gallery-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 1);
+}
+
+/* Close button */
+.gallery-overlay__close {
+  position: fixed;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+  padding: 14px;
+}
+
+/* X icon via mask */
+.gallery-overlay__close span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke='black' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E") center/100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke='black' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E") center/100% no-repeat;
+}
+
+/* Right sidebar — company list + filmstrip stacked */
+.gallery-overlay__sidebar {
+  position: fixed;
+  right: 24px;
+  top: 48px;
+  bottom: 0;
+  width: 148px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel */
+.gallery-overlay__panel {
+  position: absolute;
+  left: 100px;
+  right: 196px; /* 148px sidebar + 24px right offset + 24px gap */
+  top: 48px;
+  bottom: 48px;
+  z-index: 5;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Main image + caption area */
+.gallery-overlay__main {
+  flex: 1;
+  min-height: 0;
+  padding: 0 48px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gallery-overlay__media {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-overlay__image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.gallery-overlay__caption {
+  font-family: var(--font-ui);
+  font-size: var(--size-body-md);
+  color: var(--color-blue);
+  line-height: var(--leading-normal);
+  margin-top: var(--space-sm);
+}
+
+/* Filmstrip — clips only the top edge; bottom extends freely to viewport */
+.gallery-overlay__filmstrip {
+  flex: 1;
+  min-height: 0;
+  overflow: visible;
+  clip-path: inset(0 0 -9999px 0);
+}
+
+.gallery-overlay__filmstrip-track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-top: var(--space-xs);
+  will-change: transform;
+}
+
+.gallery-overlay__filmstrip::-webkit-scrollbar { display: none; }
+
+.gallery-overlay__divider {
+  height: 1px;
+  background: var(--color-blue);
+  opacity: 0.4;
+  margin: var(--space-xs) 0;
+  flex-shrink: 0;
+}
+
+.gallery-overlay__thumb {
+  flex-shrink: 0;
+  overflow: hidden;
+  opacity: 0.3;
+  border: 2px solid transparent;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.gallery-overlay__thumb img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-overlay__thumb.is-active {
+  opacity: 0.5;
+  border-color: var(--color-yellow);
+}
+
+.gallery-overlay__thumb:hover:not(.is-active) {
+  opacity: 0.6;
+}
+
+/* ── Gallery Mobile ≤768px ─────────────────────────── */
+
+@media (max-width: 768px) {
+  .gallery-overlay__sidebar { display: none; }
+  .gallery-overlay__panel { inset: 0; left: 0; right: 0; }
+  .gallery-overlay__close { top: 16px; left: 16px; }
+  .gallery-overlay__main { padding: 0 var(--gutter) var(--gutter); }
+}

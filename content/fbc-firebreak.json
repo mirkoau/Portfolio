@@ -1,0 +1,21 @@
+{
+  "id": "fbc-firebreak",
+  "title": "FBC: Firebreak",
+  "company": "Remedy Entertainment",
+  "role": "Lead UI/UX Designer",
+  "period": "2023–2026",
+  "tags": ["Lead Design", "Interaction Design", "UI Design", "Project Management", "Stakeholder Management"],
+  "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak UI/UX work" },
+  "sections": [
+    {
+      "type": "text",
+      "content": [
+        "Lead UI/UX design from early production to final product. I worked on all parts of the game's systems, interactions, and UI."
+      ]
+    },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak interaction design detail", "caption": "FBC: Firebreak — interaction design detail" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak HUD layout & hierarchy", "caption": "FBC: Firebreak — HUD layout & hierarchy" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak main menu and lobby UI", "caption": "FBC: Firebreak — main menu and lobby UI" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak loadout & gear selection", "caption": "FBC: Firebreak — loadout & gear selection" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "cleveron-main",
+  "title": "Cleveron",
+  "company": "Cleveron",
+  "role": "UI/UX Designer",
+  "period": "2020–2022",
+  "tags": ["Product Design", "UI Design", "UX Design", "Design Systems"],
+  "hero": { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron UI/UX work" },
+  "sections": [
+    {
+      "type": "text",
+      "content": [
+        "Cleveron creates lockers and APMs (advanced parcel machines) bringing ease and efficiency to last mile logistics.",
+        "I joined Cleveron in 2020, when it had grown out of its original start-up status. However the company had kept the encouraging hands-on mindset, giving me the opportunity to introduce new ways of working for design and development processes."
+      ]
+    },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Cleveron APM touchscreen interface", "caption": "Cleveron — APM touchscreen interface" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Cleveron logistics web portal", "caption": "Cleveron — logistics web portal" }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "work": [
+    {
+      "id": "remedy",
+      "company": "Remedy Entertainment",
+      "role": "Senior UX Designer",
+      "period": "2022–...",
+      "projects": [
+        {
+          "id": "fbc-firebreak",
+          "title": "FBC: Firebreak",
+          "role": "Lead UI/UX Designer · 2023–2026",
+          "tags": ["Lead Design", "Interaction Design", "UI Design", "Project Management", "Stakeholder Management"],
+          "body": [
+            "Lead UI/UX design from early production to final product. I worked on all parts of the game's systems, interactions, and UI."
+          ],
+          "gallery": [
+            { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak UI/UX work", "caption": "FBC: Firebreak — overview of UI systems" },
+            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak additional work", "caption": "FBC: Firebreak — interaction design detail" },
+            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak HUD design", "caption": "FBC: Firebreak — HUD layout & hierarchy" },
+            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak menu systems", "caption": "FBC: Firebreak — main menu and lobby UI" },
+            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak loadout screen", "caption": "FBC: Firebreak — loadout & gear selection" }
+          ]
+        },
+        {
+          "id": "alan-wake-2",
+          "title": "Alan Wake 2",
+          "role": "UX Designer · 2022–2023",
+          "tags": ["Interaction Design", "UI Design", "Game Design", "Usability Research"],
+          "body": [
+            "My role was to support game design and narrative design teams. Direction of interaction and UI design was diegetic and minimalistic. I pitched designs to a variety of stakeholders — game director, art lead, UI/UX design lead, game designers. I collaborated with UI and game programmers to bring the designs to life, and reacted to UR feedback to improve in-game systems.",
+            "I worked on nearly all parts of the game's systems, interactions, and UI. My biggest contributions to the project were:"
+          ],
+          "gallery": [
+            { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 UI/UX work", "caption": "Alan Wake 2 — UI overview" },
+            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 additional work", "caption": "Alan Wake 2 — interaction systems" },
+            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 inventory UI", "caption": "Alan Wake 2 — inventory & weapon wheel" },
+            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 case board", "caption": "Alan Wake 2 — case board UI exploration" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cleveron",
+      "company": "Cleveron",
+      "role": "UI/UX Designer",
+      "period": "2020–2022",
+      "projects": [
+        {
+          "id": "cleveron-main",
+          "title": null,
+          "role": null,
+          "tags": ["Product Design", "UI Design", "UX Design", "Design Systems"],
+          "body": [
+            "Cleveron creates lockers and APMs (advanced parcel machines) bringing ease and efficiency to last mile logistics.",
+            "I joined Cleveron in 2020, when it had grown out of its original start-up status. However the company had kept the encouraging hands-on mindset, giving me the opportunity to introduce new ways of working for design and development processes."
+          ],
+          "gallery": [
+            { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron UI/UX work", "caption": "Cleveron — product design overview" },
+            { "src": "assets/images/placeholder.svg", "alt": "Cleveron APM interface", "caption": "Cleveron — APM touchscreen interface" },
+            { "src": "assets/images/placeholder.svg", "alt": "Cleveron web portal", "caption": "Cleveron — logistics web portal" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evocon",
+      "company": "Evocon",
+      "role": "UI/UX/Visual Designer",
+      "period": "2019–2020",
+      "projects": [
+        {
+          "id": "evocon-main",
+          "title": null,
+          "role": null,
+          "tags": ["UI Design", "UX Design", "Visual Design", "SaaS"],
+          "body": [
+            "Evocon is a manufacturing SaaS and a device that helps manufacturers around the world to waste less both time and materials.",
+            "It turns a complicated and data heavy task that's manufacture monitoring into an easy to understand and user-friendly experience.",
+            "In 2019, Evocon won EAS' award for Best Design Implementing."
+          ],
+          "gallery": [
+            { "src": "assets/images/evocon-cover.png", "alt": "Evocon front page desktop", "caption": "Evocon — front page desktop view" },
+            { "src": "assets/images/evocon-1.png", "alt": "Evocon design work", "caption": "Evocon — design overview" },
+            { "src": "assets/images/evocon-2.png", "alt": "Evocon design work", "caption": "Evocon — UI design" },
+            { "src": "assets/images/evocon-3.png", "alt": "Evocon design work", "caption": "Evocon — interface design" },
+            { "src": "assets/images/evocon-4.png", "alt": "Evocon design work", "caption": "Evocon — product design" },
+            { "src": "assets/images/evocon-5.png", "alt": "Evocon design work", "caption": "Evocon — visual design" },
+            { "src": "assets/images/evocon-6.png", "alt": "Evocon design work", "caption": "Evocon — design detail" },
+            { "src": "assets/images/evocon-article_image_2.png", "alt": "Evocon article image", "caption": "Evocon — article imagery" },
+            { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign" },
+            { "src": "assets/images/evocon-kodukas-uus-2.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign detail" },
+            { "src": "assets/images/evocon-kodukas-uus-3.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign view" },
+            { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon Kodukas original", "caption": "Evocon — Kodukas original design" },
+            { "src": "assets/images/evocon-kodukas-vana-2.png", "alt": "Evocon Kodukas original", "caption": "Evocon — Kodukas original detail" },
+            { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon good speed animation", "caption": "Evocon — good speed indicator" },
+            { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon slow speed animation", "caption": "Evocon — slow speed indicator" },
+            { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon microstop animation", "caption": "Evocon — microstop speed indicator" }
+          ]
+        }
+      ]
+    }
+  ],
+  "personalWork": {
+    "items": [
+      { "id": "p10", "src": "assets/images/funkfest-1.png", "alt": "Funkfest", "caption": "Funkfest" },
+      { "id": "p3", "src": "assets/images/personal-3.png", "alt": "Personal work", "caption": "Personal work" },
+      { "id": "p7", "src": "assets/images/indiefest-2.png", "alt": "Indiefest", "caption": "Indiefest" },
+      { "id": "p1", "src": "assets/images/personal-1.png", "alt": "Personal work", "caption": "Personal work" },
+      { "id": "p11", "src": "assets/images/funkfest-2.png", "alt": "Funkfest", "caption": "Funkfest" },
+      { "id": "p5", "src": "assets/images/personal-5.png", "alt": "Personal work", "caption": "Personal work" },
+      { "id": "p9", "src": "assets/images/iwe.gif", "alt": "Indiefest animation", "caption": "Indiefest" },
+      { "id": "p2", "src": "assets/images/personal-2.png", "alt": "Personal work", "caption": "Personal work" },
+      { "id": "p4", "src": "assets/images/personal-4.png", "alt": "Personal work", "caption": "Personal work" }
+    ]
+  },
+  "about": {
+    "body": [
+      "I'm a 32-year-old designer from Pärnu, Estonia, currently based in Helsinki, Finland. I enjoy playing and making video games, visiting museums, travelling and cooking.",
+      "I'm a product-minded design generalist. I've shaped B2B software, service platforms, and most recently — video game UI and interaction systems. I care about making complex things feel simple and intuitive, without sacrificing personality.",
+      "My work spans UX, UI, interaction design, and visual design. I like understanding the full stack of a product — from wireframes to motion to front-end — so I can design with real constraints in mind.",
+      "I prefer working in-house where I can go deep on a product, but I'm open to the right freelance collaboration. If you think we'd work well together — let's talk."
+    ],
+    "portrait": { "src": "assets/images/mirko_profile.jpg", "alt": "Portrait of Mirko Aus" }
+  }
+}

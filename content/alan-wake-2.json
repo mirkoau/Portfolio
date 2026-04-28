@@ -1,0 +1,22 @@
+{
+  "id": "alan-wake-2",
+  "title": "Alan Wake 2",
+  "company": "Remedy Entertainment",
+  "role": "UX Designer",
+  "period": "2022–2023",
+  "tags": ["Interaction Design", "UI Design", "Game Design", "Usability Research"],
+  "intro": "Introduction text",
+  "hero": { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 UI/UX work" },
+  "sections": [
+    {
+      "type": "text",
+      "content": [
+        "My role was to support game design and narrative design teams. Direction of interaction and UI design was diegetic and minimalistic. I pitched designs to a variety of stakeholders — game director, art lead, UI/UX design lead, game designers. I collaborated with UI and game programmers to bring the designs to life, and reacted to UR feedback to improve in-game systems.",
+        "I worked on nearly all parts of the game's systems, interactions, and UI. My biggest contributions to the project were:"
+      ]
+    },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 interaction systems", "caption": "Alan Wake 2 — interaction systems" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 inventory & weapon wheel", "caption": "Alan Wake 2 — inventory & weapon wheel" },
+    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 case board UI exploration", "caption": "Alan Wake 2 — case board UI exploration" }
+  ]
+}

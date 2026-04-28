@@ -1,0 +1,308 @@
+// One fixed button physically travels between nav and about positions.
+// nav__cta and about__cta are invisible layout anchors only.
+
+let _showForProject = null;
+
+export function showForProject() { if (_showForProject) _showForProject(); }
+
+export function initLetsTalk(lenis) {
+  if (typeof gsap === 'undefined') return;
+
+  const navAnchor      = document.querySelector('.nav__cta');
+  const aboutAnchor    = document.querySelector('.about__cta');
+  const workSection    = document.querySelector('.work');
+  const linkedinBtn    = document.querySelector('.about__linkedin');
+  if (!navAnchor || !aboutAnchor || !workSection) return;
+
+  // Silence anchors — position references only, never interactive
+  navAnchor.style.animation     = 'none';
+  navAnchor.style.opacity       = '0';
+  navAnchor.style.pointerEvents = 'none';
+  aboutAnchor.style.opacity       = '0';
+  aboutAnchor.style.pointerEvents = 'none';
+
+  // ── Single flying button ──────────────────────────────
+  const btn = document.createElement('a');
+  btn.href        = navAnchor.href;
+  btn.className   = 'btn-cta';
+  btn.innerHTML = 'Contact<span class="btn-emoji" aria-hidden="true">✉</span>';
+  btn.setAttribute('aria-label', 'Contact Mirko via email');
+  btn.style.cssText = 'position:fixed;margin:0;z-index:200;opacity:0;';
+  document.body.appendChild(btn);
+
+  // ── Anchor snapshot helpers ───────────────────────────
+  function computedPx(el, prop) {
+    return parseFloat(getComputedStyle(el)[prop]);
+  }
+  function navTarget() {
+    const r = navAnchor.getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height, fontSize: computedPx(navAnchor, 'fontSize'), borderRadius: computedPx(navAnchor, 'borderRadius') };
+  }
+  function aboutTarget() {
+    const r = aboutAnchor.getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height, fontSize: computedPx(aboutAnchor, 'fontSize'), borderRadius: computedPx(aboutAnchor, 'borderRadius') };
+  }
+
+  // Seed at nav position while invisible
+  const n0 = navTarget();
+  gsap.set(btn, { left: n0.left, top: n0.top, width: n0.width, height: n0.height, fontSize: n0.fontSize, borderRadius: n0.borderRadius });
+
+  // ── State ─────────────────────────────────────────────
+  let state = 'hidden';  // hidden | nav | about
+  let tween = null;
+
+  // ── Scroll tracking (active while state === 'about') ──
+  let tracking = false;
+  const setL = gsap.quickSetter(btn, 'left', 'px');
+  const setT = gsap.quickSetter(btn, 'top',  'px');
+
+  function trackAbout() {
+    if (!tracking) return;
+    const r = aboutAnchor.getBoundingClientRect();
+    setL(r.left);
+    setT(r.top);
+  }
+
+  // ── Appear at nav ─────────────────────────────────────
+  function appear() {
+    if (state !== 'hidden') return;
+    state = 'nav';
+    btn.classList.add('btn-cta--nav');
+    // Re-sync to nav in case layout shifted since init
+    const n = navTarget();
+    gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height });
+    gsap.fromTo(btn,
+      { opacity: 0, y: -10 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', clearProps: 'y' }
+    );
+  }
+
+  // ── Arc flight ────────────────────────────────────────
+  function fly(to) {
+    if (state === 'hidden' || state === to) return;
+    tracking = false;
+    state    = to;
+    if (to === 'nav') {
+      btn.classList.add('btn-cta--nav');
+      if (linkedinBtn) gsap.to(linkedinBtn, { opacity: 0, duration: 0.3, ease: 'power2.in' });
+    } else {
+      btn.classList.remove('btn-cta--nav');
+    }
+    if (tween) tween.kill();
+    gsap.set(btn, { x: 0, y: 0 });
+
+    const fromL  = parseFloat(gsap.getProperty(btn, 'left'));
+    const fromT  = parseFloat(gsap.getProperty(btn, 'top'));
+    const fromW  = parseFloat(gsap.getProperty(btn, 'width'));
+    const fromH  = parseFloat(gsap.getProperty(btn, 'height'));
+    const fromFs = parseFloat(gsap.getProperty(btn, 'fontSize'));
+    const fromBr = parseFloat(gsap.getProperty(btn, 'borderRadius'));
+
+    const dest = to === 'about' ? aboutTarget() : navTarget();
+
+    // Nadir: midpoint dips 110px below the lower of the two endpoints.
+    // Button may pass off-screen — intentional.
+    const arcX = (fromL + dest.left) / 2;
+    const arcY = Math.max(fromT, dest.top) + 110;
+
+    tween = gsap.timeline();
+
+    // Phase 1: accelerate to arc nadir, interpolating size halfway
+    tween.to(btn, {
+      left: arcX, top: arcY,
+      width:        (fromW  + dest.width)        / 2,
+      height:       (fromH  + dest.height)       / 2,
+      fontSize:     (fromFs + dest.fontSize)     / 2,
+      borderRadius: (fromBr + dest.borderRadius) / 2,
+      duration: 0.38,
+      ease: 'power2.in',
+    });
+
+    if (to === 'about') {
+      // Phase 2 — live-tracked elastic landing.
+      // Tween a scalar t from 1→0 (elastic). Each frame:
+      //   position = currentAnchor + initialOffset * t
+      // As t → 0 the button converges on wherever the anchor currently is,
+      // so no snap occurs even if the user scrolled during flight.
+      const spring = { t: 1 };
+      let offsetX = 0;
+      let offsetY = 0;
+
+      tween.add(gsap.to(spring, {
+        t: 0,
+        duration: 0.72,
+        ease: 'elastic.out(0.9, 0.65)',
+        onStart() {
+          const r = aboutAnchor.getBoundingClientRect();
+          offsetX = parseFloat(gsap.getProperty(btn, 'left')) - r.left;
+          offsetY = parseFloat(gsap.getProperty(btn, 'top'))  - r.top;
+        },
+        onUpdate() {
+          const r = aboutAnchor.getBoundingClientRect();
+          gsap.set(btn, {
+            left: r.left + offsetX * spring.t,
+            top:  r.top  + offsetY * spring.t,
+          });
+        },
+        onComplete() {
+          tracking = true;
+          if (linkedinBtn) gsap.to(linkedinBtn, { opacity: 1, duration: 0.4, ease: 'power2.out' });
+        },
+      }));
+
+      // Size settles smoothly in parallel with phase 2
+      tween.to(btn, {
+        width: dest.width, height: dest.height,
+        fontSize: dest.fontSize, borderRadius: dest.borderRadius,
+        duration: 0.52,
+        ease: 'power2.out',
+      }, '<');
+
+    } else {
+      // Nav anchor is fixed — plain elastic tween is fine
+      tween.to(btn, {
+        left: dest.left, top: dest.top,
+        duration: 0.65,
+        ease: 'elastic.out(0.6, 0.75)',
+      });
+      tween.to(btn, {
+        width: dest.width, height: dest.height,
+        fontSize: dest.fontSize, borderRadius: dest.borderRadius,
+        duration: 0.52,
+        ease: 'power2.out',
+      }, '<');
+    }
+  }
+
+  // ── Reduced motion check ─────────────────────────────
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = matchMedia('(pointer: coarse)').matches;
+
+
+  // ── Mail emoji animation ─────────────────────────────
+  const emoji = btn.querySelector('.btn-emoji');
+  let emojiTween = null;
+
+  function playMailAnim() {
+    if (!emoji || prefersReduced) return;
+    if (emojiTween) emojiTween.kill();
+    emojiTween = gsap.timeline();
+    // Lift + tilt like it's being sent
+    emojiTween.to(emoji, {
+      y: -6, x: 4, rotation: -12, scale: 1.2,
+      duration: 0.3, ease: 'power2.out',
+    });
+    // Little wiggle at the peak
+    emojiTween.to(emoji, {
+      rotation: 8, duration: 0.15, ease: 'power1.inOut',
+    });
+    emojiTween.to(emoji, {
+      rotation: -6, duration: 0.12, ease: 'power1.inOut',
+    });
+    // Settle back with elastic bounce
+    emojiTween.to(emoji, {
+      y: 0, x: 0, rotation: 0, scale: 1,
+      duration: 0.6, ease: 'elastic.out(1, 0.4)',
+    });
+  }
+
+  function resetMailAnim() {
+    if (!emoji || prefersReduced) return;
+    if (emojiTween) emojiTween.kill();
+    gsap.to(emoji, {
+      y: 0, x: 0, rotation: 0, scale: 1,
+      duration: 0.4, ease: 'power2.out',
+    });
+  }
+
+  // ── Hover & press feedback ────────────────────────────
+  let isNav = () => btn.classList.contains('btn-cta--nav');
+
+  btn.addEventListener('mouseenter', () => {
+    if (tween?.isActive() || prefersReduced) return;
+    playMailAnim();
+    if (isNav()) {
+      gsap.to(btn, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
+    } else {
+      gsap.to(btn, { scale: 1.08, duration: 0.4, ease: 'power2.out' });
+    }
+  });
+
+  btn.addEventListener('mouseleave', () => {
+    if (prefersReduced) return;
+    resetMailAnim();
+    if (isNav()) {
+      gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+    } else {
+      gsap.to(btn, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+    }
+  });
+
+  btn.addEventListener('mousedown', () => {
+    if (prefersReduced) return;
+    gsap.to(btn, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
+  });
+
+  btn.addEventListener('mouseup', () => {
+    if (prefersReduced) return;
+    gsap.to(btn, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
+  });
+
+  btn.addEventListener('touchstart', () => {
+    if (tween?.isActive() || prefersReduced) return;
+    gsap.to(btn, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
+  }, { passive: true });
+
+  btn.addEventListener('touchend', () => {
+    if (prefersReduced) return;
+    gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+  }, { passive: true });
+
+  // ── Appear trigger: scrolled 80% into Work section ─────
+  function checkWorkProgress() {
+    if (state !== 'hidden') return;
+    const r = workSection.getBoundingClientRect();
+    const visible = Math.min(r.bottom, H) - Math.max(r.top, 0);
+    if (visible / H >= 0.8) {
+      appear();
+      window.removeEventListener('scroll', checkWorkProgress);
+      if (lenis) lenis.off('scroll', checkWorkProgress);
+    }
+  }
+  const H = window.innerHeight;
+  window.addEventListener('scroll', checkWorkProgress, { passive: true });
+  if (lenis) lenis.on('scroll', checkWorkProgress);
+  checkWorkProgress();
+
+  // ── Scroll tracking hook ──────────────────────────────
+  function onScroll() { trackAbout(); }
+  if (lenis) lenis.on('scroll', onScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── Flight trigger: about CTA enters / leaves viewport ─
+  const aboutObserver = new IntersectionObserver(entries => {
+    const e = entries[0];
+    if (e.isIntersecting) {
+      fly('about');
+    } else {
+      fly('nav');
+    }
+  }, { threshold: 0.05 });
+  aboutObserver.observe(aboutAnchor);
+
+  // ── Project page helpers ────────────────────────────
+  // Keep button visible in nav position on subpages
+  _showForProject = () => {
+    if (state === 'hidden') {
+      appear();
+    } else if (state === 'about') {
+      tracking = false;
+      state = 'nav';
+      btn.classList.add('btn-cta--nav');
+      const n = navTarget();
+      gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height, x: 0, y: 0 });
+    }
+    // nav state — already visible, nothing to do
+  };
+
+}

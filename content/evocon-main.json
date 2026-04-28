@@ -1,0 +1,44 @@
+{
+  "id": "evocon-main",
+  "title": "Evocon",
+  "company": "Evocon",
+  "role": "UI/UX/Visual Designer",
+  "period": "2019–2020",
+  "tags": ["UI Design", "UX Design", "Visual Design", "SaaS"],
+  "hero": { "src": "assets/images/evocon-cover.png", "alt": "Evocon front page desktop" },
+  "sections": [
+    {
+      "type": "text",
+      "content": [
+        "Evocon is a manufacturing SaaS and a device that helps manufacturers around the world to waste less both time and materials.",
+        "It turns a complicated and data heavy task that's manufacture monitoring into an easy to understand and user-friendly experience.",
+        "In 2019, Evocon won EAS' award for Best Design Implementing."
+      ]
+    },
+    { "type": "image", "src": "assets/images/evocon-1.png", "alt": "Evocon design overview", "caption": "Evocon — design overview" },
+    { "type": "image", "src": "assets/images/evocon-2.png", "alt": "Evocon UI design", "caption": "Evocon — UI design" },
+    { "type": "image", "src": "assets/images/evocon-3.png", "alt": "Evocon interface design", "caption": "Evocon — interface design" },
+    { "type": "image", "src": "assets/images/evocon-4.png", "alt": "Evocon product design", "caption": "Evocon — product design" },
+    { "type": "image", "src": "assets/images/evocon-5.png", "alt": "Evocon visual design", "caption": "Evocon — visual design" },
+    { "type": "image", "src": "assets/images/evocon-6.png", "alt": "Evocon design detail", "caption": "Evocon — design detail" },
+    { "type": "image", "src": "assets/images/evocon-article_image_2.png", "alt": "Evocon article image", "caption": "Evocon — article imagery" },
+    {
+      "type": "image-pair",
+      "images": [
+        { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon Kodukas redesign", "caption": "Kodukas — redesign" },
+        { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon Kodukas original", "caption": "Kodukas — original" }
+      ]
+    },
+    {
+      "type": "image-pair",
+      "images": [
+        { "src": "assets/images/evocon-kodukas-uus-2.png", "alt": "Evocon Kodukas redesign detail", "caption": "Kodukas — redesign detail" },
+        { "src": "assets/images/evocon-kodukas-vana-2.png", "alt": "Evocon Kodukas original detail", "caption": "Kodukas — original detail" }
+      ]
+    },
+    { "type": "image", "src": "assets/images/evocon-kodukas-uus-3.png", "alt": "Evocon Kodukas redesign view", "caption": "Evocon — Kodukas redesign view" },
+    { "type": "image", "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon good speed animation", "caption": "Evocon — good speed indicator" },
+    { "type": "image", "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon slow speed animation", "caption": "Evocon — slow speed indicator" },
+    { "type": "image", "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon microstop animation", "caption": "Evocon — microstop speed indicator" }
+  ]
+}

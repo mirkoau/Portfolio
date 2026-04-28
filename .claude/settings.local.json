@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Figma__get_design_context",
+      "Bash(node:*)",
+      "Bash(grep -n \"hover\\\\|scale\\\\|transform\" /c/Users/mirko/Documents/portfoolio/js/*.js)",
+      "Bash(grep -n \"work__project-image\\\\|gallery-icon\\\\|insertAdjacentHTML\\\\|innerHTML\\\\|createElement\" /c/Users/mirko/Documents/portfoolio/js/*.js)",
+      "Bash(grep -n \"gallery-trigger\\\\|project-image\\\\|mouseenter\\\\|mouseleave\" /c/Users/mirko/Documents/portfoolio/js/*.js)",
+      "WebFetch(domain:www.harrygeorge.design)",
+      "WebFetch(domain:assets-global.website-files.com)",
+      "WebSearch",
+      "WebFetch(domain:api.fontshare.com)",
+      "WebFetch(domain:imposter.framer.website)",
+      "WebFetch(domain:codepen.io)",
+      "WebFetch(domain:www.linkedin.com)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(cp \"C:/Users/mirko/Documents/portfolio/alanwake-cover.jpg\" \"C:/Users/mirko/Documents/portfoolio/assets/images/\")",
+      "Bash(cp \"C:/Users/mirko/Documents/portfolio/fbc-cover.webp\" \"C:/Users/mirko/Documents/portfoolio/assets/images/\")",
+      "Bash(cp \"C:/Users/mirko/Documents/portfolio/funkfest_anatole_1080x1080.png\" \"C:/Users/mirko/Documents/portfoolio/assets/images/funkfest-1.png\")",
+      "Bash(cp \"C:/Users/mirko/Documents/portfolio/funkfest_poster1-2_A2_CMYK_5mm-bleed.png\" \"C:/Users/mirko/Documents/portfoolio/assets/images/funkfest-2.png\")",
+      "WebFetch(domain:www.behance.net)",
+      "WebFetch(domain:mir-s3-cdn-cf.behance.net)",
+      "Bash(claude mcp:*)",
+      "WebFetch(domain:www.figma.com)",
+      "mcp__figma__get_design_context"
+    ]
+  }
+}
