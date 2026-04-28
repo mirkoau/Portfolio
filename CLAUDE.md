@@ -47,7 +47,7 @@ Ultra-concise. Grammar optional. Examples:
 - Sacrifice grammar for concision
 - Ask before adding deps or new files
 - Prefer editing existing files over creating new ones
-- No auto-commit unless asked
+- Auto-commit + push after substantial changes (concise message per Commit Style). Skip for tiny WIP edits or when explicitly told to hold.
 
 ## Performance Rules
 - No unused CSS/JS shipped
