@@ -882,7 +882,6 @@ body.is-project-view .scroll-bg {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   position: relative;
   z-index: 2;
-  background: var(--color-bg);
 }
 
 .footer__copy {

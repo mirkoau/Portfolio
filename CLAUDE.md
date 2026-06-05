@@ -42,12 +42,32 @@ Ultra-concise. Grammar optional. Examples:
 - `perf: lazy load project imgs`
 
 ## Claude Interaction Style
+- **Always load the `caveman` skill at the start of every conversation in this project.**
 - Short, direct responses
 - No filler, no preamble
 - Sacrifice grammar for concision
 - Ask before adding deps or new files
 - Prefer editing existing files over creating new ones
 - Auto-commit + push after substantial changes (concise message per Commit Style). Skip for tiny WIP edits or when explicitly told to hold.
+
+## Code Intelligence
+
+Prefer LSP over Grep/Glob/Read for code navigation:
+- `goToDefinition` / `goToImplementation` to jump to source
+- `findReferences` to see all usages across the codebase
+- `workspaceSymbol` to find where something is defined
+- `documentSymbol` to list all symbols in a file
+- `hover` for type info without reading the file
+- `incomingCalls` / `outgoingCalls` for call hierarchy
+
+Before renaming or changing a function signature, use
+`findReferences` to find all call sites first.
+
+Use Grep/Glob only for text/pattern searches (comments,
+strings, config values) where LSP doesn't help.
+
+After writing or editing code, check LSP diagnostics before
+moving on. Fix any type errors or missing imports immediately.
 
 ## Performance Rules
 - No unused CSS/JS shipped
