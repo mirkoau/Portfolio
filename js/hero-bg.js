@@ -187,6 +187,14 @@ export function initHeroBg() {
       // modulate slightly by flow so it reads as part of the liquid, not a flat wash
       col += blTint * blCorner * (0.55 + flow * 0.45) * 0.4;
 
+      // ── Bottom-middle splash — cool teal/indigo ───
+      float bmSplash = smoothstep(0.6, 0.0, length((uv - vec2(0.5, 0.0)) * vec2(1.0, 1.35)));
+      col += vec3(0.03, 0.08, 0.15) * bmSplash * (0.45 + pattern * 0.55) * 0.38;
+
+      // ── Left-mid splash — warm plum ───────────────
+      float lSplash = smoothstep(0.55, 0.0, length((uv - vec2(0.0, 0.45)) * vec2(1.25, 1.0)));
+      col += vec3(0.12, 0.05, 0.07) * lSplash * (0.5 + flow * 0.5) * 0.36;
+
       // Global brightness lift — slightly more visible palette
       col *= 1.05;
 
