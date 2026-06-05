@@ -286,13 +286,12 @@ body {
 
 /* ── Buttons ────────────────────────────────────────── */
 
-/* Inverted Ink — shared base. Cream pill, ink text; dark fill wipes in on hover */
+/* iOS Glass Silver — shared base */
 .btn-cta,
 .btn-secondary,
 .work__see-more,
 .nav__burger {
   position: relative;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -301,18 +300,36 @@ body {
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.01em;
-  color: lab(13% 2 4);
+  color: rgba(200, 210, 255, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   transition:
     transform 0.25s var(--ease-spring),
     box-shadow var(--duration-base) var(--ease-out),
-    color 0.3s var(--ease-out);
-  background: lab(95% 2 6);
-  border: 1px solid transparent;
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+  background:
+    linear-gradient(180deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.01) 50%,
+      rgba(0, 0, 0, 0.04) 100%),
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.18) 0%,
+      rgba(160, 180, 255, 0.06) 40%,
+      rgba(160, 180, 255, 0.02) 60%,
+      rgba(160, 180, 255, 0.10) 100%);
+  border: 1px solid rgba(160, 180, 255, 0.14);
+  border-top-color: rgba(160, 180, 255, 0.3);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
   border-radius: 14px;
   padding: 14px 28px;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.25),
-    0 6px 20px rgba(0, 0, 0, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.18),
+    0 12px 40px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -320,48 +337,60 @@ body {
   transform: scale(1);
 }
 
-/* Ink wipe layer — sits above cream fill, below text */
+/* Top edge highlight line */
 .btn-cta::before,
 .btn-secondary::before,
 .work__see-more::before,
 .nav__burger::before {
   content: '';
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: lab(10% 3 6);
-  transform: translateY(101%);
-  transition: transform 0.4s var(--ease-spring);
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   pointer-events: none;
+  z-index: 2;
 }
 
-/* Hover: scale + lift, ink wipes up, text flips to cream */
+/* Hover: scale + fill brighten */
 .btn-cta:hover,
 .btn-secondary:hover,
 .work__see-more:hover,
 .nav__burger:hover {
-  color: lab(95% 2 6);
+  color: rgba(255, 255, 255, 0.92);
   transform: scale(1.04);
+  background:
+    linear-gradient(180deg,
+      rgba(160, 190, 255, 0.14) 0%,
+      rgba(140, 170, 255, 0.08) 100%),
+    linear-gradient(180deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.01) 50%,
+      rgba(0, 0, 0, 0.04) 100%),
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.18) 0%,
+      rgba(160, 180, 255, 0.06) 40%,
+      rgba(160, 180, 255, 0.02) 60%,
+      rgba(160, 180, 255, 0.10) 100%);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 10px 30px rgba(0, 0, 0, 0.42);
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    0 14px 44px rgba(0, 0, 0, 0.14);
 }
 
-.btn-cta:hover::before,
-.btn-secondary:hover::before,
-.work__see-more:hover::before,
-.nav__burger:hover::before {
-  transform: translateY(0);
-}
-
-/* Pressed: scale down */
+/* Pressed: scale down + deep inset */
 .btn-cta:active,
 .btn-secondary:active,
 .work__see-more:active,
 .nav__burger:active {
   transform: scale(0.94);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.3);
+    inset 0 2px 6px rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -378,10 +407,17 @@ body {
   font-weight: 700;
   font-size: 14px;
   padding: 10px 22px;
-  border-radius: 12px;
+  background:
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.03) 40%,
+      rgba(160, 180, 255, 0.01) 60%,
+      rgba(160, 180, 255, 0.06) 100%);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 4px 14px rgba(0, 0, 0, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.10),
+    0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .about .section-main {
