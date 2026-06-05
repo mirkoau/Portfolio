@@ -268,6 +268,13 @@ function initBurgerMenu(lenis) {
   burger.hidden = false;
   let open = false;
 
+  // Any scroll attempt while open closes the menu —
+  // unless it's scrolling within an actually-scrollable panel
+  const onScrollAttempt = (e) => {
+    if (panel.contains(e.target) && panel.scrollHeight > panel.clientHeight) return;
+    setOpen(false);
+  };
+
   function setOpen(next) {
     if (next === open) return;
     open = next;
@@ -282,10 +289,14 @@ function initBurgerMenu(lenis) {
         backdrop.classList.add('project-menu__backdrop--open');
       });
       if (lenis) lenis.stop();
+      window.addEventListener('wheel', onScrollAttempt, { passive: true });
+      window.addEventListener('touchmove', onScrollAttempt, { passive: true });
     } else {
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
       if (lenis) lenis.start();
+      window.removeEventListener('wheel', onScrollAttempt);
+      window.removeEventListener('touchmove', onScrollAttempt);
       // hide after transition so it leaves the a11y tree
       setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 400);
     }
