@@ -23,7 +23,27 @@
       "WebFetch(domain:mir-s3-cdn-cf.behance.net)",
       "Bash(claude mcp:*)",
       "WebFetch(domain:www.figma.com)",
-      "mcp__figma__get_design_context"
+      "mcp__figma__get_design_context",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(nslookup mirkoaus.com 1.1.1.1)",
+      "Bash(nslookup -type=NS mirkoaus.com 1.1.1.1)",
+      "Bash(nslookup -type=A mirkoaus.com daisy.ns.cloudflare.com)",
+      "Bash(nslookup -type=TXT _github-pages-challenge-mirkoau.mirkoaus.com daisy.ns.cloudflare.com)",
+      "Bash(nslookup -type=CNAME www.mirkoaus.com daisy.ns.cloudflare.com)",
+      "Bash(curl -sI -H \"Host: mirkoaus.com\" https://185.199.108.153 -k --max-time 10)",
+      "Bash(curl -sI https://mirkoaus.com --max-time 15)",
+      "Bash(curl -sI http://mirkoaus.com --max-time 15)",
+      "Bash(curl -sI https://mirkoau.github.io/Portfolio/ --max-time 15)",
+      "Bash(curl -skv https://mirkoaus.com --max-time 10)",
+      "Bash(curl -sI https://mirkoaus.com --max-time 10)",
+      "Bash(curl -sI https://www.mirkoaus.com --max-time 10)",
+      "Bash(curl -sI \"https://mirkoaus.com/?cachebust=$\\(date +%s\\)\" --max-time 10)",
+      "Bash(curl -sI \"https://mirkoaus.com/?bust=$\\(date +%s%N\\)\" --max-time 10)",
+      "Bash(claude update *)",
+      "Bash(git reset *)",
+      "Skill(update-config)"
     ]
   }
 }

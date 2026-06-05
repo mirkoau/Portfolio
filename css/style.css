@@ -785,6 +785,7 @@ body.is-project-view .scroll-bg {
 }
 
 .personal-work__item {
+  position: relative;
   break-inside: avoid;
   margin-bottom: var(--space-xl);
   cursor: pointer;
@@ -816,6 +817,21 @@ body.is-project-view .scroll-bg {
 
 .personal-work__item:hover img {
   transform: scale(1.03);
+}
+
+.personal-work__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.personal-work__item:hover::after,
+.personal-work__item:focus-visible::after {
+  opacity: 1;
 }
 
 /* ── About ──────────────────────────────────────────── */

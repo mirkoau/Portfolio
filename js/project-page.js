@@ -16,14 +16,16 @@ async function getAllProjects() {
       projects.push({ id: p.id, title: p.title || company.company });
     }
   }
-  // Fetch hero images from per-project JSONs
+  // Fetch hero images + role/period from per-project JSONs
   await Promise.all(projects.map(async (p) => {
     try {
       const r = await fetch(`content/${p.id}.json`);
       const d = await r.json();
       p.hero = d.hero?.src || '';
       p.heroAlt = d.hero?.alt || '';
-    } catch { p.hero = ''; p.heroAlt = ''; }
+      p.role = d.role || '';
+      p.period = d.period || '';
+    } catch { p.hero = ''; p.heroAlt = ''; p.role = ''; p.period = ''; }
   }));
   _allProjects = projects;
   return _allProjects;
@@ -58,14 +60,20 @@ async function render(project, lenis) {
 
   const arrowSvg = `<svg class="project-footer__arrow" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 18H28.5M28.5 18L19.5 9M28.5 18L19.5 27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-  const footerRows = footerProjects.map(p => `
+  const footerRows = footerProjects.map(p => {
+    const meta = [p.role, p.period].filter(Boolean).join('  / ');
+    return `
     <a class="project-footer__row" href="#/work/${p.id}">
       <div class="project-footer__row-bg">
         ${p.hero ? `<img src="${p.hero}" alt="" loading="lazy" />` : ''}
       </div>
-      <span class="project-footer__title">${p.title}</span>
+      <div class="project-footer__title-group">
+        <span class="project-footer__title">${p.title}</span>
+        ${meta ? `<span class="project-footer__role">${meta}</span>` : ''}
+      </div>
       ${arrowSvg}
-    </a>`).join('');
+    </a>`;
+  }).join('');
 
   container.innerHTML = `
     <article class="project-page">
@@ -97,11 +105,52 @@ async function render(project, lenis) {
   // Snap scroll + reveals + contact button
   const cleanSnap = initProjectSnap(lenis);
   const cleanReveals = initProjectReveals();
+  const cleanFooterArrows = initFooterArrows();
   showForProject();
 
   _cleanup = () => {
     if (cleanSnap) cleanSnap();
     if (cleanReveals) cleanReveals();
+    if (cleanFooterArrows) cleanFooterArrows();
+  };
+}
+
+// ── Footer arrow hover (mirrors See-More) ─────────────
+
+function initFooterArrows() {
+  if (typeof gsap === 'undefined') return null;
+  const rows = container.querySelectorAll('.project-footer__row');
+  if (!rows.length) return null;
+
+  const handlers = [];
+
+  rows.forEach(row => {
+    const arrow = row.querySelector('.project-footer__arrow');
+    if (!arrow) return;
+
+    const onEnter = () => {
+      gsap.killTweensOf(arrow);
+      gsap.timeline()
+        .to(arrow, { x: 24, opacity: 0, duration: 0.25, ease: 'power3.in' })
+        .set(arrow, { x: -16 })
+        .to(arrow, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+    };
+
+    const onLeave = () => {
+      gsap.killTweensOf(arrow);
+      gsap.to(arrow, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+    };
+
+    row.addEventListener('mouseenter', onEnter);
+    row.addEventListener('mouseleave', onLeave);
+    handlers.push({ row, onEnter, onLeave });
+  });
+
+  return () => {
+    handlers.forEach(({ row, onEnter, onLeave }) => {
+      row.removeEventListener('mouseenter', onEnter);
+      row.removeEventListener('mouseleave', onLeave);
+    });
   };
 }
 
