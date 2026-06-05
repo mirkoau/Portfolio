@@ -312,12 +312,13 @@
 
 /* Glass-pill base inherited from .btn-cta group; below = position + icon */
 .nav__burger {
-  /* square, height matched to the Back button (btn-cta box) */
-  --burger-size: calc(28px + var(--size-body-md) * var(--leading-normal));
-  margin-left: var(--space-sm);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -22px 0 0 -22px;
   pointer-events: all;
-  width: var(--burger-size);
-  height: var(--burger-size);
+  width: 44px;
+  height: 44px;
   padding: 0;
   opacity: 0;
   visibility: hidden;
