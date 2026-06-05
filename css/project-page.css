@@ -14,7 +14,7 @@
 
 .project-page__hero {
   position: relative;
-  height: 100vh;
+  height: 50vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -24,10 +24,7 @@
 
 .project-page__hero-img-wrap {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50vh;
+  inset: 0;
   z-index: 0;
 }
 
@@ -46,7 +43,7 @@
   position: relative;
   z-index: 1;
   align-self: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-lg);
   max-width: 891px;
   display: flex;
   flex-direction: column;
@@ -78,13 +75,6 @@
   font-size: var(--size-body-sm);
   color: var(--color-blue);
   opacity: 0.5;
-}
-
-.project-page__info-intro {
-  font-family: var(--font-ui);
-  font-size: var(--size-body-md);
-  color: var(--color-blue-dim);
-  line-height: var(--leading-normal);
 }
 
 /* ── Content zone ────────────────────────────────────── */

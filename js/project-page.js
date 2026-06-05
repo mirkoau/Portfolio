@@ -85,7 +85,6 @@ async function render(project, lenis) {
               <p class="project-page__info-title">${project.title}</p>
               <p class="project-page__info-role">${project.role}  / ${project.period}</p>
             </div>
-            ${project.intro ? `<p class="project-page__info-intro">${project.intro}</p>` : ''}
           </div>
         </div>
       </section>
@@ -99,14 +98,12 @@ async function render(project, lenis) {
       </nav>
     </article>`;
 
-  // Snap scroll + reveals + contact button
-  const cleanSnap = initProjectSnap(lenis);
+  // Reveals + contact button
   const cleanReveals = initProjectReveals();
   const cleanFooterArrows = initFooterArrows();
   showForProject();
 
   _cleanup = () => {
-    if (cleanSnap) cleanSnap();
     if (cleanReveals) cleanReveals();
     if (cleanFooterArrows) cleanFooterArrows();
   };
@@ -210,83 +207,6 @@ function renderSection(section) {
     default:
       return '';
   }
-}
-
-// ── Snap scroll on project hero ───────────────────────
-
-function initProjectSnap(lenis) {
-  const heroEl = container.querySelector('.project-page__hero');
-  const contentEl = container.querySelector('.project-page__content');
-  if (!heroEl || !contentEl || !lenis) return null;
-
-  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let inHero = true;
-  let snapping = false;
-
-  const onWheel = (e) => {
-    if (!inHero) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (snapping) return;
-    if (e.deltaY > 0) {
-      snapping = true;
-      if (noMotion) {
-        lenis.scrollTo(contentEl, { immediate: true });
-        inHero = false;
-        snapping = false;
-      } else {
-        lenis.scrollTo(contentEl, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 3),
-          onComplete: () => { inHero = false; snapping = false; },
-        });
-      }
-    }
-  };
-
-  let touchY0 = 0;
-  const onTouchStart = (e) => {
-    if (inHero) touchY0 = e.touches[0].clientY;
-  };
-  const onTouchMove = (e) => {
-    if (!inHero) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    if (snapping) return;
-    if (touchY0 - e.touches[0].clientY > 20) {
-      snapping = true;
-      if (noMotion) {
-        lenis.scrollTo(contentEl, { immediate: true });
-        inHero = false;
-        snapping = false;
-      } else {
-        lenis.scrollTo(contentEl, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 3),
-          onComplete: () => { inHero = false; snapping = false; },
-        });
-      }
-    }
-  };
-
-  const onScroll = () => {
-    if (inHero && !snapping && lenis.scroll >= heroEl.offsetHeight * 0.5) {
-      inHero = false;
-    }
-    if (!inHero && lenis.scroll < 10) { inHero = true; snapping = false; }
-  };
-
-  window.addEventListener('wheel', onWheel, { passive: false, capture: true });
-  window.addEventListener('touchstart', onTouchStart, { passive: true, capture: true });
-  window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
-  lenis.on('scroll', onScroll);
-
-  return () => {
-    window.removeEventListener('wheel', onWheel, { capture: true });
-    window.removeEventListener('touchstart', onTouchStart, { capture: true });
-    window.removeEventListener('touchmove', onTouchMove, { capture: true });
-    lenis.off('scroll', onScroll);
-  };
 }
 
 // ── Scroll reveals on content sections ────────────────
