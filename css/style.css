@@ -291,8 +291,6 @@ body {
 .btn-secondary,
 .work__see-more,
 .nav__burger {
-  --mx: 50%;
-  --my: 50%;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -310,9 +308,6 @@ body {
     background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out);
   background:
-    radial-gradient(120px circle at var(--mx) var(--my),
-      rgba(255, 255, 255, 0.18) 0%,
-      rgba(255, 255, 255, 0) 60%),
     linear-gradient(180deg,
       rgba(160, 180, 255, 0.10) 0%,
       rgba(160, 180, 255, 0.01) 50%,
@@ -367,9 +362,6 @@ body {
   color: rgba(255, 255, 255, 0.92);
   transform: scale(1.04);
   background:
-    radial-gradient(120px circle at var(--mx) var(--my),
-      rgba(255, 255, 255, 0.24) 0%,
-      rgba(255, 255, 255, 0) 60%),
     linear-gradient(180deg,
       rgba(160, 190, 255, 0.14) 0%,
       rgba(140, 170, 255, 0.08) 100%),
