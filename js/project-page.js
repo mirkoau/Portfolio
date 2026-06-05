@@ -51,16 +51,14 @@ export async function showProject(projectId, lenis) {
   }
 }
 
-async function render(project, lenis) {
-
-  const allProjects = await getAllProjects();
-  const footerProjects = allProjects.filter(p => p.id !== project.id);
-
+// Shared row markup for footer + burger menu. Excludes currentId.
+function renderProjectRows(projects, currentId) {
   const arrowSvg = `<svg class="project-footer__arrow" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 18H28.5M28.5 18L19.5 9M28.5 18L19.5 27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-  const footerRows = footerProjects.map(p => {
-    const meta = [p.role, p.period].filter(Boolean).join('  / ');
-    return `
+  return projects
+    .filter(p => p.id !== currentId)
+    .map(p => {
+      const meta = [p.role, p.period].filter(Boolean).join('  / ');
+      return `
     <a class="project-footer__row" href="#/work/${p.id}">
       <div class="project-footer__row-bg">
         ${p.hero ? `<img src="${p.hero}" alt="" loading="lazy" />` : ''}
@@ -71,7 +69,14 @@ async function render(project, lenis) {
       </div>
       ${arrowSvg}
     </a>`;
-  }).join('');
+    })
+    .join('');
+}
+
+async function render(project, lenis) {
+
+  const allProjects = await getAllProjects();
+  const footerRows = renderProjectRows(allProjects, project.id);
 
   container.innerHTML = `
     <article class="project-page">
