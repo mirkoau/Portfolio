@@ -286,51 +286,50 @@ body {
 
 /* ── Buttons ────────────────────────────────────────── */
 
-/* Liquid Glass — shared base. Cursor-reactive specular + chromatic edge */
+/* iOS Glass Silver — shared base */
 .btn-cta,
 .btn-secondary,
 .work__see-more,
 .nav__burger {
-  --mx: 50%;
-  --my: 50%;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 17px;
+  font-weight: 800;
+  font-size: 18px;
   letter-spacing: -0.01em;
-  color: rgba(240, 242, 248, 0.85);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  color: rgba(200, 210, 255, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   transition:
     transform 0.25s var(--ease-spring),
     box-shadow var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out);
   background:
-    radial-gradient(150px circle at var(--mx) var(--my),
-      rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 60%),
     linear-gradient(180deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.02) 45%,
-      rgba(0, 0, 0, 0.05) 100%),
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.01) 50%,
+      rgba(0, 0, 0, 0.04) 100%),
     linear-gradient(135deg,
-      rgba(244, 247, 255, 0.1) 0%,
-      rgba(236, 240, 255, 0.04) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+      rgba(160, 180, 255, 0.18) 0%,
+      rgba(160, 180, 255, 0.06) 40%,
+      rgba(160, 180, 255, 0.02) 60%,
+      rgba(160, 180, 255, 0.10) 100%);
+  border: 1px solid rgba(160, 180, 255, 0.14);
+  border-top-color: rgba(160, 180, 255, 0.3);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
   border-radius: 14px;
   padding: 14px 28px;
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow:
-    inset 1.5px 1.5px 1px -1px lab(78% -50 -15 / 0.5),
-    inset -1.5px -1.5px 1px -1px lab(66% 36 68 / 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 2px 6px rgba(0, 0, 0, 0.18),
-    0 10px 30px rgba(0, 0, 0, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.18),
+    0 12px 40px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -338,7 +337,7 @@ body {
   transform: scale(1);
 }
 
-/* Specular sheen bar — glides across on hover */
+/* Top edge highlight line */
 .btn-cta::before,
 .btn-secondary::before,
 .work__see-more::before,
@@ -346,38 +345,41 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: -65%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.28), transparent);
-  transform: skewX(-18deg);
-  transition: left 0.6s var(--ease-out);
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
-/* Hover: scale + edge refraction intensifies, sheen sweeps */
+/* Hover: scale + fill brighten */
 .btn-cta:hover,
 .btn-secondary:hover,
 .work__see-more:hover,
 .nav__burger:hover {
-  color: rgba(255, 255, 255, 0.96);
+  color: rgba(255, 255, 255, 0.92);
   transform: scale(1.04);
-  border-color: rgba(255, 255, 255, 0.26);
+  background:
+    linear-gradient(180deg,
+      rgba(160, 190, 255, 0.14) 0%,
+      rgba(140, 170, 255, 0.08) 100%),
+    linear-gradient(180deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.01) 50%,
+      rgba(0, 0, 0, 0.04) 100%),
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.18) 0%,
+      rgba(160, 180, 255, 0.06) 40%,
+      rgba(160, 180, 255, 0.02) 60%,
+      rgba(160, 180, 255, 0.10) 100%);
   box-shadow:
-    inset 1.5px 1.5px 1px -1px lab(78% -50 -15 / 0.68),
-    inset -1.5px -1.5px 1px -1px lab(66% 36 68 / 0.58),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 4px 10px rgba(0, 0, 0, 0.24),
-    0 14px 42px rgba(0, 0, 0, 0.26);
-}
-
-.btn-cta:hover::before,
-.btn-secondary:hover::before,
-.work__see-more:hover::before,
-.nav__burger:hover::before {
-  left: 120%;
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    0 14px 44px rgba(0, 0, 0, 0.14);
 }
 
 /* Pressed: scale down + deep inset */
@@ -385,9 +387,9 @@ body {
 .btn-secondary:active,
 .work__see-more:active,
 .nav__burger:active {
-  transform: scale(0.95);
+  transform: scale(0.94);
   box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.32),
+    inset 0 2px 6px rgba(0, 0, 0, 0.35),
     0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -400,18 +402,22 @@ body {
   outline-offset: 3px;
 }
 
-/* Alt button — lighter weight, gentler edge */
+/* Alt button — lighter weight */
 .btn-secondary {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   padding: 10px 22px;
+  background:
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.03) 40%,
+      rgba(160, 180, 255, 0.01) 60%,
+      rgba(160, 180, 255, 0.06) 100%);
   box-shadow:
-    inset 1px 1px 1px -1px lab(78% -50 -15 / 0.4),
-    inset -1px -1px 1px -1px lab(66% 36 68 / 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
-    0 2px 6px rgba(0, 0, 0, 0.14),
-    0 6px 18px rgba(0, 0, 0, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.10),
+    0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .about .section-main {
