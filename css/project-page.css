@@ -383,7 +383,7 @@
   position: fixed;
   top: calc(var(--nav-height) + var(--space-sm));
   left: 50%;
-  width: min(360px, calc(100vw - 2 * var(--gutter)));
+  width: min(200px, calc(100vw - 2 * var(--gutter)));
   z-index: 95;
   max-height: calc(100vh - var(--nav-height) - var(--space-sm) - var(--space-md));
   overflow-y: auto;
@@ -473,7 +473,7 @@
 
 @media (max-width: 768px) {
   .project-menu {
-    width: min(360px, calc(100vw - 2 * var(--gutter)));
+    width: min(200px, calc(100vw - 2 * var(--gutter)));
   }
 }
 
