@@ -44,6 +44,17 @@ export async function initGallery(lenisInstance) {
     else              setActive(Math.max(flatIndex - 1, 0));
   }, { passive: false });
 
+  filmstrip.addEventListener('click', e => {
+    const thumb = e.target.closest('[data-idx]');
+    if (thumb) setActive(parseInt(thumb.dataset.idx, 10));
+  });
+  filmstrip.addEventListener('wheel', e => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, personalList.length - 1));
+    else              setActive(Math.max(flatIndex - 1, 0));
+  }, { passive: false });
+
   // Touch swipe
   let touchX0 = 0, touchY0 = 0;
   overlay.addEventListener('touchstart', e => {
@@ -73,16 +84,6 @@ function rebuildFilmstrip() {
     </button>`).join('');
   filmstrip.innerHTML = `<div class="gallery-overlay__filmstrip-track">${items}</div>`;
   filmstripTrack = filmstrip.querySelector('.gallery-overlay__filmstrip-track');
-
-  filmstrip.addEventListener('click', e => {
-    const thumb = e.target.closest('[data-idx]');
-    if (thumb) setActive(parseInt(thumb.dataset.idx, 10));
-  });
-  filmstrip.addEventListener('wheel', e => {
-    e.preventDefault();
-    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, personalList.length - 1));
-    else              setActive(Math.max(flatIndex - 1, 0));
-  }, { passive: false });
 }
 
 function setActive(idx) {
