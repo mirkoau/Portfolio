@@ -102,15 +102,17 @@
 .gallery-overlay__filmstrip {
   flex: 1;
   min-height: 0;
-  overflow: visible;
-  clip-path: inset(0 0 -9999px 0);
+  overflow: hidden;
+  margin-top: -40px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
 }
 
 .gallery-overlay__filmstrip-track {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  padding-top: var(--space-xs);
+  padding-top: var(--space-xl);
   will-change: transform;
 }
 
