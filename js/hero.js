@@ -312,24 +312,10 @@ export function initHero(bg) {
   const galleryOverlay = document.getElementById('gallery-overlay');
   const heroSection = document.getElementById('hero');
 
-  // ── 30fps render cap ────────────────────────────────
-  // Physics runs every frame (smooth, correct speed); GPU draw
-  // throttled to 30fps — shader drift is slow, 60fps imperceptible.
-  let lastRenderT = -1;
-  const RENDER_DT = 1 / 30 - 0.002;
-  function draw() {
-    renderer.render(scene, camera);
-  }
-  function shouldDraw(time) {
-    if (time - lastRenderT < RENDER_DT) return false;
-    lastRenderT = time;
-    return true;
-  }
-
   function tick(time) {
     bg.tick(time);
 
-    if (paused) { if (shouldDraw(time)) draw(); return; }
+    if (paused) { renderer.render(scene, camera); return; }
     const overlayOpen = galleryOverlay && !galleryOverlay.hidden;
     const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
     const heroGone = heroRect && heroRect.bottom <= heroRect.height * 0.2;
@@ -409,8 +395,6 @@ export function initHero(bg) {
 
     });
 
-    if (!shouldDraw(time)) return;
-
     if (nameMesh) nameMesh.position.y = (H / 2 - NAME_TOP * H) + scrollY;
     if (taglineMesh) {
       const nameSize = heroNameSize();
@@ -419,7 +403,7 @@ export function initHero(bg) {
       taglineMesh.position.y = (H / 2 - NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + scrollY;
     }
 
-    draw();
+    renderer.render(scene, camera);
   }
 
   if (typeof gsap !== 'undefined') {
