@@ -102,6 +102,12 @@ export function initHeroBg() {
       return val;
     }
 
+    // Cheap 2-octave FBM for domain warping — warp is low-freq,
+    // doesn't need detail. Halves snoise calls per warp layer.
+    float fbmWarp(vec3 p) {
+      return 0.55 * snoise(p) + 0.2475 * snoise(p * 1.8);
+    }
+
     // ── Film grain ──────────────────────────────────
     float hash(vec2 p) {
       vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -114,25 +120,25 @@ export function initHeroBg() {
       float aspect = uResolution.x / uResolution.y;
       vec2 st = vec2(uv.x * aspect, uv.y);
 
-      float t = uTime * 0.03; // very slow drift
+      float t = uTime * 0.04; // very slow drift
 
       // ── Triple domain warping (Inigo Quilez style) ─
       // Warp level 1
       vec2 q = vec2(
-        fbm(vec3(st * 0.6, t * 0.5)),
-        fbm(vec3(st * 0.6 + 5.2, t * 0.4))
+        fbmWarp(vec3(st * 0.6, t * 0.5)),
+        fbmWarp(vec3(st * 0.6 + 5.2, t * 0.4))
       );
 
       // Warp level 2 — stronger displacement for deep folds
       vec2 r = vec2(
-        fbm(vec3((st + q * 2.0) * 0.5, t * 0.6 + 1.7)),
-        fbm(vec3((st + q * 2.0) * 0.5 + 2.8, t * 0.5 + 9.2))
+        fbmWarp(vec3((st + q * 2.0) * 0.5, t * 0.6 + 1.7)),
+        fbmWarp(vec3((st + q * 2.0) * 0.5 + 2.8, t * 0.5 + 9.2))
       );
 
       // Warp level 3 — liquid ribbons
       vec2 s = vec2(
-        fbm(vec3((st + r * 1.8) * 0.4, t * 0.35 + 3.1)),
-        fbm(vec3((st + r * 1.8) * 0.4 + 7.3, t * 0.3 + 6.5))
+        fbmWarp(vec3((st + r * 1.8) * 0.4, t * 0.35 + 3.1)),
+        fbmWarp(vec3((st + r * 1.8) * 0.4 + 7.3, t * 0.3 + 6.5))
       );
 
       // Final warped coordinate
