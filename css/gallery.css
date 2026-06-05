@@ -103,7 +103,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  margin-top: -40px;
+  padding-top: var(--space-xl);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
   mask-image: linear-gradient(to bottom, transparent 0, #000 48px);
 }
