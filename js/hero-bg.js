@@ -170,10 +170,12 @@ export function initHeroBg() {
       float ribbon2 = smoothstep(0.65, 0.85, pattern);
       float ribbon3 = smoothstep(0.25, 0.45, pattern) * smoothstep(0.65, 0.4, pattern);
 
+      // flow modulates intensity (floored) instead of gating presence,
+      // so these hues persist like the pattern-only top-right band
       col = mix(col, col1, ribbon2 * 0.7);
-      col = mix(col, col2, ribbon1 * smoothstep(0.4, 0.8, flow) * 0.65);
-      col = mix(col, col3, ribbon3 * smoothstep(0.5, 0.85, flow) * 0.6);
-      col = mix(col, col4, smoothstep(0.7, 0.95, pattern * flow) * 0.4);
+      col = mix(col, col2, ribbon1 * mix(0.5, 1.0, smoothstep(0.4, 0.8, flow)) * 0.65);
+      col = mix(col, col3, ribbon3 * mix(0.5, 1.0, smoothstep(0.5, 0.85, flow)) * 0.6);
+      col = mix(col, col4, smoothstep(0.55, 0.9, pattern * flow) * 0.4);
 
       // Highlight along fold edges — catches light like liquid
       float edge = abs(dFdx(pattern)) + abs(dFdy(pattern));
