@@ -343,7 +343,7 @@
   position: relative;
   display: block;
   width: 18px;
-  height: 11px;
+  height: 11.5px;
 }
 
 .nav__burger-line {
@@ -361,10 +361,10 @@
 
 /* X morph when open */
 .nav__burger--open .nav__burger-line:nth-child(1) {
-  transform: translateY(4.75px) rotate(45deg);
+  transform: translateY(5px) rotate(45deg) scaleY(1.3);
 }
 .nav__burger--open .nav__burger-line:nth-child(2) {
-  transform: translateY(-4.75px) rotate(-45deg);
+  transform: translateY(-5px) rotate(-45deg) scaleY(1.3);
 }
 
 /* ── Project menu (burger dropdown) ─────────────────── */
@@ -381,9 +381,10 @@
 
 .project-menu {
   position: fixed;
-  top: calc(var(--nav-height) + var(--space-sm));
+  top: calc(var(--nav-height) + var(--space-xs));
   left: 50%;
-  width: min(250px, calc(100vw - 2 * var(--gutter)));
+  width: max-content;
+  max-width: calc(100vw - 2 * var(--gutter));
   z-index: 95;
   max-height: calc(100vh - var(--nav-height) - var(--space-sm) - var(--space-md));
   overflow-y: auto;
@@ -429,6 +430,8 @@
   height: 48px;
   padding: 0 var(--space-md);
   gap: var(--space-sm);
+  justify-content: center;
+  text-align: center;
   border: none;
   border-radius: 12px;
   transition: background var(--duration-base) var(--ease-out);
@@ -462,20 +465,9 @@
 }
 
 .project-menu .project-footer__arrow {
-  width: 22px;
-  height: 22px;
-  color: rgba(200, 210, 255, 0.75);
+  display: none;
 }
 
-.project-menu .project-footer__row:hover .project-footer__arrow {
-  color: rgba(255, 255, 255, 0.92);
-}
-
-@media (max-width: 768px) {
-  .project-menu {
-    width: min(250px, calc(100vw - 2 * var(--gutter)));
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .nav__burger,

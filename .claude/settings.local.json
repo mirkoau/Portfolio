@@ -43,7 +43,8 @@
       "Bash(curl -sI \"https://mirkoaus.com/?bust=$\\(date +%s%N\\)\" --max-time 10)",
       "Bash(claude update *)",
       "Bash(git reset *)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Bash(git checkout *)"
     ]
   }
 }
