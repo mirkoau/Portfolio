@@ -403,8 +403,7 @@ body {
 }
 
 /* Alt button — lighter weight */
-.btn-secondary,
-.nav__burger {
+.btn-secondary {
   font-weight: 700;
   font-size: 14px;
   padding: 10px 22px;

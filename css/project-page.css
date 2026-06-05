@@ -312,10 +312,7 @@
 
 /* Glass-pill base inherited from .btn-cta group; below = position + icon */
 .nav__burger {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin: -22px 0 0 -22px;
+  margin-left: var(--space-sm);
   pointer-events: all;
   width: 44px;
   height: 44px;
@@ -384,11 +381,11 @@
 
 .project-menu {
   position: fixed;
-  top: var(--nav-height);
+  top: calc(var(--nav-height) + var(--space-sm));
   left: 0;
   right: 0;
   z-index: 95;
-  max-height: calc(100vh - var(--nav-height));
+  max-height: calc(100vh - var(--nav-height) - var(--space-sm));
   overflow-y: auto;
   background: var(--color-bg);
   border-bottom: 0.5px solid var(--color-blue);
