@@ -382,21 +382,35 @@
 .project-menu {
   position: fixed;
   top: calc(var(--nav-height) + var(--space-sm));
-  left: 60px;
-  width: min(380px, calc(100vw - 120px));
+  left: 50%;
+  width: min(360px, calc(100vw - 2 * var(--gutter)));
   z-index: 95;
   max-height: calc(100vh - var(--nav-height) - var(--space-sm) - var(--space-md));
   overflow-y: auto;
-  background: var(--color-bg);
-  border: 0.5px solid var(--color-blue);
-  border-radius: 16px;
+  padding: var(--space-xs);
+  background:
+    linear-gradient(180deg,
+      rgba(160, 180, 255, 0.10) 0%,
+      rgba(160, 180, 255, 0.01) 50%,
+      rgba(0, 0, 0, 0.04) 100%),
+    linear-gradient(135deg,
+      rgba(160, 180, 255, 0.18) 0%,
+      rgba(160, 180, 255, 0.06) 40%,
+      rgba(160, 180, 255, 0.02) 60%,
+      rgba(160, 180, 255, 0.10) 100%);
+  border: 1px solid rgba(160, 180, 255, 0.14);
+  border-top-color: rgba(160, 180, 255, 0.3);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.12),
     0 1px 3px rgba(0, 0, 0, 0.12),
     0 6px 20px rgba(0, 0, 0, 0.18),
     0 12px 40px rgba(0, 0, 0, 0.12);
-  transform: translateY(-12px);
+  transform: translate(-50%, -12px);
   opacity: 0;
   pointer-events: none;
   transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
@@ -405,24 +419,42 @@
 .project-menu[hidden] { display: none; }
 
 .project-menu--open {
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   opacity: 1;
   pointer-events: all;
 }
 
-/* Compact menu rows (override shared footer-row styles) */
+/* Compact glassy menu rows (override shared footer-row styles) */
 .project-menu .project-footer__row {
-  height: 56px;
+  height: 48px;
   padding: 0 var(--space-md);
   gap: var(--space-sm);
+  border: none;
+  border-radius: 12px;
+  transition: background var(--duration-base) var(--ease-out);
 }
 
-.project-menu .project-footer__row:first-child {
-  border-top: none;
+/* No hover image, glassy highlight instead */
+.project-menu .project-footer__row-bg {
+  display: none;
 }
 
+.project-menu .project-footer__row:hover {
+  background: rgba(160, 180, 255, 0.10);
+}
+
+/* Match Back / Contact button typography */
 .project-menu .project-footer__title {
-  font-size: 22px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: rgba(200, 210, 255, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.project-menu .project-footer__row:hover .project-footer__title {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .project-menu .project-footer__role {
@@ -430,19 +462,18 @@
 }
 
 .project-menu .project-footer__arrow {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  color: rgba(200, 210, 255, 0.75);
+}
+
+.project-menu .project-footer__row:hover .project-footer__arrow {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 @media (max-width: 768px) {
   .project-menu {
-    left: var(--gutter);
-    width: min(380px, calc(100vw - 2 * var(--gutter)));
-  }
-
-  .project-menu .project-footer__row {
-    height: 56px;
-    padding: 0 var(--space-md);
+    width: min(360px, calc(100vw - 2 * var(--gutter)));
   }
 }
 
