@@ -32,6 +32,10 @@ export async function initGallery(lenisInstance) {
 
   closeBtn.addEventListener('click', closeOverlay);
   backdrop.addEventListener('click', closeOverlay);
+  overlay.addEventListener('click', e => {
+    if (e.target.closest('.gallery-overlay__image, .gallery-overlay__thumb')) return;
+    closeOverlay();
+  });
   document.addEventListener('keydown', onKey);
 
   overlay.addEventListener('wheel', e => {
