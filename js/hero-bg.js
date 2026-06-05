@@ -180,6 +180,13 @@ export function initHeroBg() {
       edge = smoothstep(0.0, 0.08, edge);
       col += edge * vec3(0.07, 0.06, 0.09) * 1.2;
 
+      // ── Bottom-left blue-brown tint — balances top-right color ─
+      float blCorner = smoothstep(0.95, 0.0, length(uv));   // 1 at (0,0), fades out
+      vec3  blTint   = mix(vec3(0.02, 0.05, 0.13),          // cool blue
+                           vec3(0.08, 0.05, 0.03), 0.45);   // warm brown
+      // modulate slightly by flow so it reads as part of the liquid, not a flat wash
+      col += blTint * blCorner * (0.55 + flow * 0.45) * 0.4;
+
       // ── Subtle vignette to darken edges ───────────
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
       col *= mix(0.75, 1.0, vig);
