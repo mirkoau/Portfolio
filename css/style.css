@@ -756,7 +756,7 @@ body.is-project-view .scroll-bg {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.46) 100%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
