@@ -30,24 +30,30 @@ export function wipeTransition(prepare, finalize, { reverse = false } = {}) {
 
     await prepare?.(); // render under cover, no band on screen yet
 
+    const BAND = 30;        // band height (vh)
+    const HALF = BAND / 2;  // overshoot each end so it slides fully in/out
     const band = document.createElement('div');
     band.setAttribute('aria-hidden', 'true');
     band.style.cssText =
-      'position:fixed;left:0;width:100%;height:30vh;background:#000;' +
-      'z-index:5000;pointer-events:none;transform:translateY(-50%);top:0;';
+      `position:fixed;left:0;width:100%;height:${BAND}vh;background:#000;` +
+      `z-index:5000;pointer-events:none;transform:translateY(-50%);top:${-HALF}%;`;
     document.body.appendChild(band);
 
-    const apply = (l) => {
-      view.style.clipPath = clipFor(l);
-      band.style.top = `${l}%`;
+    // t 0→100. Band centre travels from fully-above to fully-below the viewport;
+    // the reveal tracks the band centre but is clamped to [0,100], so the wipe
+    // only advances while the band is actually crossing the screen.
+    const apply = (t) => {
+      const centre = -HALF + (t / 100) * (100 + BAND);
+      band.style.top = `${centre}%`;
+      view.style.clipPath = clipFor(Math.max(0, Math.min(100, centre)));
     };
 
-    const s = { l: 0 };
+    const s = { t: 0 };
     gsap.to(s, {
-      l: 100,
+      t: 100,
       duration: 0.85,
       ease: 'power3.inOut',
-      onUpdate() { apply(s.l); },
+      onUpdate() { apply(s.t); },
       onComplete() {
         finalize?.();             // outgoing now fully covered
         band.remove();
