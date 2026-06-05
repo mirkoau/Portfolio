@@ -298,8 +298,8 @@ body {
   gap: 10px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 14px;
-  letter-spacing: 0.15em;
+  font-size: 13px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(238, 233, 224, 0.9);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
@@ -309,9 +309,9 @@ body {
     border-color 0.4s var(--ease-out),
     color 0.4s var(--ease-out);
   background-color: transparent;
-  border: 1.5px solid rgba(238, 233, 224, 0.5);
+  border: 1px solid rgba(238, 233, 224, 0.45);
   border-radius: 9999px;
-  padding: 15px 30px;
+  padding: 13px 26px;
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -350,9 +350,9 @@ body {
 /* Alt button — smaller */
 .btn-secondary {
   font-weight: 500;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.14em;
-  padding: 11px 24px;
+  padding: 10px 20px;
 }
 
 .about .section-main {
