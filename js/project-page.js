@@ -261,6 +261,7 @@ function initProjectReveals() {
 function initBurgerMenu(lenis) {
   const burger   = document.querySelector('.nav__burger');
   const hero     = container.querySelector('.project-page__hero');
+  const footer   = container.querySelector('.project-footer');
   const panel    = container.querySelector('.project-menu');
   const backdrop = container.querySelector('.project-menu__backdrop');
   if (!burger || !hero || !panel || !backdrop) return null;
@@ -312,11 +313,13 @@ function initBurgerMenu(lenis) {
   panel.querySelectorAll('.project-footer__row').forEach(r => r.addEventListener('click', onRow));
   document.addEventListener('keydown', onKey);
 
-  // Reveal burger once scrolled past the hero
+  // Reveal burger past the hero, hide again once the footer comes into view
   function onScroll() {
-    const past = hero.getBoundingClientRect().bottom <= 0;
-    burger.classList.toggle('nav__burger--visible', past);
-    if (!past && open) setOpen(false);
+    const pastHero = hero.getBoundingClientRect().bottom <= 0;
+    const atFooter = footer && footer.getBoundingClientRect().top <= window.innerHeight;
+    const visible = pastHero && !atFooter;
+    burger.classList.toggle('nav__burger--visible', visible);
+    if (!visible && open) setOpen(false);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   if (lenis) lenis.on('scroll', onScroll);
