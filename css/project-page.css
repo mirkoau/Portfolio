@@ -384,13 +384,14 @@
 .project-menu {
   position: fixed;
   top: calc(var(--nav-height) + var(--space-sm));
-  left: 0;
-  right: 0;
+  left: 60px;
+  width: min(380px, calc(100vw - 120px));
   z-index: 95;
-  max-height: calc(100vh - var(--nav-height) - var(--space-sm));
+  max-height: calc(100vh - var(--nav-height) - var(--space-sm) - var(--space-md));
   overflow-y: auto;
   background: var(--color-bg);
-  border-bottom: 0.5px solid var(--color-blue);
+  border: 0.5px solid var(--color-blue);
+  border-radius: 16px;
   transform: translateY(-12px);
   opacity: 0;
   pointer-events: none;
@@ -403,6 +404,42 @@
   transform: translateY(0);
   opacity: 1;
   pointer-events: all;
+}
+
+/* Compact menu rows (override shared footer-row styles) */
+.project-menu .project-footer__row {
+  height: 56px;
+  padding: 0 var(--space-md);
+  gap: var(--space-sm);
+}
+
+.project-menu .project-footer__row:first-child {
+  border-top: none;
+}
+
+.project-menu .project-footer__title {
+  font-size: 22px;
+}
+
+.project-menu .project-footer__role {
+  display: none;
+}
+
+.project-menu .project-footer__arrow {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .project-menu {
+    left: var(--gutter);
+    width: min(380px, calc(100vw - 2 * var(--gutter)));
+  }
+
+  .project-menu .project-footer__row {
+    height: 56px;
+    padding: 0 var(--space-md);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
