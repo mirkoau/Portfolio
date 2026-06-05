@@ -237,21 +237,6 @@ body {
    Fades in as hero scrolls away to keep sections readable. */
 
 
-/* ── Bottom blur vignette ───────────────────────────── */
-
-.bottom-blur {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 5vh;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  mask-image: linear-gradient(to bottom, transparent, black);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-  pointer-events: none;
-  z-index: 5;
-}
 
 /* ── Navigation ─────────────────────────────────────── */
 
@@ -551,7 +536,6 @@ body.is-project-view .work,
 body.is-project-view .personal-work,
 body.is-project-view .about,
 body.is-project-view .footer,
-body.is-project-view .bottom-blur,
 body.is-project-view .scroll-bg {
   display: none !important;
 }
@@ -625,8 +609,8 @@ body.is-project-view .scroll-bg {
   border: 0.5px solid color-mix(in lab, var(--color-blue) 30%, transparent);
   padding: var(--space-lg);
   margin-bottom: var(--space-2xl);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
 }
 
 .work__entry-header {
