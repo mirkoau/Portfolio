@@ -7,7 +7,7 @@ import { initHero     } from './hero.js';
 import { initGallery  } from './gallery.js';
 import { initRouter, currentRoute, resetRoute } from './router.js';
 import { showProject, hideProject } from './project-page.js';
-import { curtainTransition } from './page-transition.js';
+import { wipeTransition } from './page-transition.js';
 
 await initContent(); // DOM populated before observers attach
 
@@ -27,12 +27,15 @@ let _scrollY = 0;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 navBack.addEventListener('click', (e) => {
   e.preventDefault();
-  curtainTransition(() => {
-    hideProject();
-    showIndex();
-    history.replaceState(null, '', location.pathname);
-    resetRoute();
-  }, { reverse: true });
+  wipeTransition(
+    () => { showIndex(); }, // index visible beneath the wiping project layer
+    () => {
+      hideProject();
+      history.replaceState(null, '', location.pathname);
+      resetRoute();
+    },
+    { reverse: true }
+  );
 });
 
 // ── Back arrow animation (mirrors See More arrow) ────
@@ -72,19 +75,22 @@ function showIndex() {
 initRouter((route, prev) => {
   if (route.view === 'project') {
     const fromProject = prev && prev.view === 'project';
-    curtainTransition(() => {
-      if (fromProject) {
-        window.scrollTo(0, 0);
-        if (lenis) lenis.scrollTo(0, { immediate: true });
-      } else {
-        hideIndex();
-      }
-      showProject(route.projectId, lenis);
-    });
+    wipeTransition(
+      async () => {
+        if (fromProject) {
+          window.scrollTo(0, 0);
+          if (lenis) lenis.scrollTo(0, { immediate: true });
+        }
+        await showProject(route.projectId, lenis); // render under cover
+      },
+      // hide index only once project fully covers it (else it vanishes unmasked)
+      () => { if (!fromProject) hideIndex(); }
+    );
   } else if (prev && prev.view === 'project') {
-    curtainTransition(() => {
-      hideProject();
-      showIndex();
-    }, { reverse: true });
+    wipeTransition(
+      () => { showIndex(); },
+      () => { hideProject(); },
+      { reverse: true }
+    );
   }
 });
