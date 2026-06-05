@@ -464,8 +464,10 @@ export function initHero(bg) {
         [() => taglineMesh, buildTaglineMesh, m => { taglineMesh = m; }],
       ]) {
         const old = get();
+        const wasVisible = old ? old.visible : true;
         if (old) { scene.remove(old); old.geometry.dispose(); old.material.map.dispose(); old.material.dispose(); }
         const m = build(W, H);
+        m.visible = wasVisible;
         set(m);
         scene.add(m);
       }
