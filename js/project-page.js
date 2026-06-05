@@ -101,16 +101,22 @@ async function render(project, lenis) {
       <nav class="project-footer" aria-label="Other projects">
         ${footerRows}
       </nav>
+      <div class="project-menu__backdrop" hidden></div>
+      <nav class="project-menu" id="project-menu" aria-label="Projects" hidden>
+        ${footerRows}
+      </nav>
     </article>`;
 
-  // Reveals + contact button
+  // Reveals + contact button + burger menu
   const cleanReveals = initProjectReveals();
   const cleanFooterArrows = initFooterArrows();
+  const cleanBurgerMenu = initBurgerMenu(lenis);
   showForProject();
 
   _cleanup = () => {
     if (cleanReveals) cleanReveals();
     if (cleanFooterArrows) cleanFooterArrows();
+    if (cleanBurgerMenu) cleanBurgerMenu();
   };
 }
 
@@ -249,6 +255,75 @@ function initProjectReveals() {
   };
 }
 
+
+// ── Burger menu: reveal + open/close ──────────────────
+
+function initBurgerMenu(lenis) {
+  const burger   = document.querySelector('.nav__burger');
+  const hero     = container.querySelector('.project-page__hero');
+  const panel    = container.querySelector('.project-menu');
+  const backdrop = container.querySelector('.project-menu__backdrop');
+  if (!burger || !hero || !panel || !backdrop) return null;
+
+  burger.hidden = false;
+  let open = false;
+
+  function setOpen(next) {
+    if (next === open) return;
+    open = next;
+    burger.classList.toggle('nav__burger--open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    if (open) {
+      panel.hidden = false;
+      backdrop.hidden = false;
+      // next frame so transition runs from initial state
+      requestAnimationFrame(() => {
+        panel.classList.add('project-menu--open');
+        backdrop.classList.add('project-menu__backdrop--open');
+      });
+      if (lenis) lenis.stop();
+    } else {
+      panel.classList.remove('project-menu--open');
+      backdrop.classList.remove('project-menu__backdrop--open');
+      if (lenis) lenis.start();
+      // hide after transition so it leaves the a11y tree
+      setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 400);
+    }
+  }
+
+  const onBurger   = () => setOpen(!open);
+  const onBackdrop = () => setOpen(false);
+  const onRow      = () => setOpen(false);              // navigation happens via href
+  const onKey      = (e) => { if (e.key === 'Escape' && open) { setOpen(false); burger.focus(); } };
+
+  burger.addEventListener('click', onBurger);
+  backdrop.addEventListener('click', onBackdrop);
+  panel.querySelectorAll('.project-footer__row').forEach(r => r.addEventListener('click', onRow));
+  document.addEventListener('keydown', onKey);
+
+  // Reveal burger once scrolled past the hero
+  function onScroll() {
+    const past = hero.getBoundingClientRect().bottom <= 0;
+    burger.classList.toggle('nav__burger--visible', past);
+    if (!past && open) setOpen(false);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  if (lenis) lenis.on('scroll', onScroll);
+  onScroll();
+
+  return () => {
+    setOpen(false);
+    burger.removeEventListener('click', onBurger);
+    backdrop.removeEventListener('click', onBackdrop);
+    document.removeEventListener('keydown', onKey);
+    window.removeEventListener('scroll', onScroll);
+    if (lenis) lenis.off('scroll', onScroll);
+    burger.classList.remove('nav__burger--visible', 'nav__burger--open');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.hidden = true;
+    if (lenis) lenis.start();
+  };
+}
 
 // ── Public: hide project ──────────────────────────────
 
