@@ -187,6 +187,9 @@ export function initHeroBg() {
       // modulate slightly by flow so it reads as part of the liquid, not a flat wash
       col += blTint * blCorner * (0.55 + flow * 0.45) * 0.4;
 
+      // Global brightness lift — slightly more visible palette
+      col *= 1.05;
+
       // ── Subtle vignette to darken edges ───────────
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
       col *= mix(0.75, 1.0, vig);
