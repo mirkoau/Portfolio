@@ -52,8 +52,6 @@ export async function showProject(projectId, lenis) {
 }
 
 async function render(project, lenis) {
-  const tags = (project.tags || [])
-    .map(t => `<span class="work__tag">${t}</span>`).join('');
 
   const allProjects = await getAllProjects();
   const footerProjects = allProjects.filter(p => p.id !== project.id);
@@ -89,7 +87,6 @@ async function render(project, lenis) {
             </div>
             ${project.intro ? `<p class="project-page__info-intro">${project.intro}</p>` : ''}
           </div>
-          ${tags ? `<div class="work__project-tags">${tags}</div>` : ''}
         </div>
       </section>
       <div class="project-page__content">

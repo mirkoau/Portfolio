@@ -699,23 +699,6 @@ body.is-project-view .scroll-bg {
   margin-top: var(--space-sm);
 }
 
-.work__project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin-top: var(--space-sm);
-}
-
-.work__tag {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-blue);
-  background: lab(68% 7 -55 / 0.12);
-  border-radius: 20px;
-  padding: 3px 12px;
-  white-space: nowrap;
-}
 
 .work__project-image {
   position: relative;

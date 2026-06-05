@@ -24,7 +24,10 @@
 
 .project-page__hero-img-wrap {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50vh;
   z-index: 0;
 }
 
@@ -42,7 +45,8 @@
 .project-page__info-card {
   position: relative;
   z-index: 1;
-  align-self: flex-start;
+  align-self: center;
+  margin-bottom: var(--space-2xl);
   max-width: 891px;
   display: flex;
   flex-direction: column;
@@ -58,6 +62,7 @@
 .project-page__info-title-group {
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .project-page__info-title {
