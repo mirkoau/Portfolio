@@ -544,6 +544,18 @@ body {
 .hero__card--4 { width: 24%; height: 258px; left: 9%; top: 74%; }
 .hero__card--5 { width: 31%; height: 336px; left: 57%; top: 65%; }
 
+/* ── Project view: hide all index content ───────────── */
+/* !important ensures any stray inline style cannot reveal */
+body.is-project-view .hero,
+body.is-project-view .work,
+body.is-project-view .personal-work,
+body.is-project-view .about,
+body.is-project-view .footer,
+body.is-project-view .bottom-blur,
+body.is-project-view .scroll-bg {
+  display: none !important;
+}
+
 /* ── Section layout (shared) ────────────────────────── */
 
 .work,

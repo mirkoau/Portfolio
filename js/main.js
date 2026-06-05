@@ -18,8 +18,8 @@ const heroBg = initHeroBg();
 const hero = initHero(heroBg);
 initGallery(lenis);
 
-// Index sections to toggle when routing (nav stays visible on both views)
-const indexContent = document.querySelectorAll('.hero, .work, .personal-work, .about, .footer, .bottom-blur, .scroll-bg');
+// Index sections hidden via body.is-project-view class (see style.css)
+// CSS-driven hide is robust against accidental inline style overrides.
 const projectView = document.getElementById('project-view');
 const navBack = document.querySelector('.nav__back');
 let _scrollY = 0;
@@ -52,7 +52,7 @@ if (backArrow && typeof gsap !== 'undefined') {
 
 function hideIndex() {
   _scrollY = window.scrollY;
-  indexContent.forEach(el => el.style.display = 'none');
+  document.body.classList.add('is-project-view');
   navBack.hidden = false;
   window.scrollTo(0, 0);
   if (lenis) lenis.scrollTo(0, { immediate: true });
@@ -60,7 +60,7 @@ function hideIndex() {
 }
 
 function showIndex() {
-  indexContent.forEach(el => el.style.display = '');
+  document.body.classList.remove('is-project-view');
   navBack.hidden = true;
   window.scrollTo(0, _scrollY);
   if (lenis) lenis.scrollTo(_scrollY, { immediate: true });
