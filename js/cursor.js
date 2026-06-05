@@ -13,6 +13,7 @@ export function initCursor() {
   var isHovering = false;
 
   var INTERACTIVE = 'a, button, [role="button"], input, label, select, textarea, .work__project-image, .personal-work__item, .work__see-more';
+  var SPECULAR = '.btn-cta, .btn-secondary, .work__see-more, .nav__burger';
 
   document.addEventListener('mouseover', function (e) {
     if (e.target.closest(INTERACTIVE)) isHovering = true;
@@ -28,6 +29,14 @@ export function initCursor() {
       targetScale = MIN_S + Math.min(Math.sqrt(dx*dx + dy*dy) / 40, 1) * (MAX_S - MIN_S);
     }
     lastX = mouseX; lastY = mouseY;
+
+    // Feed pointer position into the glass button under the cursor (specular)
+    var btn = e.target.closest(SPECULAR);
+    if (btn) {
+      var r = btn.getBoundingClientRect();
+      btn.style.setProperty('--mx', (mouseX - r.left) + 'px');
+      btn.style.setProperty('--my', (mouseY - r.top) + 'px');
+    }
   });
   document.addEventListener('mouseleave', function () { el.style.opacity = '0'; });
   document.addEventListener('mouseenter', function () { el.style.opacity = '1'; });
