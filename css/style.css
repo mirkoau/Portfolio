@@ -286,7 +286,7 @@ body {
 
 /* ── Buttons ────────────────────────────────────────── */
 
-/* iOS Glass Silver — shared base */
+/* Backdrop Reveal Cutout — the hero shader shows through, boosted */
 .btn-cta,
 .btn-secondary,
 .work__see-more,
@@ -297,39 +297,26 @@ body {
   justify-content: center;
   gap: 10px;
   font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-  color: rgba(200, 210, 255, 0.75);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.005em;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55), 0 0 2px rgba(0, 0, 0, 0.45);
   transition:
     transform 0.25s var(--ease-spring),
     box-shadow var(--duration-base) var(--ease-out),
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out);
-  background:
-    linear-gradient(180deg,
-      rgba(160, 180, 255, 0.10) 0%,
-      rgba(160, 180, 255, 0.01) 50%,
-      rgba(0, 0, 0, 0.04) 100%),
-    linear-gradient(135deg,
-      rgba(160, 180, 255, 0.18) 0%,
-      rgba(160, 180, 255, 0.06) 40%,
-      rgba(160, 180, 255, 0.02) 60%,
-      rgba(160, 180, 255, 0.10) 100%);
-  border: 1px solid rgba(160, 180, 255, 0.14);
-  border-top-color: rgba(160, 180, 255, 0.3);
-  border-bottom-color: rgba(0, 0, 0, 0.08);
+    border-color var(--duration-base) var(--ease-out),
+    backdrop-filter var(--duration-base) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-base) var(--ease-out);
+  background: rgba(10, 9, 16, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 14px;
   padding: 14px 28px;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: saturate(220%) contrast(112%) brightness(1.35) blur(2px);
+  -webkit-backdrop-filter: saturate(220%) contrast(112%) brightness(1.35) blur(2px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 6px 20px rgba(0, 0, 0, 0.18),
-    0 12px 40px rgba(0, 0, 0, 0.12);
+    inset 0 0 16px rgba(0, 0, 0, 0.25),
+    0 4px 18px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -337,49 +324,34 @@ body {
   transform: scale(1);
 }
 
-/* Top edge highlight line */
+/* Crisp inner edge over the busy backdrop */
 .btn-cta::before,
 .btn-secondary::before,
 .work__see-more::before,
 .nav__burger::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   pointer-events: none;
   z-index: 2;
 }
 
-/* Hover: scale + fill brighten */
+/* Hover: scale + lift, reveal cranks saturation/brightness, edge brightens */
 .btn-cta:hover,
 .btn-secondary:hover,
 .work__see-more:hover,
 .nav__burger:hover {
-  color: rgba(255, 255, 255, 0.92);
+  color: #fff;
   transform: scale(1.04);
-  background:
-    linear-gradient(180deg,
-      rgba(160, 190, 255, 0.14) 0%,
-      rgba(140, 170, 255, 0.08) 100%),
-    linear-gradient(180deg,
-      rgba(160, 180, 255, 0.10) 0%,
-      rgba(160, 180, 255, 0.01) 50%,
-      rgba(0, 0, 0, 0.04) 100%),
-    linear-gradient(135deg,
-      rgba(160, 180, 255, 0.18) 0%,
-      rgba(160, 180, 255, 0.06) 40%,
-      rgba(160, 180, 255, 0.02) 60%,
-      rgba(160, 180, 255, 0.10) 100%);
+  border-color: rgba(255, 255, 255, 0.42);
+  backdrop-filter: saturate(340%) contrast(120%) brightness(1.75) blur(0px);
+  -webkit-backdrop-filter: saturate(340%) contrast(120%) brightness(1.75) blur(0px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.22),
-    0 14px 44px rgba(0, 0, 0, 0.14);
+    inset 0 0 14px rgba(0, 0, 0, 0.2),
+    0 6px 26px rgba(0, 0, 0, 0.45),
+    0 0 32px -8px rgba(130, 130, 170, 0.5);
 }
 
 /* Pressed: scale down + deep inset */
@@ -402,22 +374,17 @@ body {
   outline-offset: 3px;
 }
 
-/* Alt button — lighter weight */
+/* Alt button — smaller, gentler reveal */
 .btn-secondary {
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 13px;
   padding: 10px 22px;
-  background:
-    linear-gradient(135deg,
-      rgba(160, 180, 255, 0.10) 0%,
-      rgba(160, 180, 255, 0.03) 40%,
-      rgba(160, 180, 255, 0.01) 60%,
-      rgba(160, 180, 255, 0.06) 100%);
+  border-radius: 12px;
+  backdrop-filter: saturate(200%) contrast(110%) brightness(1.25) blur(2px);
+  -webkit-backdrop-filter: saturate(200%) contrast(110%) brightness(1.25) blur(2px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.10),
-    0 4px 14px rgba(0, 0, 0, 0.12);
+    inset 0 0 12px rgba(0, 0, 0, 0.2),
+    0 3px 12px rgba(0, 0, 0, 0.3);
 }
 
 .about .section-main {
