@@ -209,7 +209,6 @@ body {
 /* ── Custom cursor ──────────────────────────────────── */
 
 .cursor {
-  display: none; /* cursor dot hidden for now */
   position: fixed;
   top: 0;
   left: 0;
