@@ -74,16 +74,20 @@ function renderProjectRows(projects, currentId) {
     .join('');
 }
 
-// Burger menu rows — distinct from the footer: compact glass buttons, label
-// only, staggered reveal. --i drives the stagger order.
+// Burger menu rows — distinct from the footer: compact glass buttons in a row
+// (the burger morphs into them). Last item is the X close. --i drives stagger.
 function renderMenuRows(projects, currentId) {
-  return projects
-    .filter(p => p.id !== currentId)
-    .map((p, i) => `
+  const items = projects.filter(p => p.id !== currentId);
+  const rows = items.map((p, i) => `
     <a class="project-menu__item" href="#/work/${p.id}" style="--i:${i}">
       <span class="project-menu__label">${p.title}</span>
-    </a>`)
-    .join('');
+    </a>`).join('');
+  const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  const close = `
+    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:${items.length}">
+      <span class="project-menu__label">${closeSvg}</span>
+    </button>`;
+  return rows + close;
 }
 
 async function render(project, lenis) {
