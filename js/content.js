@@ -76,29 +76,11 @@ function initSeeMoreArrows() {
     const arrow = project.querySelector('.work__see-more-arrow');
     if (!arrow) return;
 
-    // Idle pulse — subtle loop drawing attention
-    const pulse = gsap.to(arrow, {
-      x: 3,
-      duration: 0.8,
-      ease: 'power1.inOut',
-      yoyo: true,
-      repeat: -1,
-      paused: true,
-    });
-
-    // Start pulse when in view
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) pulse.play();
-      else pulse.pause();
-    }, { threshold: 0.5 });
-    io.observe(project);
-
     // Hover — arrow shoots right and snaps back from left
     const seeMore = project.querySelector('.work__see-more');
     if (!seeMore) return;
 
     seeMore.addEventListener('mouseenter', () => {
-      pulse.pause();
       gsap.timeline()
         .to(arrow, { x: 20, opacity: 0, duration: 0.25, ease: 'power3.in' })
         .set(arrow, { x: -12 })
@@ -106,10 +88,7 @@ function initSeeMoreArrows() {
     });
 
     seeMore.addEventListener('mouseleave', () => {
-      gsap.to(arrow, {
-        x: 0, opacity: 1, duration: 0.3, ease: 'power2.out',
-        onComplete: () => pulse.restart(),
-      });
+      gsap.to(arrow, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
     });
   });
 }
