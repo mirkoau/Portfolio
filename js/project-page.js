@@ -124,7 +124,7 @@ async function render(project, lenis) {
   // Reveals + contact button + burger menu + image gallery
   const cleanReveals = initProjectReveals();
   const cleanFooterArrows = initFooterArrows();
-  const cleanBurgerMenu = initBurgerMenu(lenis);
+  const cleanBurgerMenu = initBurgerMenu();
   const cleanGallery = initProjectGallery();
   const cleanHeroParallax = initHeroParallax(lenis);
   showForProject();
@@ -344,13 +344,11 @@ function initProjectReveals() {
 
 // ── Burger menu: reveal + open/close ──────────────────
 
-function initBurgerMenu(lenis) {
+function initBurgerMenu() {
   const burger   = document.querySelector('.nav__burger');
-  const hero     = container.querySelector('.project-page__hero');
-  const footer   = container.querySelector('.project-footer');
   const panel    = container.querySelector('.project-menu');
   const backdrop = container.querySelector('.project-menu__backdrop');
-  if (!burger || !hero || !panel || !backdrop) return null;
+  if (!burger || !panel || !backdrop) return null;
 
   burger.hidden = false;
   let open = false;
@@ -386,25 +384,14 @@ function initBurgerMenu(lenis) {
   panel.querySelectorAll('.project-menu__item').forEach(r => r.addEventListener('click', onRow));
   document.addEventListener('keydown', onKey);
 
-  // Reveal burger past the hero, hide again once the footer comes into view
-  function onScroll() {
-    const pastHero = hero.getBoundingClientRect().bottom <= 0;
-    const atFooter = footer && footer.getBoundingClientRect().top <= window.innerHeight;
-    const visible = pastHero && !atFooter;
-    burger.classList.toggle('nav__burger--visible', visible);
-    if (!visible && open) setOpen(false);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  if (lenis) lenis.on('scroll', onScroll);
-  onScroll();
+  // Visible for the whole project page
+  burger.classList.add('nav__burger--visible');
 
   return () => {
     setOpen(false);
     burger.removeEventListener('click', onBurger);
     backdrop.removeEventListener('click', onBackdrop);
     document.removeEventListener('keydown', onKey);
-    window.removeEventListener('scroll', onScroll);
-    if (lenis) lenis.off('scroll', onScroll);
     burger.classList.remove('nav__burger--visible', 'nav__burger--open');
     burger.setAttribute('aria-expanded', 'false');
     burger.hidden = true;
