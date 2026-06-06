@@ -216,8 +216,8 @@ export function initHeroBg() {
       float lSplash = smoothstep(0.55, 0.0, length((uv - vec2(0.0, 0.45)) * vec2(1.25, 1.0)));
       col += vec3(0.12, 0.05, 0.07) * lSplash * (0.5 + flow * 0.5) * 0.36;
 
-      // Global brightness lift — +0.08 while hero in view, back to 1.05 when past
-      col *= 1.05 + 0.08 * uHeroVis;
+      // Global brightness lift — +0.1 while hero in view, back to 1.05 when past
+      col *= 1.05 + 0.1 * uHeroVis;
 
       // ── Subtle vignette to darken edges ───────────
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
