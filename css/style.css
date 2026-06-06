@@ -790,13 +790,20 @@ body.is-project-view .scroll-bg {
   padding: 0;
   background: none;
   text-align: left;
-  overflow: hidden;
   padding-top: var(--pt, 0);
 }
 
 .personal-work__item:nth-child(3n+1) { --pt: 0; }
 .personal-work__item:nth-child(3n+2) { --pt: 100px; }
 .personal-work__item:nth-child(3n+3) { --pt: 40px; }
+
+/* Media wrapper == image box: clips hover scale + carries the vignette,
+   so neither spills into the stagger padding above. */
+.personal-work__media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
 
 .personal-work__item:nth-child(1)  { margin-bottom: 60px; }
 .personal-work__item:nth-child(2)  { margin-bottom: 120px; }
@@ -805,29 +812,29 @@ body.is-project-view .scroll-bg {
 .personal-work__item:nth-child(7)  { margin-bottom: 50px; }
 .personal-work__item:nth-child(8)  { margin-bottom: 110px; }
 
-.personal-work__item img {
+.personal-work__media img {
   width: 100%;
   height: auto;
   display: block;
   transition: transform 0.5s var(--ease-out);
 }
 
-.personal-work__item:hover img {
+.personal-work__item:hover .personal-work__media img {
   transform: scale(1.03);
 }
 
-.personal-work__item::after {
+.personal-work__media::after {
   content: '';
   position: absolute;
-  inset: var(--pt, 0) 0 0 0; /* skip top-padding stagger — cover image only */
+  inset: 0;
   background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
 
-.personal-work__item:hover::after,
-.personal-work__item:focus-visible::after {
+.personal-work__item:hover .personal-work__media::after,
+.personal-work__item:focus-visible .personal-work__media::after {
   opacity: 1;
 }
 

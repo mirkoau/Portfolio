@@ -32,7 +32,7 @@ function buildProject(project, entry) {
         </div>
         <div class="work__project-desc">
           ${project.body.map(p => `<p class="work__project-body">${p}</p>`).join('')}
-          <span class="work__see-more" aria-hidden="true">See More <svg class="work__see-more-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="work__see-more" aria-hidden="true">See More <svg class="work__see-more-arrow" width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
       </div>
     </div>`;
@@ -122,7 +122,9 @@ function renderPersonalWork(pw) {
     <div class="personal-work__grid">
       ${pw.items.map((item, i) => `
         <button class="personal-work__item" data-personal-trigger data-personal-idx="${i}" aria-label="View ${item.alt}">
-          <img src="${item.src}" alt="${item.alt}" loading="lazy" />
+          <span class="personal-work__media">
+            <img src="${item.src}" alt="${item.alt}" loading="lazy" />
+          </span>
         </button>`).join('')}
     </div>`;
 }
