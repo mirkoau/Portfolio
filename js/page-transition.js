@@ -1,6 +1,6 @@
 // Forward: curtain covers instantly, content switches, curtain exits downward.
 // Reverse: curtain enters from bottom, covers, content switches, exits upward.
-export function curtainTransition(onMidpoint, { reverse = false, getBackground = null } = {}) {
+export function curtainTransition(onMidpoint, { reverse = false } = {}) {
   return new Promise(resolve => {
     const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (noMotion) { onMidpoint(); resolve(); return; }
@@ -8,15 +8,7 @@ export function curtainTransition(onMidpoint, { reverse = false, getBackground =
     const curtain = document.createElement('div');
     curtain.setAttribute('aria-hidden', 'true');
     curtain.style.cssText =
-      'position:fixed;inset:0;background:#05050a;z-index:5000;pointer-events:none;';
-
-    // Paint the live shader frame as the curtain backdrop (falls back to dark).
-    const bgUrl = typeof getBackground === 'function' ? getBackground() : null;
-    if (bgUrl) {
-      curtain.style.backgroundImage = `url(${bgUrl})`;
-      curtain.style.backgroundSize = 'cover';
-      curtain.style.backgroundPosition = 'center';
-    }
+      'position:fixed;inset:0;background:#000;z-index:5000;pointer-events:none;';
     document.body.appendChild(curtain);
 
     if (reverse) {

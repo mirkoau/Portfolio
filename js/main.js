@@ -24,9 +24,6 @@ const projectView = document.getElementById('project-view');
 const navBack = document.querySelector('.nav__back');
 let _scrollY = 0;
 
-// Live shader frame for the curtain backdrop (so it's not flat black).
-const bgSnapshot = () => (hero && hero.snapshotBg ? hero.snapshotBg() : null);
-
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 navBack.addEventListener('click', (e) => {
   e.preventDefault();
@@ -35,7 +32,7 @@ navBack.addEventListener('click', (e) => {
     showIndex();
     history.replaceState(null, '', location.pathname);
     resetRoute();
-  }, { reverse: true, getBackground: bgSnapshot });
+  }, { reverse: true });
 });
 
 // ── Back arrow animation (mirrors See More arrow) ────
@@ -83,11 +80,11 @@ initRouter((route, prev) => {
         hideIndex();
       }
       showProject(route.projectId, lenis);
-    }, { getBackground: bgSnapshot });
+    });
   } else if (prev && prev.view === 'project') {
     curtainTransition(() => {
       hideProject();
       showIndex();
-    }, { reverse: true, getBackground: bgSnapshot });
+    }, { reverse: true });
   }
 });
