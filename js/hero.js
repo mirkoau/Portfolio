@@ -489,5 +489,23 @@ export function initHero(bg) {
       if (nameMesh) nameMesh.visible = true;
       if (taglineMesh) taglineMesh.visible = true;
     },
+    // Snapshot the gradient only (cards/text hidden) → dataURL.
+    // Used as curtain backdrop so the transition shows the shader, not black.
+    // toDataURL works without preserveDrawingBuffer because we read in the
+    // same sync tick as the render (buffer not yet cleared).
+    snapshotBg() {
+      try {
+        const hidden = [];
+        meshes.forEach(m => { if (m.visible) { hidden.push(m); m.visible = false; } });
+        if (nameMesh && nameMesh.visible) { hidden.push(nameMesh); nameMesh.visible = false; }
+        if (taglineMesh && taglineMesh.visible) { hidden.push(taglineMesh); taglineMesh.visible = false; }
+        renderer.render(scene, camera);
+        const url = canvas.toDataURL('image/png');
+        hidden.forEach(m => m.visible = true);
+        return url;
+      } catch (e) {
+        return null;
+      }
+    },
   };
 }
