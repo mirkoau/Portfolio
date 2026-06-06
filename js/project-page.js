@@ -374,8 +374,8 @@ function initBurgerMenu() {
     } else {
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
-      // hide after transition so it leaves the a11y tree
-      setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 400);
+      // hide after the morph completes so it leaves the a11y tree
+      setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 450);
     }
   }
 

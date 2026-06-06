@@ -478,7 +478,7 @@
     width 0.4s var(--ease-out),
     height 0.4s var(--ease-out),
     border-radius 0.4s var(--ease-out),
-    opacity 0.3s var(--ease-out);
+    opacity 0.4s var(--ease-out);
 }
 
 /* Frosted blur layer — full strength */
