@@ -1,4 +1,5 @@
 import { showForProject } from './lets-talk.js';
+import { openGallery } from './gallery.js';
 
 const container = document.getElementById('project-view');
 let _currentId = null;
@@ -99,6 +100,7 @@ async function render(project, lenis) {
         </div>
       </div>
       <nav class="project-footer" aria-label="Other projects">
+        <span class="project-footer__label">More Work</span>
         ${footerRows}
       </nav>
       <div class="project-menu__backdrop" hidden></div>
@@ -107,17 +109,85 @@ async function render(project, lenis) {
       </nav>
     </article>`;
 
-  // Reveals + contact button + burger menu
+  // Reveals + contact button + burger menu + image gallery
   const cleanReveals = initProjectReveals();
   const cleanFooterArrows = initFooterArrows();
   const cleanBurgerMenu = initBurgerMenu(lenis);
+  const cleanGallery = initProjectGallery();
+  const cleanHeroParallax = initHeroParallax(lenis);
   showForProject();
 
   _cleanup = () => {
     if (cleanReveals) cleanReveals();
     if (cleanFooterArrows) cleanFooterArrows();
     if (cleanBurgerMenu) cleanBurgerMenu();
+    if (cleanGallery) cleanGallery();
+    if (cleanHeroParallax) cleanHeroParallax();
   };
+}
+
+// ── Hero image parallax — drifts slower than content as it scrolls away ──
+// Mirrors the index hero feel: foreground leaves, background lags behind.
+
+function initHeroParallax(lenis) {
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (noMotion) return null;
+
+  const hero = container.querySelector('.project-page__hero');
+  const wrap = container.querySelector('.project-page__hero-img-wrap');
+  if (!hero || !wrap) return null;
+
+  const FACTOR = 0.4; // 0 = scrolls with content, 1 = fully fixed
+  wrap.style.willChange = 'transform';
+
+  function onScroll() {
+    // Only animate while hero still touches the viewport
+    if (hero.getBoundingClientRect().bottom <= 0) return;
+    const y = (lenis ? lenis.scroll : window.scrollY) * FACTOR;
+    wrap.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+  }
+
+  if (lenis) lenis.on('scroll', onScroll);
+  else window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  return () => {
+    if (lenis) lenis.off('scroll', onScroll);
+    else window.removeEventListener('scroll', onScroll);
+    wrap.style.willChange = '';
+    wrap.style.transform = '';
+  };
+}
+
+// ── Content images → gallery overlay ──────────────────
+// Every content image on the page becomes one filmstrip entry.
+
+function initProjectGallery() {
+  const figures = [...container.querySelectorAll(
+    '.project-page__section-image, .project-page__section--image-only'
+  )];
+  if (!figures.length) return null;
+
+  const list = figures.map(fig => {
+    const img = fig.querySelector('img');
+    const cap = fig.querySelector('figcaption');
+    return {
+      src: img.getAttribute('src'),
+      alt: img.getAttribute('alt') || '',
+      caption: cap ? cap.textContent : '',
+    };
+  });
+
+  const handlers = [];
+  figures.forEach((fig, i) => {
+    fig.classList.add('is-zoomable');
+    const onClick = () => openGallery(list, i, fig);
+    fig.addEventListener('click', onClick);
+    handlers.push({ fig, onClick });
+  });
+
+  return () => handlers.forEach(({ fig, onClick }) =>
+    fig.removeEventListener('click', onClick));
 }
 
 // ── Footer arrow hover (mirrors See-More) ─────────────
@@ -185,7 +255,9 @@ function renderSection(section) {
 
     case 'image-only':
       return `<figure class="project-page__section project-page__section--image-only">
-        <img src="${section.src}" alt="${section.alt}" loading="lazy" />
+        <div class="project-page__image-frame">
+          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
+        </div>
         ${section.caption ? `<figcaption>${section.caption}</figcaption>` : ''}
       </figure>`;
 
@@ -202,7 +274,9 @@ function renderSection(section) {
 
     case 'image':
       return `<figure class="project-page__section project-page__section--image-only">
-        <img src="${section.src}" alt="${section.alt}" loading="lazy" />
+        <div class="project-page__image-frame">
+          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
+        </div>
         ${section.caption ? `<figcaption>${section.caption}</figcaption>` : ''}
       </figure>`;
 
