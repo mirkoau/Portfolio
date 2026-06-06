@@ -212,12 +212,13 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 48px;
-  height: 48px;
+  width: 4800px;
+  height: 4800px;
   border-radius: 50%;
   background: var(--color-white);
+  opacity: 0.1;
   pointer-events: none;
-  z-index: 9999;
+  z-index: -1;
   mix-blend-mode: exclusion;
   transform-origin: center center;
   overflow: visible;

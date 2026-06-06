@@ -3,7 +3,7 @@ export function initCursor() {
   var el = document.querySelector('.cursor');
   if (!el) return;
 
-  var BASE    = 48;
+  var BASE    = 4800;
   var MIN_S   = 18 / 48;   // 18px at rest
   var MAX_S   = 1.0;        // 48px peak velocity
   var HOVER_S = 80 / 48;   // 80px on interactive elements
@@ -13,7 +13,6 @@ export function initCursor() {
   var isHovering = false;
 
   var INTERACTIVE = 'a, button, [role="button"], input, label, select, textarea, .work__project-image, .personal-work__item, .work__see-more';
-  var SPECULAR = '.btn-cta, .btn-secondary, .work__see-more, .nav__burger';
 
   document.addEventListener('mouseover', function (e) {
     if (e.target.closest(INTERACTIVE)) isHovering = true;
@@ -29,18 +28,9 @@ export function initCursor() {
       targetScale = MIN_S + Math.min(Math.sqrt(dx*dx + dy*dy) / 40, 1) * (MAX_S - MIN_S);
     }
     lastX = mouseX; lastY = mouseY;
-
-    // Cursor-reactive gradient — write position into the glass button under it.
-    // Never cleared on leave, so each button keeps its last gradient placement.
-    var btn = e.target.closest(SPECULAR);
-    if (btn) {
-      var r = btn.getBoundingClientRect();
-      btn.style.setProperty('--mx', (mouseX - r.left) + 'px');
-      btn.style.setProperty('--my', (mouseY - r.top) + 'px');
-    }
   });
   document.addEventListener('mouseleave', function () { el.style.opacity = '0'; });
-  document.addEventListener('mouseenter', function () { el.style.opacity = '1'; });
+  document.addEventListener('mouseenter', function () { el.style.opacity = '0.1'; });
 
   (function tick() {
     currentScale += (targetScale - currentScale) * 0.15;
