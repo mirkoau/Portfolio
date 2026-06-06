@@ -10,42 +10,6 @@ export function initHero(bg) {
 
   const isCoarse = matchMedia('(pointer: coarse)').matches;
 
-  // ── Pointer displacement (cards + text bend near cursor) ─
-  // Shared uniforms hooked into each MeshBasicMaterial via onBeforeCompile,
-  // so Three keeps handling texture/color/alpha. Planes are subdivided so
-  // the world-space warp reads smoothly. uStr gated to hero in render loop.
-  const SEG = 24;
-  const plane = (w, h) => new THREE.PlaneGeometry(w, h, SEG, SEG);
-  const dispUniforms = {
-    uMouse: { value: new THREE.Vector2(0, 0) }, // world xy
-    uStr:   { value: 0 },                        // 0..1 eased gate
-    uTime:  { value: 0 },
-  };
-  let dispStr = 0;
-  function applyDisplace(material) {
-    material.onBeforeCompile = shader => {
-      shader.uniforms.uMouse = dispUniforms.uMouse;
-      shader.uniforms.uStr   = dispUniforms.uStr;
-      shader.uniforms.uTime  = dispUniforms.uTime;
-      shader.vertexShader =
-        'uniform vec2 uMouse;\nuniform float uStr;\nuniform float uTime;\n' +
-        shader.vertexShader.replace(
-          '#include <project_vertex>',
-          [
-            'vec4 wDisp = modelMatrix * vec4(transformed, 1.0);',  // world space
-            'vec2 toM = wDisp.xy - uMouse;',
-            'float dM = length(toM);',
-            'float infl = smoothstep(240.0, 0.0, dM) * uStr;',
-            'vec2 dir = toM / (dM + 1e-4);',
-            'wDisp.xy += dir * infl * 34.0;',                       // bulge outward
-            'wDisp.z  += sin(dM * 0.05 - uTime * 4.0) * infl * 24.0;', // ripple in depth
-            'gl_Position = projectionMatrix * viewMatrix * wDisp;',
-          ].join('\n')
-        );
-    };
-    material.needsUpdate = true;
-  }
-
   document.querySelectorAll('.hero__card').forEach(el => (el.style.display = 'none'));
 
   // Hide CSS tagline — Three.js renders it as a mesh
@@ -127,9 +91,10 @@ export function initHero(bg) {
     cx.textAlign    = 'left';
     TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
 
-    const tagMat = new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true });
-    applyDisplace(tagMat);
-    const mesh = new THREE.Mesh(plane(tw, th), tagMat);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(tw, th),
+      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
+    );
 
     const leftX    = TEXT_LEFT * W - W / 2 + tw / 2;
     const nameY    = H / 2 - NAME_TOP * H;
@@ -164,9 +129,10 @@ export function initHero(bg) {
     cx.textAlign     = 'left';
     cx.fillText(text, pad, th / 2);
 
-    const nameMat = new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true });
-    applyDisplace(nameMat);
-    const mesh = new THREE.Mesh(plane(tw, th), nameMat);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(tw, th),
+      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
+    );
 
     const leftX = TEXT_LEFT * W - W / 2 + tw / 2 - fontSize * 0.06;
     const posY  = H / 2 - NAME_TOP * H;
@@ -192,9 +158,10 @@ export function initHero(bg) {
   const meshes = CARDS.map((d, i) => {
     const pw   = d.w * W;
     const tex  = new THREE.Texture();
-    const cardMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-    applyDisplace(cardMat);
-    const mesh = new THREE.Mesh(plane(pw, d.h), cardMat);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(pw, d.h),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true })
+    );
     mesh.userData = {
       px: baseX(d), py: baseY(d, d.h),
       vx: 0, vy: 0,
@@ -215,7 +182,7 @@ export function initHero(bg) {
       mesh.userData.aspect = aspect;
       const h = pw / aspect;
       mesh.geometry.dispose();
-      mesh.geometry = plane(pw, h);
+      mesh.geometry = new THREE.PlaneGeometry(pw, h);
       mesh.userData.py = baseY(d, h);
       mesh.position.y = mesh.userData.py;
     };
@@ -354,14 +321,6 @@ export function initHero(bg) {
     const heroGone = heroRect && heroRect.bottom <= heroRect.height * 0.2;
     const frozen = overlayOpen || heroGone;
 
-    // ── Pointer displacement uniforms (hero only) ──────
-    const wantDisp = (!isCoarse && !noMotion && !frozen) ? 1 : 0;
-    dispStr += (wantDisp - dispStr) * 0.12;
-    dispUniforms.uStr.value = dispStr;
-    dispUniforms.uTime.value = time;
-    const mw = toWorld(rawX, rawY);
-    dispUniforms.uMouse.value.set(mw.x, mw.y);
-
     // Offset cards + text so they scroll with the page (not fixed in viewport)
     const scrollY = heroRect ? -heroRect.top : 0;
 
@@ -495,7 +454,7 @@ export function initHero(bg) {
       const pw = d.w * W;
       const h  = mesh.userData.aspect ? pw / mesh.userData.aspect : d.h;
       mesh.geometry.dispose();
-      mesh.geometry = plane(pw, h);
+      mesh.geometry = new THREE.PlaneGeometry(pw, h);
       mesh.userData.px = baseX(d);
       mesh.userData.py = baseY(d, h);
     });
