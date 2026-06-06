@@ -483,17 +483,33 @@
   pointer-events: all;
 }
 
-/* Menu rows read as glass buttons (footer rows untouched) */
-.project-menu .project-footer__row {
+/* Menu rows — own component: compact glass buttons, label only.
+   Glass base lives on ::after so it can reveal after the label. */
+.project-menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 48px;
   padding: 0 var(--space-md);
-  gap: var(--space-sm);
-  justify-content: center;
-  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.project-menu__item + .project-menu__item {
+  margin-top: 6px;
+}
+
+.project-menu__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
   border: 1px solid rgba(238, 230, 214, 0.14);
   border-top-color: rgba(252, 246, 234, 0.42);
   border-bottom-color: rgba(0, 0, 0, 0.16);
-  border-radius: 12px;
   background:
     linear-gradient(180deg,
       rgba(248, 242, 230, 0.06) 0%,
@@ -508,24 +524,35 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.42),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
     0 1px 3px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  z-index: 0;
   transition:
-    transform 0.25s var(--ease-spring),
+    opacity 0.35s var(--ease-out),
     background var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.project-menu__label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: rgba(245, 240, 230, 0.82);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    opacity 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out),
     color var(--duration-base) var(--ease-out);
 }
 
-.project-menu .project-footer__row + .project-footer__row {
-  margin-top: 6px;
-}
-
-/* No hover image — glass brighten + scale like the buttons */
-.project-menu .project-footer__row-bg {
-  display: none;
-}
-
-.project-menu .project-footer__row:hover {
+/* Hover / active — glass brighten + scale like the buttons */
+.project-menu__item:hover {
   transform: scale(1.04);
+}
+
+.project-menu__item:hover::after {
   background:
     linear-gradient(180deg,
       rgba(251, 246, 235, 0.13) 0%,
@@ -546,33 +573,40 @@
     0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
-.project-menu .project-footer__row:active {
+.project-menu__item:hover .project-menu__label {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.project-menu__item:active {
   transform: scale(0.94);
+}
+
+.project-menu__item:active::after {
   box-shadow:
     inset 0 2px 6px rgba(0, 0, 0, 0.35),
     0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Match Back / Contact button typography */
-.project-menu .project-footer__title {
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-  color: rgba(245, 240, 230, 0.82);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+/* Staggered reveal: panel base first, then each item — label leads, glass
+   base follows. --i is the row index (set inline). */
+.project-menu__label {
+  opacity: 0;
+  transform: translateY(6px);
 }
 
-.project-menu .project-footer__row:hover .project-footer__title {
-  color: rgba(255, 255, 255, 0.95);
+.project-menu__item::after {
+  opacity: 0;
 }
 
-.project-menu .project-footer__role {
-  display: none;
+.project-menu--open .project-menu__label {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(120ms + var(--i, 0) * 70ms);
 }
 
-.project-menu .project-footer__arrow {
-  display: none;
+.project-menu--open .project-menu__item::after {
+  opacity: 1;
+  transition-delay: calc(200ms + var(--i, 0) * 70ms);
 }
 
 
@@ -580,9 +614,16 @@
   .nav__burger,
   .nav__burger-line,
   .project-menu,
-  .project-menu .project-footer__row,
+  .project-menu__item,
+  .project-menu__item::after,
+  .project-menu__label,
   .project-menu__backdrop {
     transition: none;
+  }
+
+  .project-menu--open .project-menu__label,
+  .project-menu--open .project-menu__item::after {
+    transition-delay: 0s;
   }
 }
 

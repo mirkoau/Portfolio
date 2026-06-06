@@ -52,7 +52,7 @@ export async function showProject(projectId, lenis) {
   }
 }
 
-// Shared row markup for footer + burger menu. Excludes currentId.
+// Footer row markup ("More Work"). Excludes currentId.
 function renderProjectRows(projects, currentId) {
   const arrowSvg = `<svg class="project-footer__arrow" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 18H28.5M28.5 18L19.5 9M28.5 18L19.5 27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   return projects
@@ -71,6 +71,18 @@ function renderProjectRows(projects, currentId) {
       ${arrowSvg}
     </a>`;
     })
+    .join('');
+}
+
+// Burger menu rows — distinct from the footer: compact glass buttons, label
+// only, staggered reveal. --i drives the stagger order.
+function renderMenuRows(projects, currentId) {
+  return projects
+    .filter(p => p.id !== currentId)
+    .map((p, i) => `
+    <a class="project-menu__item" href="#/work/${p.id}" style="--i:${i}">
+      <span class="project-menu__label">${p.title}</span>
+    </a>`)
     .join('');
 }
 
@@ -105,7 +117,7 @@ async function render(project, lenis) {
       </nav>
       <div class="project-menu__backdrop" hidden></div>
       <nav class="project-menu" id="project-menu" aria-label="Projects" hidden>
-        ${footerRows}
+        ${renderMenuRows(allProjects, project.id)}
       </nav>
     </article>`;
 
@@ -371,7 +383,7 @@ function initBurgerMenu(lenis) {
 
   burger.addEventListener('click', onBurger);
   backdrop.addEventListener('click', onBackdrop);
-  panel.querySelectorAll('.project-footer__row').forEach(r => r.addEventListener('click', onRow));
+  panel.querySelectorAll('.project-menu__item').forEach(r => r.addEventListener('click', onRow));
   document.addEventListener('keydown', onKey);
 
   // Reveal burger past the hero, hide again once the footer comes into view
