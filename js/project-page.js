@@ -75,16 +75,17 @@ function renderProjectRows(projects, currentId) {
 }
 
 // Burger menu rows — distinct from the footer: compact glass buttons in a row
-// (the burger morphs into them). Last item is the X close. --i drives stagger.
+// (the burger morphs into a glass panel of them). Last item is the X close.
 function renderMenuRows(projects, currentId) {
-  const items = projects.filter(p => p.id !== currentId);
-  const rows = items.map((p, i) => `
-    <a class="project-menu__item" href="#/work/${p.id}" style="--i:${i}">
+  const rows = projects
+    .filter(p => p.id !== currentId)
+    .map(p => `
+    <a class="project-menu__item" href="#/work/${p.id}">
       <span class="project-menu__label">${p.title}</span>
     </a>`).join('');
   const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
   const close = `
-    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:${items.length}">
+    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu">
       <span class="project-menu__label">${closeSvg}</span>
     </button>`;
   return rows + close;

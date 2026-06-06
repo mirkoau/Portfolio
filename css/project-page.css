@@ -440,6 +440,7 @@
 
 /* Inline row on the nav header — the burger morphs into these pills.
    No tray background; the items themselves carry the glass. */
+/* Inline glass panel on the nav header — the burger morphs into it. */
 .project-menu {
   position: fixed;
   top: calc(var(--nav-height) / 2);
@@ -451,20 +452,61 @@
   flex-wrap: nowrap;
   justify-content: center;
   gap: 6px;
-  transform: translate(-50%, -50%);
+  padding: var(--space-xs);
+  border-radius: 18px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
   pointer-events: none;
+  transition:
+    opacity 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+
+/* Glass panel base — same style as the glass buttons, at ~0.3 opacity */
+.project-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(238, 230, 214, 0.14);
+  border-top-color: rgba(252, 246, 234, 0.42);
+  border-bottom-color: rgba(0, 0, 0, 0.16);
+  background:
+    linear-gradient(180deg,
+      rgba(248, 242, 230, 0.06) 0%,
+      rgba(248, 242, 230, 0.01) 50%,
+      rgba(0, 0, 0, 0.05) 100%),
+    linear-gradient(135deg,
+      rgba(248, 242, 230, 0.11) 0%,
+      rgba(248, 242, 230, 0.035) 40%,
+      rgba(248, 242, 230, 0.01) 60%,
+      rgba(248, 242, 230, 0.06) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 6px 20px rgba(0, 0, 0, 0.18),
+    0 12px 40px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .project-menu[hidden] { display: none; }
 
 .project-menu--open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
   pointer-events: all;
 }
 
 /* Menu rows — own component: compact glass buttons, label only.
-   Glass base lives on ::after so it can reveal after the label. */
+   Glass base lives on ::after. */
 .project-menu__item {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -511,8 +553,6 @@
   pointer-events: none;
   z-index: 0;
   transition:
-    opacity 0.35s var(--ease-out),
-    transform 0.35s var(--ease-out),
     background var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out);
 }
@@ -526,11 +566,6 @@
   letter-spacing: -0.01em;
   color: rgba(245, 240, 230, 0.82);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  /* color intentionally excluded — hover recolor must be instant, and the
-     reveal transition-delay would otherwise lag it */
-  transition:
-    opacity 0.3s var(--ease-out),
-    transform 0.3s var(--ease-out);
 }
 
 /* Hover / active — glass brighten + scale like the buttons */
@@ -573,45 +608,14 @@
     0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Staggered reveal: panel base first, then each item — label leads, glass base
-   follows; both drop in from the top. --i is the row index (set inline). */
-.project-menu__label {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-
-.project-menu__item::after {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-
-.project-menu--open .project-menu__label {
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(120ms + var(--i, 0) * 70ms);
-}
-
-.project-menu--open .project-menu__item::after {
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(200ms + var(--i, 0) * 70ms);
-}
-
-
 @media (prefers-reduced-motion: reduce) {
   .nav__burger,
   .nav__burger-line,
   .project-menu,
   .project-menu__item,
   .project-menu__item::after,
-  .project-menu__label,
   .project-menu__backdrop {
     transition: none;
-  }
-
-  .project-menu--open .project-menu__label,
-  .project-menu--open .project-menu__item::after {
-    transition-delay: 0s;
   }
 }
 
