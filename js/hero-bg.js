@@ -27,6 +27,7 @@ export function initHeroBg() {
     uResolution: { value: new THREE.Vector2(W, H) },
     uMouse:      { value: new THREE.Vector2(0.5, 0.5) }, // uv space, y-up
     uMouseStr:   { value: 0 },                            // 0..1 eased influence
+    uHeroVis:    { value: 0 },                            // 1 in hero → 0 scrolled past
   };
 
   const liquidVert = `
@@ -44,6 +45,7 @@ export function initHeroBg() {
     uniform vec2 uResolution;
     uniform vec2 uMouse;
     uniform float uMouseStr;
+    uniform float uHeroVis;
 
     // ── Simplex 3D noise (Ashima Arts) ──────────────
     vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
@@ -129,13 +131,13 @@ export function initHeroBg() {
       vec2 mst   = vec2(uMouse.x * aspect, uMouse.y);
       vec2 toM   = st - mst;
       float dM   = length(toM);
-      float R    = 0.45;                                  // radius in st units
+      float R    = 0.38;                                  // radius in st units
       float infl = smoothstep(R, 0.0, dM) * uMouseStr;    // 1 at cursor → 0 at edge
-      float ang  = infl * 2.6;                            // swirl strength (pronounced)
+      float ang  = infl * 0.9;                            // swirl strength (subtle)
       mat2  rot  = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
       vec2  dir  = toM / (dM + 1e-4);
       // swirl around, then bulge outward → liquid magnify
-      st = mst + rot * toM + dir * infl * 0.14;
+      st = mst + rot * toM + dir * infl * 0.05;
 
       float t = uTime * 0.04; // very slow drift
 
@@ -214,8 +216,8 @@ export function initHeroBg() {
       float lSplash = smoothstep(0.55, 0.0, length((uv - vec2(0.0, 0.45)) * vec2(1.25, 1.0)));
       col += vec3(0.12, 0.05, 0.07) * lSplash * (0.5 + flow * 0.5) * 0.36;
 
-      // Global brightness lift — slightly more visible palette
-      col *= 1.05;
+      // Global brightness lift — +0.08 while hero in view, back to 1.05 when past
+      col *= 1.05 + 0.08 * uHeroVis;
 
       // ── Subtle vignette to darken edges ───────────
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
@@ -253,6 +255,8 @@ export function initHeroBg() {
   let mSmX  = 0.5, mSmY  = 0.5;
   let mStr  = 0;            // eased influence sent to uMouseStr
   let mVel  = 0;            // recent pointer speed
+  let hVis  = 0;            // eased hero visibility (1 in hero → 0 past)
+  const heroEl = document.getElementById('hero');
   if (!isCoarse && !noMotion) {
     window.addEventListener('mousemove', e => {
       const nx = e.clientX / W;
@@ -280,14 +284,22 @@ export function initHeroBg() {
     tick(time) {
       if (!noMotion) liquidUniforms.uTime.value = time;
 
+      // Hero visibility (matches hero.js "heroGone" threshold) — drives
+      // brightness lift + lens gate. Eased so transitions are smooth.
+      const r = heroEl ? heroEl.getBoundingClientRect() : null;
+      const inHero = r ? r.bottom > r.height * 0.2 : true;
+      hVis += ((inHero ? 1 : 0) - hVis) * 0.08;
+      liquidUniforms.uHeroVis.value = hVis;
+
       if (!isCoarse && !noMotion) {
         // smoothed follow (lag = liquid feel)
         mSmX += (mTgtX - mSmX) * 0.08;
         mSmY += (mTgtY - mSmY) * 0.08;
         liquidUniforms.uMouse.value.set(mSmX, mSmY);
-        // strength: floor 0.5 at rest, swells to ~1 on movement (pronounced)
+        // strength: floor 0.25 at rest, gentle swell on movement (subtle);
+        // off once scrolled past hero
         mVel *= 0.9;
-        const want = 0.5 + mVel * 0.5;
+        const want = inHero ? 0.25 + mVel * 0.35 : 0;
         mStr += (want - mStr) * 0.1;
         liquidUniforms.uMouseStr.value = mStr;
       }
