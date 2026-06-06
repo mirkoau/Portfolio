@@ -5,18 +5,75 @@
   "role": "UX Designer",
   "period": "2022–2023",
   "tags": ["Interaction Design", "UI Design", "Game Design", "Usability Research"],
-  "intro": "Introduction text",
   "hero": { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 UI/UX work" },
   "sections": [
     {
-      "type": "text",
+      "type": "image-right",
       "content": [
-        "My role was to support game design and narrative design teams. Direction of interaction and UI design was diegetic and minimalistic. I pitched designs to a variety of stakeholders — game director, art lead, UI/UX design lead, game designers. I collaborated with UI and game programmers to bring the designs to life, and reacted to UR feedback to improve in-game systems.",
-        "I worked on nearly all parts of the game's systems, interactions, and UI. My biggest contributions to the project were:"
+        "I worked as a UX designer on Alan Wake 2, supporting the game and narrative design teams and teaming up with UI and game programmers along the way. My work spanned the maps, the menus, and a handful of the game's core in-game systems."
+      ],
+      "src": "assets/images/aw2-intro.jpg",
+      "alt": "Alan Wake 2 in-game UI"
+    },
+    {
+      "type": "image-left",
+      "content": [
+        "The piece I'm most attached to is the case board — a diegetic bit of UI where the player physically arranges the evidence they've collected to piece together the plot. Because it lives inside the fiction rather than on top of it, almost everything about it had to be discovered by hand. I spent a lot of time playing with different setups and interactions, testing how players would lay out, connect, and read their evidence, until the board felt like a real space for thinking rather than a menu pretending to be one."
+      ],
+      "src": "assets/images/aw2-caseboard.jpg",
+      "alt": "Alan Wake 2 case board"
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "The case board lives inside the fiction, so almost everything about it had to be discovered by hand."
       ]
     },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 interaction systems", "caption": "Alan Wake 2 — interaction systems" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 inventory & weapon wheel", "caption": "Alan Wake 2 — inventory & weapon wheel" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 case board UI exploration", "caption": "Alan Wake 2 — case board UI exploration" }
+    {
+      "type": "image-right",
+      "content": [
+        "A big part of my work was on the maps, where the core challenge was holding the same readability across wildly different scales — a sprawling forest and a single house need to communicate just as clearly. I designed the navigation and camera controls, and worked through everything the map shows the player, from item pickups to mission markers."
+      ],
+      "src": "assets/images/aw2-maps.jpg",
+      "alt": "Alan Wake 2 map"
+    },
+    {
+      "type": "image-only",
+      "src": "assets/images/aw2-caseboard-wide.jpg",
+      "alt": "Alan Wake 2 case board, full view"
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "None of this happened in isolation. Every feature here came together through close collaboration — inside the craft team and with external teams across the project. No single feature is ever really one person's; they're almost always built together."
+      ]
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "We set out to build the best photo mode ever made in a game."
+      ]
+    },
+    {
+      "type": "image-right",
+      "content": [
+        "Photo mode was its own ambition. That meant grounding it in real photography — actual camera terms and values, the kind a photographer would recognize — while also inventing tools that only make sense in a game's digital space, like an orbital camera that frees you from where a real lens could ever go. The aim was to give digital photographers a proper instrument, and at the same time fuel the game's presence across social media through the images people would make and share."
+      ],
+      "src": "assets/images/aw2-photomode.jpg",
+      "alt": "Alan Wake 2 photo mode"
+    },
+    {
+      "type": "image-left",
+      "content": [
+        "In-game, a large part of my contribution was the whole setup for player inventory and storage. Items in Alan's and Saga's inventories take up physical space, and that one premise drove every interaction: drop a stack of bullets onto a matching stack and they combine, place a different item onto another and the grid rearranges itself. Tied to that, I designed the weapon quick-select — a highly customizable HUD element where players could arrange their weapons and tools however they liked. I also worked on the lore menus, including the lore text, audio clip, and video clip browsers."
+      ],
+      "src": "assets/images/aw2-inventory.jpg",
+      "alt": "Alan Wake 2 inventory and weapon quick-select"
+    },
+    {
+      "type": "image-only",
+      "src": "assets/images/aw2-photomode-wide.jpg",
+      "alt": "Alan Wake 2 photo mode, full view"
+    }
   ]
 }
