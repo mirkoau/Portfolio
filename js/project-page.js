@@ -134,17 +134,17 @@ function initHeroParallax(lenis) {
   if (noMotion) return null;
 
   const hero = container.querySelector('.project-page__hero');
-  const wrap = container.querySelector('.project-page__hero-img-wrap');
-  if (!hero || !wrap) return null;
+  const img  = container.querySelector('.project-page__hero-img');
+  if (!hero || !img) return null;
 
   const FACTOR = 0.4; // 0 = scrolls with content, 1 = fully fixed
-  wrap.style.willChange = 'transform';
+  img.style.willChange = 'transform';
 
   function onScroll() {
     // Only animate while hero still touches the viewport
     if (hero.getBoundingClientRect().bottom <= 0) return;
     const y = (lenis ? lenis.scroll : window.scrollY) * FACTOR;
-    wrap.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+    img.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
   }
 
   if (lenis) lenis.on('scroll', onScroll);
@@ -154,8 +154,8 @@ function initHeroParallax(lenis) {
   return () => {
     if (lenis) lenis.off('scroll', onScroll);
     else window.removeEventListener('scroll', onScroll);
-    wrap.style.willChange = '';
-    wrap.style.transform = '';
+    img.style.willChange = '';
+    img.style.transform = '';
   };
 }
 
