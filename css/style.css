@@ -209,16 +209,16 @@ body {
 /* ── Custom cursor ──────────────────────────────────── */
 
 .cursor {
+  display: none; /* white dot cursor hidden */
   position: fixed;
   top: 0;
   left: 0;
-  width: 480px;
-  height: 480px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-white);
-  opacity: 0.1;
   pointer-events: none;
-  z-index: -1;
+  z-index: 9999;
   mix-blend-mode: exclusion;
   transform-origin: center center;
   overflow: visible;

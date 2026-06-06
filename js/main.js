@@ -11,7 +11,7 @@ import { curtainTransition } from './page-transition.js';
 
 await initContent(); // DOM populated before observers attach
 
-initCursor();
+// initCursor(); // white dot cursor hidden
 const lenis = initScroll();
 initLetsTalk(lenis);
 const heroBg = initHeroBg();
