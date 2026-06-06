@@ -3,7 +3,7 @@ export function initCursor() {
   var el = document.querySelector('.cursor');
   if (!el) return;
 
-  var BASE    = 4800;
+  var BASE    = 480;
   var MIN_S   = 18 / 48;   // 18px at rest
   var MAX_S   = 1.0;        // 48px peak velocity
   var HOVER_S = 80 / 48;   // 80px on interactive elements

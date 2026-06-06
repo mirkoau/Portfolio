@@ -212,8 +212,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 4800px;
-  height: 4800px;
+  width: 480px;
+  height: 480px;
   border-radius: 50%;
   background: var(--color-white);
   opacity: 0.1;
