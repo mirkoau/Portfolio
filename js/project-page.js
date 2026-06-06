@@ -361,9 +361,10 @@ function initBurgerMenu() {
   function setOpen(next) {
     if (next === open) return;
     open = next;
-    burger.classList.toggle('nav__burger--open', open);
     burger.setAttribute('aria-expanded', String(open));
     if (open) {
+      // burger fades out as the panel grows over it
+      burger.classList.add('nav__burger--open');
       panel.hidden = false;
       backdrop.hidden = false;
       // force reflow so the closed state is committed as the transition's
@@ -372,8 +373,12 @@ function initBurgerMenu() {
       panel.classList.add('project-menu--open');
       backdrop.classList.add('project-menu__backdrop--open');
     } else {
+      // reverse the morph: collapse the panel first, then bring the burger
+      // back once the panel has shrunk into its spot — otherwise the burger
+      // pops up in the middle of the still-collapsing panel
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
+      setTimeout(() => { if (!open) burger.classList.remove('nav__burger--open'); }, 280);
       // hide after the morph completes so it leaves the a11y tree
       setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 450);
     }
