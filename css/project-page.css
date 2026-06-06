@@ -588,9 +588,8 @@
     0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Staggered reveal: panel base first, then each item — label leads (drops in
-   from the top), glass base follows (rises from the bottom). --i is the row
-   index (set inline). */
+/* Staggered reveal: panel base first, then each item — label leads, glass base
+   follows; both drop in from the top. --i is the row index (set inline). */
 .project-menu__label {
   opacity: 0;
   transform: translateY(-8px);
@@ -598,7 +597,7 @@
 
 .project-menu__item::after {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(-8px);
 }
 
 .project-menu--open .project-menu__label {
