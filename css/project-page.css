@@ -454,20 +454,41 @@
   gap: 6px;
   padding: var(--space-xs);
   border-radius: 18px;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.96);
+  transform: translate(-50%, -50%);
   pointer-events: none;
-  transition:
-    opacity 0.3s var(--ease-out),
-    transform 0.3s var(--ease-out);
 }
 
-/* Glass panel base — same style as the glass buttons, at ~0.3 opacity */
-.project-menu::before {
+/* Glass panel base — morphs from the burger button's size up to the full base
+   on open. Two stacked layers so the blur stays full-strength while the glass
+   tint sits at ~0.3: ::before = backdrop blur, ::after = button-glass tint. */
+.project-menu::before,
+.project-menu::after {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 18px;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition:
+    width 0.4s var(--ease-out),
+    height 0.4s var(--ease-out),
+    border-radius 0.4s var(--ease-out),
+    opacity 0.3s var(--ease-out);
+}
+
+/* Frosted blur layer — full strength */
+.project-menu::before {
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+}
+
+/* Glass tint layer — same style as the glass buttons, faded to ~0.3 */
+.project-menu::after {
   border: 1px solid rgba(238, 230, 214, 0.14);
   border-top-color: rgba(252, 246, 234, 0.42);
   border-bottom-color: rgba(0, 0, 0, 0.16);
@@ -487,18 +508,21 @@
     0 1px 3px rgba(0, 0, 0, 0.12),
     0 6px 20px rgba(0, 0, 0, 0.18),
     0 12px 40px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .project-menu[hidden] { display: none; }
 
+.project-menu--open::before { opacity: 1; }
+.project-menu--open::after  { opacity: 0.3; }
+
+.project-menu--open::before,
+.project-menu--open::after {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+}
+
 .project-menu--open {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
   pointer-events: all;
 }
 
@@ -515,7 +539,15 @@
   border-radius: 12px;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.25s var(--ease-spring);
+  opacity: 0;
+  /* fade in just behind the panel morph; delay only on opacity so hover stays snappy */
+  transition:
+    transform 0.25s var(--ease-spring),
+    opacity 0.25s var(--ease-out) 0.12s;
+}
+
+.project-menu--open .project-menu__item {
+  opacity: 1;
 }
 
 /* X close — square, sits at the right of the row; reset button chrome */
@@ -612,6 +644,8 @@
   .nav__burger,
   .nav__burger-line,
   .project-menu,
+  .project-menu::before,
+  .project-menu::after,
   .project-menu__item,
   .project-menu__item::after,
   .project-menu__backdrop {
