@@ -363,11 +363,11 @@ function initBurgerMenu(lenis) {
     if (open) {
       panel.hidden = false;
       backdrop.hidden = false;
-      // next frame so transition runs from initial state
-      requestAnimationFrame(() => {
-        panel.classList.add('project-menu--open');
-        backdrop.classList.add('project-menu__backdrop--open');
-      });
+      // force reflow so the closed state is committed as the transition's
+      // starting point — a single rAF batches with the unhide and skips it
+      void panel.offsetWidth;
+      panel.classList.add('project-menu--open');
+      backdrop.classList.add('project-menu__backdrop--open');
     } else {
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
