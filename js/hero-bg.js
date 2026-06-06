@@ -25,6 +25,8 @@ export function initHeroBg() {
   const liquidUniforms = {
     uTime:       { value: 0 },
     uResolution: { value: new THREE.Vector2(W, H) },
+    uMouse:      { value: new THREE.Vector2(0.5, 0.5) }, // uv space, y-up
+    uMouseStr:   { value: 0 },                            // 0..1 eased influence
   };
 
   const liquidVert = `
@@ -40,6 +42,8 @@ export function initHeroBg() {
     varying vec2 vUv;
     uniform float uTime;
     uniform vec2 uResolution;
+    uniform vec2 uMouse;
+    uniform float uMouseStr;
 
     // ── Simplex 3D noise (Ashima Arts) ──────────────
     vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
@@ -119,6 +123,19 @@ export function initHeroBg() {
       vec2 uv = vUv;
       float aspect = uResolution.x / uResolution.y;
       vec2 st = vec2(uv.x * aspect, uv.y);
+
+      // ── Pointer liquid lens — swirl + bulge follows cursor ─
+      // Drag the gradient around the mouse like monopo's displacement.
+      vec2 mst   = vec2(uMouse.x * aspect, uMouse.y);
+      vec2 toM   = st - mst;
+      float dM   = length(toM);
+      float R    = 0.45;                                  // radius in st units
+      float infl = smoothstep(R, 0.0, dM) * uMouseStr;    // 1 at cursor → 0 at edge
+      float ang  = infl * 2.6;                            // swirl strength (pronounced)
+      mat2  rot  = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
+      vec2  dir  = toM / (dM + 1e-4);
+      // swirl around, then bulge outward → liquid magnify
+      st = mst + rot * toM + dir * infl * 0.14;
 
       float t = uTime * 0.04; // very slow drift
 
@@ -228,6 +245,22 @@ export function initHeroBg() {
   scene.add(liquidPlane);
 
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+
+  // ── Pointer lens tracking (desktop only) ────────────
+  // tgt = raw target, sm = smoothed (follows with lag), str eases by velocity
+  let mTgtX = 0.5, mTgtY = 0.5;
+  let mSmX  = 0.5, mSmY  = 0.5;
+  let mStr  = 0;            // eased influence sent to uMouseStr
+  let mVel  = 0;            // recent pointer speed
+  if (!isCoarse && !noMotion) {
+    window.addEventListener('mousemove', e => {
+      const nx = e.clientX / W;
+      const ny = 1 - e.clientY / H;            // flip → uv y-up
+      mVel = Math.min(1, mVel + Math.hypot(nx - mTgtX, ny - mTgtY) * 6);
+      mTgtX = nx; mTgtY = ny;
+    });
+  }
 
   // ── Resize ──────────────────────────────────────────
   window.addEventListener('resize', () => {
@@ -246,6 +279,18 @@ export function initHeroBg() {
     renderer, camera, scene, canvas,
     tick(time) {
       if (!noMotion) liquidUniforms.uTime.value = time;
+
+      if (!isCoarse && !noMotion) {
+        // smoothed follow (lag = liquid feel)
+        mSmX += (mTgtX - mSmX) * 0.08;
+        mSmY += (mTgtY - mSmY) * 0.08;
+        liquidUniforms.uMouse.value.set(mSmX, mSmY);
+        // strength: floor 0.5 at rest, swells to ~1 on movement (pronounced)
+        mVel *= 0.9;
+        const want = 0.5 + mVel * 0.5;
+        mStr += (want - mStr) * 0.1;
+        liquidUniforms.uMouseStr.value = mStr;
+      }
     },
     getSize() { return { W, H }; },
   };

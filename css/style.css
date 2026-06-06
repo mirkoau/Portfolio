@@ -103,6 +103,7 @@
   --space-lg:   45px;
   --space-xl:   95px;
   --space-2xl:  135px;
+  --space-3xl:  200px;
 
   /* Layout */
   --nav-height:  80px;
@@ -208,6 +209,7 @@ body {
 /* ── Custom cursor ──────────────────────────────────── */
 
 .cursor {
+  display: none; /* cursor dot hidden for now */
   position: fixed;
   top: 0;
   left: 0;
@@ -291,13 +293,11 @@ body {
 .btn-secondary,
 .work__see-more,
 .nav__burger {
-  --mx: 50%;
-  --my: 50%;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-body);
   font-weight: 800;
   font-size: 18px;
@@ -310,9 +310,6 @@ body {
     background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out);
   background:
-    radial-gradient(130px circle at var(--mx) var(--my),
-      rgba(248, 242, 230, 0.18) 0%,
-      rgba(248, 242, 230, 0) 60%),
     linear-gradient(180deg,
       rgba(248, 242, 230, 0.06) 0%,
       rgba(248, 242, 230, 0.01) 50%,
@@ -322,19 +319,23 @@ body {
       rgba(248, 242, 230, 0.035) 40%,
       rgba(248, 242, 230, 0.01) 60%,
       rgba(248, 242, 230, 0.06) 100%);
-  border: 1px solid rgba(238, 230, 214, 0.14);
-  border-top-color: rgba(252, 246, 234, 0.42);
+  border: 1px solid rgba(238, 230, 214, calc(0.14 * var(--be, 1)));
+  border-top-color: rgba(252, 246, 234, var(--hlt, 0.42));
   border-bottom-color: rgba(0, 0, 0, 0.16);
-  border-radius: 14px;
-  padding: 14px 28px;
+  border-radius: 12px;
+  padding: 10px 20px;
   backdrop-filter: blur(20px) saturate(135%);
   -webkit-backdrop-filter: blur(20px) saturate(135%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, var(--hlt, 0.42)),
+    inset 0 -1px 0 rgba(255, 255, 255, var(--hlb, 0)),
+    inset 0 -1px 0 rgba(0, 0, 0, calc(0.22 * var(--idb, 1))),
+    inset 0 1px 0 rgba(0, 0, 0, calc(0.22 * var(--idt, 0))),
     0 1px 3px rgba(0, 0, 0, 0.12),
-    0 6px 20px rgba(0, 0, 0, 0.18),
-    0 12px 40px rgba(0, 0, 0, 0.12);
+    0 calc(6px * var(--shb, 1)) calc(20px * var(--shb, 1)) rgba(0, 0, 0, calc(0.18 * var(--shb, 1))),
+    0 calc(12px * var(--shb, 1)) calc(40px * var(--shb, 1)) rgba(0, 0, 0, calc(0.12 * var(--shb, 1))),
+    0 calc(-6px * var(--sht, 0)) calc(20px * var(--sht, 0)) rgba(0, 0, 0, calc(0.18 * var(--sht, 0))),
+    0 calc(-12px * var(--sht, 0)) calc(40px * var(--sht, 0)) rgba(0, 0, 0, calc(0.12 * var(--sht, 0)));
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
@@ -354,7 +355,7 @@ body {
   right: 10%;
   height: 1px;
   border-radius: 9999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 252, 244, 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 252, 244, var(--hlt, 0.45)), transparent);
   pointer-events: none;
   z-index: 2;
 }
@@ -367,9 +368,6 @@ body {
   color: rgba(255, 255, 255, 0.95);
   transform: scale(1.04);
   background:
-    radial-gradient(130px circle at var(--mx) var(--my),
-      rgba(251, 245, 233, 0.24) 0%,
-      rgba(251, 245, 233, 0) 60%),
     linear-gradient(180deg,
       rgba(251, 246, 235, 0.13) 0%,
       rgba(248, 242, 230, 0.06) 100%),
@@ -416,19 +414,19 @@ body {
   font-size: 14px;
   padding: 10px 22px;
   background:
-    radial-gradient(110px circle at var(--mx) var(--my),
-      rgba(248, 242, 230, 0.14) 0%,
-      rgba(248, 242, 230, 0) 60%),
     linear-gradient(135deg,
       rgba(248, 242, 230, 0.07) 0%,
       rgba(248, 242, 230, 0.02) 40%,
       rgba(248, 242, 230, 0.01) 60%,
       rgba(248, 242, 230, 0.04) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, calc(var(--hlt, 0.42) * 0.71)),
+    inset 0 -1px 0 rgba(255, 255, 255, calc(var(--hlb, 0) * 0.71)),
+    inset 0 -1px 0 rgba(0, 0, 0, calc(0.16 * var(--idb, 1))),
+    inset 0 1px 0 rgba(0, 0, 0, calc(0.16 * var(--idt, 0))),
     0 1px 3px rgba(0, 0, 0, 0.10),
-    0 4px 14px rgba(0, 0, 0, 0.12);
+    0 calc(4px * var(--shb, 1)) calc(14px * var(--shb, 1)) rgba(0, 0, 0, calc(0.12 * var(--shb, 1))),
+    0 calc(-4px * var(--sht, 0)) calc(14px * var(--sht, 0)) rgba(0, 0, 0, calc(0.12 * var(--sht, 0)));
 }
 
 .about .section-main {
@@ -551,7 +549,6 @@ body.is-project-view .hero,
 body.is-project-view .work,
 body.is-project-view .personal-work,
 body.is-project-view .about,
-body.is-project-view .footer,
 body.is-project-view .scroll-bg {
   display: none !important;
 }
