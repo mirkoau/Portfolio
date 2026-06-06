@@ -131,7 +131,7 @@ export function initHeroBg() {
       vec2 mst   = vec2(uMouse.x * aspect, uMouse.y);
       vec2 toM   = st - mst;
       float dM   = length(toM);
-      float R    = 0.38;                                  // radius in st units
+      float R    = 0.76;                                  // radius in st units (2x)
       float infl = smoothstep(R, 0.0, dM) * uMouseStr;    // 1 at cursor → 0 at edge
       float ang  = infl * 0.9;                            // swirl strength (subtle)
       mat2  rot  = mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
