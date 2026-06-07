@@ -919,9 +919,6 @@ body.is-project-view .scroll-bg {
   .nav__back,
   .nav__cta { width: auto; }
 
-  /* Burger pinned to the right edge of the nav band */
-  .nav__burger { margin-left: auto; }
-
   .hero { min-height: 80lvh; padding-top: calc(var(--nav-height) + 80px); }
 
   /* Stack sections; label sticks to header as the section scrolls */

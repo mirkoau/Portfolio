@@ -648,6 +648,16 @@
     height: 24px;
   }
 
+  /* Burger to the top-right corner; circle = normal pill height (54px) */
+  .nav__burger {
+    left: auto;
+    right: var(--gutter);
+    top: 50%;
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 0;
+  }
+
   /* Full-width vertical menu; Contact joins the list, X sits top-right */
   .project-menu {
     top: var(--nav-height);
@@ -656,6 +666,14 @@
     flex-direction: column;
     align-items: flex-end;
     gap: var(--space-xs);
+  }
+
+  /* Items cascade in one-by-one (--i set per item, top-to-bottom) */
+  .project-menu--open .project-menu__item {
+    transition:
+      --btn-r 0.55s var(--ease-out),
+      transform 0.25s var(--ease-spring),
+      opacity 0.3s var(--ease-out) calc(var(--i, 0) * 0.07s);
   }
 
   /* Contact is part of the list on mobile */

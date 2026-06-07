@@ -77,20 +77,21 @@ function renderProjectRows(projects, currentId) {
 // Burger menu rows — distinct from the footer: compact glass buttons in a row
 // (the burger morphs into a glass panel of them). Last item is the X close.
 function renderMenuRows(projects, currentId) {
-  const rows = projects
-    .filter(p => p.id !== currentId)
-    .map(p => `
-    <a class="project-menu__item" href="#/work/${p.id}">
+  // --i drives the mobile stagger, set in visual top-to-bottom order
+  // (close sits on top, then project rows, then Contact at the bottom)
+  const items = projects.filter(p => p.id !== currentId);
+  const rows = items.map((p, k) => `
+    <a class="project-menu__item" href="#/work/${p.id}" style="--i:${k + 1}">
       <span class="project-menu__label">${p.title}</span>
     </a>`).join('');
   // Contact lives in the menu on mobile only (desktop uses the flying button)
   const contact = `
-    <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email">
+    <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
       <span class="project-menu__label">Contact</span>
     </a>`;
   const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
   const close = `
-    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu">
+    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:0">
       <span class="project-menu__label">${closeSvg}</span>
     </button>`;
   return rows + contact + close;
