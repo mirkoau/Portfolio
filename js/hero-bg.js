@@ -12,33 +12,30 @@ export function initHeroBg() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.autoClear = false;            // two-pass render — clear manually
   const canvas = renderer.domElement;
-  // 100lvh (largest viewport) is a CONSTANT — unlike vh/dvh it ignores the
-  // iOS toolbar show/hide, so the fixed bg never resizes/jumps mid-scroll.
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;pointer-events:none;z-index:-2;';
+  // Buffer + canvas resize freely to the LIVE viewport on every resize (incl.
+  // mobile toolbar toggles). The shader below is a clip-space fullscreen quad,
+  // so any buffer size fills with zero distortion → no bottom gap, ever.
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:-2;';
   document.body.appendChild(canvas);
 
-  // On mobile, size to the LARGEST viewport (100lvh, a constant) — not
-  // innerHeight, which is the toolbar-shown (smaller) height at init. setSize
-  // writes a px height to the canvas, so using innerHeight leaves a bottom gap
-  // once the browser toolbar retracts. lvh px always fills + never changes.
-  function viewportH() {
-    if (!coarse) return window.innerHeight;
-    const probe = document.createElement('div');
-    probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100lvh;visibility:hidden;pointer-events:none;';
-    document.body.appendChild(probe);
-    const h = probe.offsetHeight || window.innerHeight;
-    probe.remove();
-    return h;
-  }
-
   let W = window.innerWidth;
-  let H = viewportH();
+  let H = window.innerHeight;
+  canvas.style.height = H + 'px';
   renderer.setSize(W, H);
 
-  const camera = new THREE.OrthographicCamera(-W / 2, W / 2, H / 2, -H / 2, 0.1, 1000);
+  // ── Card camera — TOP-ANCHORED ───────────────────────
+  // Top edge pinned to y=0 (viewport top); the toolbar grows/shrinks the
+  // BOTTOM, so a larger H only moves the camera's bottom edge → top-anchored
+  // cards never shift on toolbar toggle (a centered camera would move all by
+  // ΔH/2). 1 world unit = 1 css px. Cards + text live in this scene.
+  const camera = new THREE.OrthographicCamera(-W / 2, W / 2, 0, -H, 0.1, 1000);
   camera.position.z = 500;
   const scene = new THREE.Scene();
+
+  // ── Background scene — fullscreen shader quad, own pass ─
+  const bgScene = new THREE.Scene();
 
   // ── Liquid gradient background ────────────────────
   const liquidUniforms = {
@@ -53,7 +50,9 @@ export function initHeroBg() {
     varying vec2 vUv;
     void main() {
       vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      // Clip-space fullscreen quad — ignores the camera, always covers 100%
+      // of the buffer at any size. Aspect handled in frag via uResolution.
+      gl_Position = vec4(position.xy, 0.0, 1.0);
     }
   `;
 
@@ -259,15 +258,12 @@ export function initHeroBg() {
     vertexShader: liquidVert,
     fragmentShader: `#define OCTAVES ${octaves}\n` + liquidFrag,
     depthWrite: false,
+    depthTest: false,
     extensions: { derivatives: true },
   });
 
-  const liquidPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(W, H),
-    liquidMat
-  );
-  liquidPlane.position.z = -100;
-  scene.add(liquidPlane);
+  const liquidPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), liquidMat);
+  bgScene.add(liquidPlane);
 
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isCoarse = window.matchMedia('(pointer: coarse)').matches;
@@ -290,25 +286,29 @@ export function initHeroBg() {
   }
 
   // ── Resize ──────────────────────────────────────────
-  let lastW = W;
   window.addEventListener('resize', () => {
-    // iOS toolbar show/hide fires resize with only innerHeight changed. Skip
-    // the rebuild on coarse pointers unless width (orientation) actually moved.
-    if (coarse && window.innerWidth === lastW) return;
-    lastW = window.innerWidth;
+    // Track the live viewport on EVERY resize (incl. toolbar toggles) so the
+    // shader always fills. Card camera is top-anchored, so growing H reveals
+    // the bottom without shifting cards. No geometry rebuild — quad is unit.
     W = window.innerWidth;
-    H = viewportH();
+    H = window.innerHeight;
+    canvas.style.height = H + 'px';
     renderer.setSize(W, H);
     camera.left = -W / 2; camera.right = W / 2;
-    camera.top  =  H / 2; camera.bottom = -H / 2;
+    camera.top  = 0;      camera.bottom = -H;
     camera.updateProjectionMatrix();
-    liquidPlane.geometry.dispose();
-    liquidPlane.geometry = new THREE.PlaneGeometry(W, H);
     liquidUniforms.uResolution.value.set(W, H);
   });
 
   return {
     renderer, camera, scene, canvas,
+    // Two passes, one buffer: shader fills the background, cards composite over.
+    render() {
+      renderer.clear();                  // color + depth (autoClear off)
+      renderer.render(bgScene, camera);  // shader quad (depthTest off → always)
+      renderer.clearDepth();             // fresh depth for the card pass
+      renderer.render(scene, camera);
+    },
     tick(time) {
       if (!noMotion) liquidUniforms.uTime.value = time;
 

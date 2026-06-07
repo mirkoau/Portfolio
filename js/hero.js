@@ -10,7 +10,7 @@ export function initHero(bg) {
   if (!bg) return null;
   let paused = false;
 
-  const { renderer, camera, scene, canvas } = bg;
+  const { camera, scene, canvas } = bg;
 
   const isCoarse = matchMedia('(pointer: coarse)').matches;
 
@@ -101,7 +101,7 @@ export function initHero(bg) {
     );
 
     const leftX    = TEXT_LEFT * W - W / 2 + tw / 2;
-    const nameY    = H / 2 - NAME_TOP * H;
+    const nameY    = -(NAME_TOP * H);
     const nameSize = heroNameSize();
     const gap      = W <= 768 ? 12 : 20;
     const posY     = nameY - nameSize * 0.55 - gap - th / 2;
@@ -139,7 +139,7 @@ export function initHero(bg) {
     );
 
     const leftX = TEXT_LEFT * W - W / 2 + tw / 2 - fontSize * 0.06;
-    const posY  = H / 2 - NAME_TOP * H;
+    const posY  = -(NAME_TOP * H);
     mesh.position.set(leftX, posY, 5);
     return mesh;
   }
@@ -168,7 +168,8 @@ export function initHero(bg) {
   const imgs = Array.from(document.querySelectorAll('.hero__card img'));
 
   function baseX(d) { return (d.left + d.w / 2) * W - W / 2; }
-  function baseY(d, h) { return H / 2 - (d.top * H + h / 2); }
+  // Top-anchored: y=0 at viewport top, negative downward (px-from-top).
+  function baseY(d, h) { return -(d.top * H + h / 2); }
 
   // Build meshes — geometry updated once image loads to match aspect ratio
   const meshes = CARDS.map((d, i) => {
@@ -215,7 +216,7 @@ export function initHero(bg) {
     return new THREE.Vector2((cx / W) * 2 - 1, -((cy / H) * 2 - 1));
   }
   function toWorld(cx, cy) {
-    return { x: cx - W / 2, y: H / 2 - cy };
+    return { x: cx - W / 2, y: -cy };   // top-anchored: y=0 at viewport top
   }
 
   // ── Drag + kick (desktop only) ─────────────────────
@@ -243,7 +244,7 @@ export function initHero(bg) {
     const trig = document.createElement('div');
     trig.style.cssText =
       `position:fixed;left:${mesh.position.x + W / 2 - w / 2}px;` +
-      `top:${H / 2 - mesh.position.y - h / 2}px;width:${w}px;height:${h}px;` +
+      `top:${-mesh.position.y - h / 2}px;width:${w}px;height:${h}px;` +
       'pointer-events:none;opacity:0;';
     const im = document.createElement('img');
     im.src = imgs[PORTRAIT_INDEX].src;
@@ -281,7 +282,7 @@ export function initHero(bg) {
     im.style.width  = w + 'px';
     im.style.height = h + 'px';
     im.style.left   = (m.position.x + W / 2 - w / 2) + 'px';
-    im.style.top    = (H / 2 - m.position.y - h / 2) + 'px';
+    im.style.top    = (-m.position.y - h / 2) + 'px';
   }
 
   function updateHoldClones() {
@@ -446,11 +447,11 @@ export function initHero(bg) {
   const FLOAT_BLEND_OUT  = 0.18;
 
   function clamp(ud) {
-    const mx = W / 2, my = H / 2;
+    const mx = W / 2;
     if (ud.px >  mx) { ud.px =  mx; ud.vx *= -0.6; }
     if (ud.px < -mx) { ud.px = -mx; ud.vx *= -0.6; }
-    if (ud.py >  my) { ud.py =  my; ud.vy *= -0.6; }
-    if (ud.py < -my) { ud.py = -my; ud.vy *= -0.6; }
+    if (ud.py >   0) { ud.py =   0; ud.vy *= -0.6; }   // top edge
+    if (ud.py <  -H) { ud.py =  -H; ud.vy *= -0.6; }   // bottom edge
   }
 
   // ── Render loop ─────────────────────────────────────
@@ -460,7 +461,7 @@ export function initHero(bg) {
   function tick(time) {
     bg.tick(time);
 
-    if (paused) { renderer.render(scene, camera); return; }
+    if (paused) { bg.render(); return; }
     const overlayOpen = galleryOverlay && !galleryOverlay.hidden;
     const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
     const heroGone = heroRect && heroRect.bottom <= heroRect.height * 0.2;
@@ -546,12 +547,12 @@ export function initHero(bg) {
 
     if (hold?.clones) updateHoldClones();
 
-    if (nameMesh) nameMesh.position.y = (H / 2 - NAME_TOP * H) + heroOffset;
+    if (nameMesh) nameMesh.position.y = -(NAME_TOP * H) + heroOffset;
     if (taglineMesh) {
       const nameSize = heroNameSize();
       const gap = W <= 768 ? 12 : 20;
       const tagH = taglineMesh.geometry.parameters.height;
-      taglineMesh.position.y = (H / 2 - NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
+      taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
     }
     // Fade text with the cards (mobile). heroFade < 1 only once scrolled, so
     // this never clobbers the entrance opacity tween at the top.
@@ -560,7 +561,7 @@ export function initHero(bg) {
       if (taglineMesh) taglineMesh.material.opacity = heroFade;
     }
 
-    renderer.render(scene, camera);
+    bg.render();
   }
 
   if (typeof gsap !== 'undefined') {
