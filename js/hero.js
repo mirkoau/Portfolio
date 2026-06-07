@@ -3,6 +3,8 @@
 // Mobile:  organic float, device motion → chaotic card physics
 
 import { navigate } from './router.js';
+import { openGallery } from './gallery.js';
+import { data } from './content.js';
 
 export function initHero(bg) {
   if (!bg) return null;
@@ -224,7 +226,33 @@ export function initHero(bg) {
   // ── Hold-to-navigate (desktop) ──────────────────────
   // Hold a linked card: 0.2s → blur everything else, held card stays sharp.
   // 2s → navigate to project. Release before 2s cancels.
-  const PROJECT_LINKS = [null, 'alan-wake-2', 'fbc-firebreak', null, null];
+  const PROJECT_LINKS = ['evocon-main', 'alan-wake-2', 'fbc-firebreak', 'cleveron-main', null];
+
+  // Portrait card (top-right) → opens its image in the Personal Work gallery
+  const PORTRAIT_INDEX = 4;
+  function openPortraitGallery(mesh) {
+    const items = data?.personalWork?.items;
+    if (!items?.length) return;
+    const heroSrc = imgs[PORTRAIT_INDEX]?.getAttribute('src');
+    const idx = Math.max(0, items.findIndex(it => it.src === heroSrc));
+    const list = items.map(it => ({ src: it.src, alt: it.alt, caption: it.caption }));
+
+    // FLIP trigger: a throwaway img sat at the mesh's current screen rect
+    const w = mesh.geometry.parameters.width;
+    const h = mesh.geometry.parameters.height;
+    const trig = document.createElement('div');
+    trig.style.cssText =
+      `position:fixed;left:${mesh.position.x + W / 2 - w / 2}px;` +
+      `top:${H / 2 - mesh.position.y - h / 2}px;width:${w}px;height:${h}px;` +
+      'pointer-events:none;opacity:0;';
+    const im = document.createElement('img');
+    im.src = imgs[PORTRAIT_INDEX].src;
+    im.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    trig.appendChild(im);
+    document.body.appendChild(trig);
+    openGallery(list, idx, trig);
+    setTimeout(() => trig.remove(), 1200);
+  }
   let hold = null;
   function noScroll(e) { e.preventDefault(); }
 
@@ -296,11 +324,11 @@ export function initHero(bg) {
     if (taglineMesh) taglineMesh.visible = true;
   }
 
-  function startHold(mesh, link) {
+  function startHold(mesh, link, action = 'nav') {
     cancelHold();
-    hold = { mesh, link, clones: null, blurT: 0, navT: 0 };
+    hold = { mesh, link, action, clones: null, blurT: 0, navT: 0 };
     hold.blurT = setTimeout(beginHoldBlur, 200);
-    hold.navT  = setTimeout(() => finishHoldNav(link), 1400);
+    hold.navT  = setTimeout(finishHold, 1400);
   }
 
   function cancelHold() {
@@ -312,14 +340,25 @@ export function initHero(bg) {
     hold = null;
   }
 
-  function finishHoldNav(link) {
+  function finishHold() {
     if (!hold) return;
-    // Stay blurred through the navigate — the curtain transition covers the
-    // screen, then hideCards() tears down clones + canvas blur unseen.
-    hold.navigating = true;
+    const { mesh, link, action } = hold;
     drag = null;
     window.removeEventListener('wheel', noScroll);
     document.body.style.userSelect = '';
+
+    if (action === 'gallery') {
+      // Open the held portrait in the gallery, then restore the hero behind
+      // the overlay's fading backdrop (no curtain covers this transition).
+      openPortraitGallery(mesh);
+      clearHoldVisuals();
+      hold = null;
+      return;
+    }
+
+    // Stay blurred through the navigate — the curtain transition covers the
+    // screen, then hideCards() tears down clones + canvas blur unseen.
+    hold.navigating = true;
     navigate(`#/work/${link}`);
   }
 
@@ -330,6 +369,14 @@ export function initHero(bg) {
       rawX = e.clientX;
       rawY = e.clientY;
       if (!drag) {
+        // Cards hidden (project view) or hero scrolled away → no card cursor.
+        // Raycaster hits invisible meshes too, so guard explicitly.
+        const ov = galleryOverlay && !galleryOverlay.hidden;
+        const hr = heroSection ? heroSection.getBoundingClientRect() : null;
+        if (paused || ov || (hr && hr.bottom <= hr.height * 0.2)) {
+          document.body.style.cursor = '';
+          return;
+        }
         // Pointer cursor when hovering a card
         ray.setFromCamera(toNDC(e.clientX, e.clientY), camera);
         document.body.style.cursor = ray.intersectObjects(meshes).length ? 'pointer' : '';
@@ -360,8 +407,10 @@ export function initHero(bg) {
       window.addEventListener('wheel', noScroll, { passive: false });
       document.body.style.userSelect = 'none';
 
-      const link = PROJECT_LINKS[meshes.indexOf(mesh)];
+      const idx = meshes.indexOf(mesh);
+      const link = PROJECT_LINKS[idx];
       if (link) startHold(mesh, link);
+      else if (idx === PORTRAIT_INDEX) startHold(mesh, null, 'gallery');
     });
 
     function endDrag() {
