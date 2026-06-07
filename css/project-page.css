@@ -727,7 +727,7 @@
 
 @media (max-width: 768px) {
   .project-page__hero {
-    height: 50lvh;
+    height: 75lvh;
     padding: 0 var(--gutter) var(--space-lg);
   }
 

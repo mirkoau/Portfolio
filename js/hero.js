@@ -432,51 +432,11 @@ export function initHero(bg) {
     window.addEventListener('mouseleave', endDrag);
   }
 
-  // ── DeviceMotion + tilt parallax (mobile only) ──────
-  let motionActive = false;
-  let shakeVX = 0, shakeVY = 0;
-  let tiltTX = 0, tiltTY = 0;   // target tilt, normalized -1..1 (gamma/beta)
-  let tiltX  = 0, tiltY  = 0;   // smoothed
-  // While scrolling, float + tilt jitter the cards on top of the scroll
-  // translation. Suppress them when moving, restore gentle float at rest.
+  // While scrolling, the float wobble jitters cards on top of the scroll
+  // translation. Suppress it when moving, restore gentle float at rest.
   let lastScrollY = 0;
-  let motionSuppress = 0;       // 0 = full float/tilt, 1 = frozen (scrolling)
+  let motionSuppress = 0;       // 0 = full float, 1 = frozen (scrolling)
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function onDeviceMotion(e) {
-    const a = e.accelerationIncludingGravity;
-    if (!a) return;
-    const scale = 0.6;
-    shakeVX += (a.x || 0) * scale;
-    shakeVY += -(a.y || 0) * scale;
-  }
-
-  function onDeviceOrientation(e) {
-    // gamma: left-right tilt, beta: front-back tilt (deg). Center beta ~45° for handheld.
-    if (e.gamma == null && e.beta == null) return;
-    tiltTX = Math.max(-1, Math.min(1, (e.gamma || 0) / 25));
-    tiltTY = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 25));
-  }
-
-  function startMotionListening() {
-    if (motionActive || noMotion) return;
-    motionActive = true;
-    window.addEventListener('devicemotion', onDeviceMotion);
-    window.addEventListener('deviceorientation', onDeviceOrientation);
-  }
-
-  if (isCoarse && !noMotion) {
-    const requestMotion = () => {
-      const gate = (Evt, cb) => {
-        if (typeof Evt !== 'undefined' && typeof Evt.requestPermission === 'function') {
-          Evt.requestPermission().then(s => { if (s === 'granted') cb(); }).catch(() => {});
-        } else { cb(); }
-      };
-      gate(typeof DeviceMotionEvent !== 'undefined' ? DeviceMotionEvent : undefined, startMotionListening);
-      gate(typeof DeviceOrientationEvent !== 'undefined' ? DeviceOrientationEvent : undefined, startMotionListening);
-    };
-    document.addEventListener('touchstart', requestMotion, { once: true });
-  }
 
   // ── Constants ───────────────────────────────────────
   const DAMPING          = 0.92;
@@ -539,26 +499,6 @@ export function initHero(bg) {
     }
     prevHitSet = hitSet;
 
-    let chaos = 0;
-    if (motionActive && !frozen) {
-      chaos = Math.sqrt(shakeVX * shakeVX + shakeVY * shakeVY);
-      meshes.forEach((mesh, i) => {
-        const variance = 0.7 + (i * 0.15);
-        mesh.userData.vx += shakeVX * variance;
-        mesh.userData.vy += shakeVY * variance;
-      });
-      shakeVX *= 0.3;
-      shakeVY *= 0.3;
-    }
-
-    const effectiveDamping = (motionActive && chaos > 5)
-      ? Math.min(0.97, DAMPING + chaos * 0.002)
-      : DAMPING;
-
-    // Smooth tilt toward target — gentle parallax drift
-    tiltX += (tiltTX - tiltX) * 0.06;
-    tiltY += (tiltTY - tiltY) * 0.06;
-
     meshes.forEach((mesh, i) => {
       const d  = CARDS[i];
       const ud = mesh.userData;
@@ -571,8 +511,8 @@ export function initHero(bg) {
         ud.vy = 0;
         ud.floatBlend = 0;
       } else {
-        ud.vx *= effectiveDamping;
-        ud.vy *= effectiveDamping;
+        ud.vx *= DAMPING;
+        ud.vy *= DAMPING;
         ud.px += ud.vx;
         ud.py += ud.vy;
         clamp(ud);
@@ -586,13 +526,8 @@ export function initHero(bg) {
       const floatX = (!noMotion && b > 0.01) ? Math.sin(time * d.freq * 0.6 + d.phase + 1.0) * d.amp * 0.3 * b : 0;
       const floatY = (!noMotion && b > 0.01) ? Math.sin(time * d.freq       + d.phase)         * d.amp       * b : 0;
 
-      // Tilt parallax: closer cards (higher z) drift more. Calmed while scrolling.
-      const depth = 0.6 + (d.z + 5) / 25 * 0.8;
-      const tiltPX = tiltX * 26 * depth * calm;
-      const tiltPY = -tiltY * 26 * depth * calm;
-
-      mesh.position.x = ud.px + floatX + tiltPX;
-      mesh.position.y = ud.py + floatY + scrollY + tiltPY;
+      mesh.position.x = ud.px + floatX;
+      mesh.position.y = ud.py + floatY + scrollY;
       mesh.position.z = d.z;
 
     });
