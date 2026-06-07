@@ -373,7 +373,22 @@ function initProjectReveals() {
 
   ScrollTrigger.refresh();
 
+  // Content images are lazy + have no reserved height. At refresh they're
+  // collapsed, so later sections' trigger positions cache too high and their
+  // reveal fires off-screen. Re-refresh as each image loads to correct the
+  // downstream positions before they're scrolled into view.
+  const imgs = [...container.querySelectorAll('.project-page__content img')];
+  let rafId = 0;
+  const scheduleRefresh = () => {
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+  };
+  const pending = imgs.filter(img => !img.complete);
+  pending.forEach(img => img.addEventListener('load', scheduleRefresh));
+
   return () => {
+    cancelAnimationFrame(rafId);
+    pending.forEach(img => img.removeEventListener('load', scheduleRefresh));
     batchTriggers.forEach(t => t.kill());
   };
 }
