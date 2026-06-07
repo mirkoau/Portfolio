@@ -963,6 +963,7 @@ body.is-project-view .scroll-bg {
     display: flex;
     align-items: center;
     font-size: var(--size-heading-lg);
+    z-index: 10;
   }
 
   .section-main { padding: 0 var(--gutter); }
