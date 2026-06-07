@@ -18,3 +18,6 @@ desktop.ini
 
 # Scratch / working notes
 .text-base/
+
+# Claude Code — personal/local only (shared config: CLAUDE.md, .claude/settings.json)
+.claude/settings.local.json
