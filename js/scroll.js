@@ -166,7 +166,8 @@ export function initScroll() {
   window.addEventListener('resize', updateGlass);
   updateGlass();
 
-  const START = '20% bottom';
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const START = isMobile ? '5% bottom' : '15% bottom';
 
   // ── Work entry headers — role + company anchors the section ─
   gsap.set('.work__entry-header', { y: 40, opacity: 0 });

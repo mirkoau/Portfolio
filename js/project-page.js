@@ -345,6 +345,8 @@ function initProjectReveals() {
   const sections = container.querySelectorAll('.project-page__section');
   if (!sections.length) return null;
 
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
   gsap.set(sections, { y: 50, opacity: 0 });
 
   // Snapshot triggers before batch so we can diff after
@@ -357,7 +359,7 @@ function initProjectReveals() {
       stagger: 0.12,
       ease: 'power3.out',
     }),
-    start: '20% bottom',
+    start: isMobile ? '5% bottom' : '15% bottom',
     once: true,
   });
 
