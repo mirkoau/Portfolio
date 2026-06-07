@@ -179,6 +179,7 @@
 
 .project-page__section--image-only figcaption {
   font-family: var(--font-body);
+  font-weight: 400;
   font-size: var(--size-body-md);
   color: var(--color-blue);
   opacity: 1;
@@ -225,6 +226,7 @@
 
 .project-page__section--image-pair figcaption {
   font-family: var(--font-body);
+  font-weight: 400;
   font-size: var(--size-body-md);
   color: var(--color-blue);
   opacity: 1;
