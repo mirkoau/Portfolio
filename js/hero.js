@@ -477,6 +477,17 @@ export function initHero(bg) {
     motionSuppress += (energy - motionSuppress) * (energy > motionSuppress ? 0.6 : 0.05);
     const calm = 1 - motionSuppress;
 
+    // Mobile: a fixed canvas can't track native scroll without 1-frame jitter.
+    // So pin the hero elements (no scroll offset) and fade them out as you
+    // scroll past instead of gliding them up. Desktop keeps the glide.
+    const heroOffset = isCoarse ? 0 : scrollY;
+    let heroFade = 1;
+    if (isCoarse && heroRect) {
+      const raw  = -heroRect.top / heroRect.height;   // 0 at top → 1 past hero
+      const prog = Math.min(1, Math.max(0, raw / 0.45)); // fully faded by 45%
+      heroFade = 1 - prog * prog * (3 - 2 * prog);     // smoothstep
+    }
+
     let kickDX = 0, kickDY = 0;
     if (!isCoarse && !frozen) {
       kickDX =  accDX * KICK_STR;
@@ -527,19 +538,26 @@ export function initHero(bg) {
       const floatY = (!noMotion && b > 0.01) ? Math.sin(time * d.freq       + d.phase)         * d.amp       * b : 0;
 
       mesh.position.x = ud.px + floatX;
-      mesh.position.y = ud.py + floatY + scrollY;
+      mesh.position.y = ud.py + floatY + heroOffset;
       mesh.position.z = d.z;
+      if (isCoarse) mesh.material.opacity = heroFade;
 
     });
 
     if (hold?.clones) updateHoldClones();
 
-    if (nameMesh) nameMesh.position.y = (H / 2 - NAME_TOP * H) + scrollY;
+    if (nameMesh) nameMesh.position.y = (H / 2 - NAME_TOP * H) + heroOffset;
     if (taglineMesh) {
       const nameSize = heroNameSize();
       const gap = W <= 768 ? 12 : 20;
       const tagH = taglineMesh.geometry.parameters.height;
-      taglineMesh.position.y = (H / 2 - NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + scrollY;
+      taglineMesh.position.y = (H / 2 - NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
+    }
+    // Fade text with the cards (mobile). heroFade < 1 only once scrolled, so
+    // this never clobbers the entrance opacity tween at the top.
+    if (isCoarse && heroFade < 1) {
+      if (nameMesh)    nameMesh.material.opacity    = heroFade;
+      if (taglineMesh) taglineMesh.material.opacity = heroFade;
     }
 
     renderer.render(scene, camera);
