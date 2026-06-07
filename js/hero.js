@@ -33,11 +33,11 @@ export function initHero(bg) {
 
   // sx/sy = scroll-scatter vector (fraction of W/H) — where card flies off to.
   const CARDS_MOBILE = [
-    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 18, freq: 0.61, phase: 0.8, sx: -1.4, sy:  0.9 },
-    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 22, freq: 0.42, phase: 0.0, sx: -1.6, sy:  0.4 },
-    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 20, freq: 0.55, phase: 1.2, sx: -1.1, sy: -1.3 },
-    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 21, freq: 0.47, phase: 3.7, sx:  1.5, sy:  0.9 },
-    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 26, freq: 0.35, phase: 2.5, sx:  1.3, sy: -1.4 },
+    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 18, freq: 0.61, phase: 0.8, sx: -1.4, sy:  1.0 },  // evocon → bottom-left
+    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 22, freq: 0.42, phase: 0.0, sx: -1.6, sy:  0.7 },  // alan wake → left, bottomish
+    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 20, freq: 0.55, phase: 1.2, sx: -1.2, sy: -1.2 },  // fbc → top-left
+    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 21, freq: 0.47, phase: 3.7, sx:  1.7, sy:  0.1 },  // cleveron → right
+    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 26, freq: 0.35, phase: 2.5, sx:  1.3, sy: -1.4 },  // portrait → top-right
   ];
 
   let CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
