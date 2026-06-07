@@ -5,9 +5,10 @@ export function initScroll() {
     duration: 1.2,
     easing: t => 1 - Math.pow(1 - t, 4),
     smooth: true,
-    // Transform-drive touch scroll too, so the fixed hero canvas (name +
-    // cards) stays in lockstep with content on mobile — kills scroll shake.
-    smoothTouch: true,
+    // Native touch scroll (no smoothTouch): lets the browser anchor content
+    // when the mobile toolbar slides. Lenis-driven touch would fight that
+    // anchor every frame → content jump. Hero card jitter is handled instead
+    // by removing tilt + suppressing float while scrolling (hero.js).
     touchMultiplier: 2,
   });
 
