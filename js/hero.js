@@ -74,34 +74,44 @@ export function initHero(bg) {
   }
 
   const TEXT_MAX_BLUR = 26;   // px (CSS) at full scroll-out
+  const BLUR_PAD      = 36;   // transparent margin so blur doesn't clip at edges
 
-  // Text mesh that can blur via scroll. Sharp text drawn once to a source
-  // canvas; display canvas is re-rendered from it per quantized px. Blur via
-  // downscale→upscale (bilinear) — ctx.filter is unsupported on older iOS
-  // Safari, this works everywhere. No geometry resize → top-of-page layout
-  // stays pixel-identical to the sharp build.
+  // Does this browser support real canvas gaussian blur? (No on iOS Safari <17.)
+  const CTX_FILTER = (() => {
+    try { return typeof document.createElement('canvas').getContext('2d').filter !== 'undefined'; }
+    catch { return false; }
+  })();
+
+  // Text mesh that can blur via scroll. Sharp text is drawn once (centered, with
+  // BLUR_PAD margin) to a source canvas; the display canvas is re-rendered from
+  // it per quantized px. Real gaussian via ctx.filter where supported, else a
+  // downscale→upscale fallback. Content stays centered in the padded canvas, so
+  // positioning by mesh center keeps the top-of-page layout pixel-identical.
   function makeBlurredTextMesh(draw, tw, th) {
+    const cw = tw + BLUR_PAD * 2;
+    const ch = th + BLUR_PAD * 2;
+
     const src = document.createElement('canvas');
-    src.width = tw * dpr; src.height = th * dpr;
+    src.width = cw * dpr; src.height = ch * dpr;
     const sc = src.getContext('2d');
     sc.scale(dpr, dpr);
+    sc.translate(BLUR_PAD, BLUR_PAD);
     draw(sc);
 
     const cv = document.createElement('canvas');
-    cv.width = tw * dpr; cv.height = th * dpr;
+    cv.width = cw * dpr; cv.height = ch * dpr;
     const cx = cv.getContext('2d');
     cx.imageSmoothingEnabled = true;
     cx.imageSmoothingQuality = 'high';
     const tmp = document.createElement('canvas');
     const tc  = tmp.getContext('2d');
-    tc.imageSmoothingEnabled = true;
-    tc.imageSmoothingQuality = 'high';
     const tex = makeTextTex(cv);
 
     const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(tw, th),
+      new THREE.PlaneGeometry(cw, ch),
       new THREE.MeshBasicMaterial({ map: tex, transparent: true })
     );
+    mesh.userData.contentH = th;   // tick anchors tagline by content height, not padded
 
     mesh.userData.blurPx = -1;
     mesh.userData.setBlur = px => {
@@ -111,9 +121,14 @@ export function initHero(bg) {
       cx.clearRect(0, 0, cv.width, cv.height);
       if (px <= 0) {
         cx.drawImage(src, 0, 0);
+      } else if (CTX_FILTER) {
+        cx.filter = `blur(${px * dpr}px)`;
+        cx.drawImage(src, 0, 0);
+        cx.filter = 'none';
       } else {
-        // Stronger px → shrink harder → blurrier on the way back up.
-        const scale = Math.max(0.03, 1 - 0.97 * px / TEXT_MAX_BLUR);
+        // Fallback: shrink then upscale (bilinear). Capped so it stays soft,
+        // not blocky — opacity fade finishes the dissolve.
+        const scale = Math.max(0.2, 1 - 0.8 * px / TEXT_MAX_BLUR);
         const dw = Math.max(1, Math.round(cv.width  * scale));
         const dh = Math.max(1, Math.round(cv.height * scale));
         tmp.width = dw; tmp.height = dh;
@@ -593,7 +608,7 @@ export function initHero(bg) {
     if (taglineMesh) {
       const nameSize = heroNameSize();
       const gap = W <= 768 ? 12 : 20;
-      const tagH = taglineMesh.geometry.parameters.height;
+      const tagH = taglineMesh.userData.contentH;
       taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
     }
     // Blur name+tagline to nothing as you scroll (mobile). Two stages so the
