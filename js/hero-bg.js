@@ -14,16 +14,16 @@ export function initHeroBg() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.autoClear = false;            // two-pass render — clear manually
   const canvas = renderer.domElement;
-  // Buffer + canvas resize freely to the LIVE viewport on every resize (incl.
-  // mobile toolbar toggles). The shader below is a clip-space fullscreen quad,
-  // so any buffer size fills with zero distortion → no bottom gap, ever.
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;pointer-events:none;z-index:-2;';
+  // Canvas height = 100lvh (LARGEST viewport, a constant) so it overfills past
+  // the toolbar — no bottom gap when the toolbar retracts, even if the browser
+  // fires `resize` late (Firefox does). The shader is a clip-space fullscreen
+  // quad → fills this buffer at any size with zero distortion.
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;pointer-events:none;z-index:-2;';
   document.body.appendChild(canvas);
 
   let W = window.innerWidth;
-  let H = window.innerHeight;
-  canvas.style.height = H + 'px';
-  renderer.setSize(W, H);
+  let H = canvas.clientHeight || window.innerHeight;   // 100lvh in px
+  renderer.setSize(W, H, false);         // false → keep the 100lvh CSS, set buffer only
 
   // ── Card camera — TOP-ANCHORED ───────────────────────
   // Top edge pinned to y=0 (viewport top); the toolbar grows/shrinks the
@@ -286,14 +286,16 @@ export function initHeroBg() {
   }
 
   // ── Resize ──────────────────────────────────────────
+  let lastW = W;
   window.addEventListener('resize', () => {
-    // Track the live viewport on EVERY resize (incl. toolbar toggles) so the
-    // shader always fills. Card camera is top-anchored, so growing H reveals
-    // the bottom without shifting cards. No geometry rebuild — quad is unit.
+    // Mobile toolbar toggle fires resize with width unchanged — but the canvas
+    // is pinned to 100lvh (constant), so nothing needs to move. Skip to avoid
+    // churn. Only width/orientation changes resize the buffer + camera.
+    if (coarse && window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
     W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.style.height = H + 'px';
-    renderer.setSize(W, H);
+    H = canvas.clientHeight || window.innerHeight;
+    renderer.setSize(W, H, false);       // keep 100lvh CSS, set buffer only
     camera.left = -W / 2; camera.right = W / 2;
     camera.top  = 0;      camera.bottom = -H;
     camera.updateProjectionMatrix();
