@@ -472,7 +472,9 @@ body {
 
 .hero {
   position: relative;
-  min-height: 100vh;
+  /* lvh = constant largest viewport; ignores iOS toolbar show/hide so the
+     hero height (and scroll/snap reference) never jumps mid-scroll. */
+  min-height: 100lvh;
   padding-top: calc(var(--nav-height) + 180px);
 }
 

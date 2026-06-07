@@ -13,7 +13,9 @@ export function initHeroBg() {
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const canvas = renderer.domElement;
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:-2;';
+  // 100lvh (largest viewport) is a CONSTANT — unlike vh/dvh it ignores the
+  // iOS toolbar show/hide, so the fixed bg never resizes/jumps mid-scroll.
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;pointer-events:none;z-index:-2;';
   document.body.appendChild(canvas);
 
   let W = window.innerWidth;
@@ -274,7 +276,12 @@ export function initHeroBg() {
   }
 
   // ── Resize ──────────────────────────────────────────
+  let lastW = W;
   window.addEventListener('resize', () => {
+    // iOS toolbar show/hide fires resize with only innerHeight changed. Skip
+    // the rebuild on coarse pointers unless width (orientation) actually moved.
+    if (coarse && window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
     W = window.innerWidth;
     H = window.innerHeight;
     renderer.setSize(W, H);

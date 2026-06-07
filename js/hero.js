@@ -437,6 +437,10 @@ export function initHero(bg) {
   let shakeVX = 0, shakeVY = 0;
   let tiltTX = 0, tiltTY = 0;   // target tilt, normalized -1..1 (gamma/beta)
   let tiltX  = 0, tiltY  = 0;   // smoothed
+  // While scrolling, float + tilt jitter the cards on top of the scroll
+  // translation. Suppress them when moving, restore gentle float at rest.
+  let lastScrollY = 0;
+  let motionSuppress = 0;       // 0 = full float/tilt, 1 = frozen (scrolling)
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function onDeviceMotion(e) {
@@ -505,6 +509,14 @@ export function initHero(bg) {
     // Offset cards + text so they scroll with the page (not fixed in viewport)
     const scrollY = heroRect ? -heroRect.top : 0;
 
+    // Scroll energy → suppress float/tilt so cards glide cleanly (no jitter).
+    // Fast attack (snap off the moment scroll starts), slow release (no pop).
+    const scrollVel = Math.abs(scrollY - lastScrollY);
+    lastScrollY = scrollY;
+    const energy = Math.min(1, scrollVel / 6);
+    motionSuppress += (energy - motionSuppress) * (energy > motionSuppress ? 0.6 : 0.05);
+    const calm = 1 - motionSuppress;
+
     let kickDX = 0, kickDY = 0;
     if (!isCoarse && !frozen) {
       kickDX =  accDX * KICK_STR;
@@ -570,14 +582,14 @@ export function initHero(bg) {
         ud.floatBlend += (want - ud.floatBlend) * (want > ud.floatBlend ? FLOAT_BLEND_IN : FLOAT_BLEND_OUT);
       }
 
-      const b = ud.floatBlend;
+      const b = ud.floatBlend * calm;
       const floatX = (!noMotion && b > 0.01) ? Math.sin(time * d.freq * 0.6 + d.phase + 1.0) * d.amp * 0.3 * b : 0;
       const floatY = (!noMotion && b > 0.01) ? Math.sin(time * d.freq       + d.phase)         * d.amp       * b : 0;
 
-      // Tilt parallax: closer cards (higher z) drift more
+      // Tilt parallax: closer cards (higher z) drift more. Calmed while scrolling.
       const depth = 0.6 + (d.z + 5) / 25 * 0.8;
-      const tiltPX = tiltX * 26 * depth;
-      const tiltPY = -tiltY * 26 * depth;
+      const tiltPX = tiltX * 26 * depth * calm;
+      const tiltPY = -tiltY * 26 * depth * calm;
 
       mesh.position.x = ud.px + floatX + tiltPX;
       mesh.position.y = ud.py + floatY + scrollY + tiltPY;
@@ -621,7 +633,12 @@ export function initHero(bg) {
   }
 
   // ── Resize ──────────────────────────────────────────
+  let lastResizeW = W;
   window.addEventListener('resize', () => {
+    // Ignore iOS toolbar height jiggle (width unchanged) — rebuilding card +
+    // text geometry mid-scroll causes the cards to jump. Width change only.
+    if (isCoarse && window.innerWidth === lastResizeW) return;
+    lastResizeW = window.innerWidth;
     ({ W, H } = bg.getSize());
     CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
     meshes.forEach((mesh, i) => {
