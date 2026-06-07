@@ -76,27 +76,29 @@ export function initScroll() {
       }
     }, { passive: false, capture: true });
 
-    // Touch
-    let touchY0 = 0;
-    window.addEventListener('touchstart', e => {
-      if (overlayOpen()) return;
-      if (inHero) touchY0 = e.touches[0].clientY;
-    }, { passive: true, capture: true });
-    window.addEventListener('touchmove', e => {
-      if (overlayOpen()) return;
-      if (!inHero || hero.offsetParent === null) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      if (snapping) return;
-      if (touchY0 - e.touches[0].clientY > 20) {
-        snapping = true;
-        lenis.scrollTo(work, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 3),
-          onComplete: () => { inHero = false; snapping = false; },
-        });
-      }
-    }, { passive: false, capture: true });
+    // Touch snap — desktop pointers only. Mobile scrolls hero freely.
+    if (!matchMedia('(pointer: coarse)').matches) {
+      let touchY0 = 0;
+      window.addEventListener('touchstart', e => {
+        if (overlayOpen()) return;
+        if (inHero) touchY0 = e.touches[0].clientY;
+      }, { passive: true, capture: true });
+      window.addEventListener('touchmove', e => {
+        if (overlayOpen()) return;
+        if (!inHero || hero.offsetParent === null) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (snapping) return;
+        if (touchY0 - e.touches[0].clientY > 20) {
+          snapping = true;
+          lenis.scrollTo(work, {
+            duration: 1.2,
+            easing: t => 1 - Math.pow(1 - t, 3),
+            onComplete: () => { inHero = false; snapping = false; },
+          });
+        }
+      }, { passive: false, capture: true });
+    }
 
     // Sync inHero with actual scroll position — fixes false snap after
     // returning from project pages (scroll restored past hero zone)
