@@ -952,11 +952,16 @@ body.is-project-view .scroll-bg {
     display: contents;
   }
 
+  /* Pin in the nav band so the label centers at the same height as the
+     flying Contact button (which sits centered in the nav) */
   .section-label {
     width: auto;
     padding-left: var(--gutter);
     margin-bottom: var(--space-md);
-    top: calc(var(--nav-height) + var(--space-sm));
+    top: 0;
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
     font-size: var(--size-heading-lg);
   }
 
