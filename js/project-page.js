@@ -320,6 +320,16 @@ function renderSection(section) {
           </figure>`).join('')}
       </div>`;
 
+    // Three images side-by-side, no text
+    case 'image-trio':
+      return `<div class="project-page__section project-page__section--image-trio">
+        ${section.images.map(img => `
+          <figure>
+            <img src="${img.src}" alt="${img.alt}" loading="lazy" />
+            ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
+          </figure>`).join('')}
+      </div>`;
+
     default:
       return '';
   }

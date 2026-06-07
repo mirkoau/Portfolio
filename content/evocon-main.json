@@ -24,6 +24,14 @@
       ]
     },
     {
+      "type": "image-trio",
+      "images": [
+        { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon speed indicator — good" },
+        { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon speed indicator — slow" },
+        { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon speed indicator — microstop" }
+      ]
+    },
+    {
       "type": "text-only",
       "content": [
         "Designing for two opposite users at once: mountains of factory data turned into one clear answer, and a shop-floor screen simple enough to ask almost nothing."

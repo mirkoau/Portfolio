@@ -231,6 +231,23 @@
   padding-top: var(--space-sm);
 }
 
+/* ── Section: image trio (three across, no text) ─────── */
+
+.project-page__section--image-trio {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.project-page__section--image-trio figure {
+  overflow: hidden;
+}
+
+.project-page__section--image-trio img {
+  width: 100%;
+  display: block;
+}
+
 /* ── Section: image pair + text (text under the left image) ── */
 
 .project-page__section--pair-text {
@@ -736,7 +753,8 @@
     order: 0;
   }
 
-  .project-page__section--image-pair {
+  .project-page__section--image-pair,
+  .project-page__section--image-trio {
     grid-template-columns: 1fr;
   }
 
