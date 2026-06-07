@@ -408,7 +408,7 @@
 .nav__burger-line {
   position: absolute;
   top: 0;
-  width: 1.5px;
+  width: 2px;
   height: 100%;
   background: currentColor;
   border-radius: 2px;
@@ -416,8 +416,8 @@
 }
 
 .nav__burger-line:nth-child(1) { left: 0; }
-.nav__burger-line:nth-child(2) { left: 50%; margin-left: -0.75px; }
-.nav__burger-line:nth-child(3) { right: 0; }
+.nav__burger-line:nth-child(2) { left: 7px; }
+.nav__burger-line:nth-child(3) { left: 14px; }
 
 /* Burger hides while open — it morphs into the menu row (X item closes it) */
 .nav__burger--open {
