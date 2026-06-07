@@ -18,8 +18,22 @@ export function initHeroBg() {
   canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;pointer-events:none;z-index:-2;';
   document.body.appendChild(canvas);
 
+  // On mobile, size to the LARGEST viewport (100lvh, a constant) — not
+  // innerHeight, which is the toolbar-shown (smaller) height at init. setSize
+  // writes a px height to the canvas, so using innerHeight leaves a bottom gap
+  // once the browser toolbar retracts. lvh px always fills + never changes.
+  function viewportH() {
+    if (!coarse) return window.innerHeight;
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100lvh;visibility:hidden;pointer-events:none;';
+    document.body.appendChild(probe);
+    const h = probe.offsetHeight || window.innerHeight;
+    probe.remove();
+    return h;
+  }
+
   let W = window.innerWidth;
-  let H = window.innerHeight;
+  let H = viewportH();
   renderer.setSize(W, H);
 
   const camera = new THREE.OrthographicCamera(-W / 2, W / 2, H / 2, -H / 2, 0.1, 1000);
@@ -283,7 +297,7 @@ export function initHeroBg() {
     if (coarse && window.innerWidth === lastW) return;
     lastW = window.innerWidth;
     W = window.innerWidth;
-    H = window.innerHeight;
+    H = viewportH();
     renderer.setSize(W, H);
     camera.left = -W / 2; camera.right = W / 2;
     camera.top  =  H / 2; camera.bottom = -H / 2;
