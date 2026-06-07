@@ -73,75 +73,6 @@ export function initHero(bg) {
     return tex;
   }
 
-  const TEXT_MAX_BLUR = 26;   // px (CSS) at full scroll-out
-  const BLUR_PAD      = 36;   // transparent margin so blur doesn't clip at edges
-
-  // Does this browser support real canvas gaussian blur? (No on iOS Safari <17.)
-  const CTX_FILTER = (() => {
-    try { return typeof document.createElement('canvas').getContext('2d').filter !== 'undefined'; }
-    catch { return false; }
-  })();
-
-  // Text mesh that can blur via scroll. Sharp text is drawn once (centered, with
-  // BLUR_PAD margin) to a source canvas; the display canvas is re-rendered from
-  // it per quantized px. Real gaussian via ctx.filter where supported, else a
-  // downscale→upscale fallback. Content stays centered in the padded canvas, so
-  // positioning by mesh center keeps the top-of-page layout pixel-identical.
-  function makeBlurredTextMesh(draw, tw, th) {
-    const cw = tw + BLUR_PAD * 2;
-    const ch = th + BLUR_PAD * 2;
-
-    const src = document.createElement('canvas');
-    src.width = cw * dpr; src.height = ch * dpr;
-    const sc = src.getContext('2d');
-    sc.scale(dpr, dpr);
-    sc.translate(BLUR_PAD, BLUR_PAD);
-    draw(sc);
-
-    const cv = document.createElement('canvas');
-    cv.width = cw * dpr; cv.height = ch * dpr;
-    const cx = cv.getContext('2d');
-    cx.imageSmoothingEnabled = true;
-    cx.imageSmoothingQuality = 'high';
-    const tmp = document.createElement('canvas');
-    const tc  = tmp.getContext('2d');
-    const tex = makeTextTex(cv);
-
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(cw, ch),
-      new THREE.MeshBasicMaterial({ map: tex, transparent: true })
-    );
-    mesh.userData.contentH = th;   // tick anchors tagline by content height, not padded
-
-    mesh.userData.blurPx = -1;
-    mesh.userData.setBlur = px => {
-      px = Math.round(px);
-      if (px === mesh.userData.blurPx) return;
-      mesh.userData.blurPx = px;
-      cx.clearRect(0, 0, cv.width, cv.height);
-      if (px <= 0) {
-        cx.drawImage(src, 0, 0);
-      } else if (CTX_FILTER) {
-        cx.filter = `blur(${px * dpr}px)`;
-        cx.drawImage(src, 0, 0);
-        cx.filter = 'none';
-      } else {
-        // Fallback: shrink then upscale (bilinear). Capped so it stays soft,
-        // not blocky — opacity fade finishes the dissolve.
-        const scale = Math.max(0.2, 1 - 0.8 * px / TEXT_MAX_BLUR);
-        const dw = Math.max(1, Math.round(cv.width  * scale));
-        const dh = Math.max(1, Math.round(cv.height * scale));
-        tmp.width = dw; tmp.height = dh;
-        tc.imageSmoothingEnabled = true;
-        tc.imageSmoothingQuality = 'high';
-        tc.drawImage(src, 0, 0, dw, dh);
-        cx.drawImage(tmp, 0, 0, dw, dh, 0, 0, cv.width, cv.height);
-      }
-      tex.needsUpdate = true;
-    };
-    mesh.userData.setBlur(0);
-    return mesh;
-  }
 
   function buildTaglineMesh(W, H) {
     const fontSize = heroTaglineSize();
@@ -155,13 +86,21 @@ export function initHero(bg) {
     const tw = Math.ceil(Math.max(...TAGLINE_LINES.map(l => mx.measureText(l).width))) + pad * 2;
     const th = lineH * TAGLINE_LINES.length + Math.ceil(fontSize * 0.4) + pad * 2;
 
-    const mesh = makeBlurredTextMesh(cx => {
-      cx.font         = fontStr;
-      cx.fillStyle    = '#ffffff';
-      cx.textBaseline = 'top';
-      cx.textAlign    = 'left';
-      TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
-    }, tw, th);
+    const cv = document.createElement('canvas');
+    cv.width  = tw * dpr;
+    cv.height = th * dpr;
+    const cx  = cv.getContext('2d');
+    cx.scale(dpr, dpr);
+    cx.font         = fontStr;
+    cx.fillStyle    = '#ffffff';
+    cx.textBaseline = 'top';
+    cx.textAlign    = 'left';
+    TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(tw, th),
+      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
+    );
 
     const leftX    = TEXT_LEFT * W - W / 2 + tw / 2;
     const nameY    = -(NAME_TOP * H);
@@ -185,13 +124,21 @@ export function initHero(bg) {
     const tw = Math.ceil(mx.measureText(text).width) + pad * 2;
     const th = Math.ceil(fontSize * 1.3) + pad * 2;
 
-    const mesh = makeBlurredTextMesh(cx => {
-      cx.font          = fontStr;
-      cx.fillStyle     = '#ffffff';
-      cx.textBaseline  = 'middle';
-      cx.textAlign     = 'left';
-      cx.fillText(text, pad, th / 2);
-    }, tw, th);
+    const cv = document.createElement('canvas');
+    cv.width  = tw * dpr;
+    cv.height = th * dpr;
+    const cx  = cv.getContext('2d');
+    cx.scale(dpr, dpr);
+    cx.font          = fontStr;
+    cx.fillStyle     = '#ffffff';
+    cx.textBaseline  = 'middle';
+    cx.textAlign     = 'left';
+    cx.fillText(text, pad, th / 2);
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(tw, th),
+      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
+    );
 
     const leftX = TEXT_LEFT * W - W / 2 + tw / 2 - fontSize * 0.06;
     const posY  = -(NAME_TOP * H);
@@ -608,24 +555,15 @@ export function initHero(bg) {
     if (taglineMesh) {
       const nameSize = heroNameSize();
       const gap = W <= 768 ? 12 : 20;
-      const tagH = taglineMesh.userData.contentH;
+      const tagH = taglineMesh.geometry.parameters.height;
       taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
     }
-    // Blur name+tagline to nothing as you scroll (mobile). Two stages so the
-    // blur actually reads: ramp to full blur over the first half while staying
-    // opaque, then fade out over the second half. heroScatter > 0 only once
-    // scrolled, so this never clobbers the entrance opacity tween.
-    if (isCoarse) {
-      const s = heroScatter;
-      const blur = Math.min(1, s / 0.5) * TEXT_MAX_BLUR;   // full blur by 50%
-      if (nameMesh)    nameMesh.userData.setBlur(blur);
-      if (taglineMesh) taglineMesh.userData.setBlur(blur);
-      if (s > 0) {
-        const f  = Math.min(1, Math.max(0, (s - 0.5) / 0.5)); // fade over 50→100%
-        const op = 1 - f * f * (3 - 2 * f);                   // smoothstep out
-        if (nameMesh)    nameMesh.material.opacity    = op;
-        if (taglineMesh) taglineMesh.material.opacity = op;
-      }
+    // Fade name+tagline out as you scroll (mobile). heroScatter > 0 only once
+    // scrolled, so this never clobbers the entrance opacity tween at the top.
+    if (isCoarse && heroScatter > 0) {
+      const op = 1 - heroScatter;
+      if (nameMesh)    nameMesh.material.opacity    = op;
+      if (taglineMesh) taglineMesh.material.opacity = op;
     }
 
     bg.render();
