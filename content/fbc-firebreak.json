@@ -8,14 +8,73 @@
   "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak UI/UX work" },
   "sections": [
     {
-      "type": "text",
+      "type": "image-right",
       "content": [
-        "Lead UI/UX design from early production to final product. I worked on all parts of the game's systems, interactions, and UI."
+        "I was the lead UI/UX designer on FBC: Firebreak, joining from preproduction and staying through to post-launch support. A UI artist and I were a team of two, working hand in hand with the three-person UI programming team."
+      ],
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak UI overview"
+    },
+    {
+      "type": "image-left",
+      "content": [
+        "Beyond that I collaborated closely with nearly every discipline on the project: art direction, the game director, game design, audio, and VFX. And beyond the interface itself, I helped shape mission design and the primary gameplay loop, and brainstormed the side activities that fleshed out the experience."
+      ],
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak cross-discipline collaboration"
+    },
+    {
+      "type": "image-right",
+      "content": [
+        "From there I owned the full UI: the structure, the flows, the HUD, the menus, and the overall visual style, plus a fair bit of production work, planning out the tasks for the design and programming teams and mapping the timeline, both short and long term."
+      ],
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak HUD and menu structure"
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "Remedy's first menu that lives inside a 3D world. Pick a loadout and you watch your gear change on the table in front of you."
       ]
     },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak interaction design detail", "caption": "FBC: Firebreak — interaction design detail" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak HUD layout & hierarchy", "caption": "FBC: Firebreak — HUD layout & hierarchy" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak main menu and lobby UI", "caption": "FBC: Firebreak — main menu and lobby UI" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak loadout & gear selection", "caption": "FBC: Firebreak — loadout & gear selection" }
+    {
+      "type": "image-only",
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak main menu in 3D space",
+      "caption": "Every menu item has its own dedicated corner of the space, and the camera glides to it on selection. Picking a loadout doesn't just happen in the UI. You watch your gear change on the table in front of you."
+    },
+    {
+      "type": "image-left",
+      "content": [
+        "The piece I'm proudest of is the main menu. Designed in close collaboration with the art director to create Remedy's first menu that lives inside a 3D environment. A feature this ambitious only came together thanks to how closely the art director, the programmers, and I worked on it."
+      ],
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak main menu design"
+    },
+    {
+      "type": "image-only",
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak mission and loadout UI"
+    },
+    {
+      "type": "image-right",
+      "content": [
+        "I also designed an onboarding flow for the metagame, and made the matchmaking and into-the-game flows fully modular, so players could sit in a queue while still browsing and swapping their equipment and cosmetics.",
+        "The game didn't find the success we'd hoped for, and we didn't hit every goal we'd set for the craft team. But on an impossible schedule, the team pulled off something close to impossible: shipping a great, genuinely functional UI. I'm proud of what we built together under that pressure."
+      ],
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak onboarding and matchmaking flow"
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "On an impossible schedule, the team pulled off something close to impossible: a great, genuinely functional UI."
+      ]
+    },
+    {
+      "type": "image-only",
+      "src": "assets/images/placeholder.svg",
+      "alt": "FBC: Firebreak in-game HUD"
+    }
   ]
 }

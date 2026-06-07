@@ -2,6 +2,8 @@
 // Desktop: organic float, mouse-contact kick, drag + throw
 // Mobile:  organic float, device motion → chaotic card physics
 
+import { navigate } from './router.js';
+
 export function initHero(bg) {
   if (!bg) return null;
   let paused = false;
@@ -147,6 +149,18 @@ export function initHero(bg) {
     taglineMesh = buildTaglineMesh(W, H);
     scene.add(nameMesh);
     scene.add(taglineMesh);
+
+    // Name + tagline fade in a touch slower than the shader
+    if (typeof gsap !== 'undefined') {
+      nameMesh.material.opacity = 0;
+      taglineMesh.material.opacity = 0;
+      gsap.to([nameMesh.material, taglineMesh.material], {
+        opacity: 1,
+        duration: 1.2,
+        delay: 0.8,
+        ease: 'power2.out',
+      });
+    }
   });
 
   const imgs = Array.from(document.querySelectorAll('.hero__card img'));
@@ -207,13 +221,120 @@ export function initHero(bg) {
   let drag = null;
   let prevHitSet = new Set();
 
+  // ── Hold-to-navigate (desktop) ──────────────────────
+  // Hold a linked card: 0.2s → blur everything else, held card stays sharp.
+  // 2s → navigate to project. Release before 2s cancels.
+  const PROJECT_LINKS = [null, 'alan-wake-2', 'fbc-firebreak', null, null];
+  let hold = null;
+  function noScroll(e) { e.preventDefault(); }
+
+  // One DOM img per scene element (cards + name + tagline), sat at the canvas
+  // layer (z-2). Clones are appended back-to-front so their natural paint order
+  // reproduces the WebGL depth — the held card keeps its distance instead of
+  // popping above the rest, and text layers stay correctly interleaved.
+  function makeCloneEl(src) {
+    const im = document.createElement('img');
+    im.src = src;
+    im.alt = '';
+    im.className = 'hero__hold-clone';
+    im.style.cssText =
+      'position:fixed;z-index:-2;pointer-events:none;object-fit:cover;' +
+      'will-change:transform,filter;transition:filter 1.2s linear;filter:blur(0px);';
+    document.body.appendChild(im);
+    return im;
+  }
+
+  const cloneCardImg = mesh => makeCloneEl(imgs[meshes.indexOf(mesh)]?.src || '');
+  const cloneTextImg = mesh => makeCloneEl(mesh.material.map.image.toDataURL());
+
+  function positionClone(im, m) {
+    const w = m.geometry.parameters.width;
+    const h = m.geometry.parameters.height;
+    im.style.width  = w + 'px';
+    im.style.height = h + 'px';
+    im.style.left   = (m.position.x + W / 2 - w / 2) + 'px';
+    im.style.top    = (H / 2 - m.position.y - h / 2) + 'px';
+  }
+
+  function updateHoldClones() {
+    if (!hold?.clones) return;
+    hold.clones.forEach(c => positionClone(c.im, c.mesh));
+  }
+
+  function beginHoldBlur() {
+    if (!hold) return;
+    // Shader + text stay in the canvas — blur it as the backdrop.
+    if (!noMotion) {
+      canvas.style.transition = 'filter 1.2s linear';
+      canvas.style.filter = 'blur(24px)';
+    }
+    const order = meshes.map((mesh, i) => ({ mesh, z: CARDS[i].z, kind: 'card' }));
+    if (nameMesh)    order.push({ mesh: nameMesh,    z: 5, kind: 'text' });
+    if (taglineMesh) order.push({ mesh: taglineMesh, z: 5, kind: 'text' });
+    order.sort((a, b) => a.z - b.z);
+    hold.clones = order.map(({ mesh, kind }) => {
+      const im = kind === 'card' ? cloneCardImg(mesh) : cloneTextImg(mesh);
+      positionClone(im, mesh);
+      return { im, mesh, held: mesh === hold.mesh };
+    });
+    meshes.forEach(m => (m.visible = false));
+    if (nameMesh)    nameMesh.visible = false;
+    if (taglineMesh) taglineMesh.visible = false;
+    // Next frame: ramp every clone except the held one to full blur.
+    requestAnimationFrame(() => {
+      if (!hold?.clones || noMotion) return;
+      hold.clones.forEach(c => { if (!c.held) c.im.style.filter = 'blur(24px)'; });
+    });
+  }
+
+  function clearHoldVisuals() {
+    canvas.style.transition = 'filter 0.3s ease';
+    canvas.style.filter = '';
+    if (hold?.clones) hold.clones.forEach(c => c.im.remove());
+    meshes.forEach(m => (m.visible = true));
+    if (nameMesh)    nameMesh.visible = true;
+    if (taglineMesh) taglineMesh.visible = true;
+  }
+
+  function startHold(mesh, link) {
+    cancelHold();
+    hold = { mesh, link, clones: null, blurT: 0, navT: 0 };
+    hold.blurT = setTimeout(beginHoldBlur, 200);
+    hold.navT  = setTimeout(() => finishHoldNav(link), 1400);
+  }
+
+  function cancelHold() {
+    if (!hold) return;
+    if (hold.navigating) return; // cleanup deferred to hideCards (screen covered)
+    clearTimeout(hold.blurT);
+    clearTimeout(hold.navT);
+    clearHoldVisuals();
+    hold = null;
+  }
+
+  function finishHoldNav(link) {
+    if (!hold) return;
+    // Stay blurred through the navigate — the curtain transition covers the
+    // screen, then hideCards() tears down clones + canvas blur unseen.
+    hold.navigating = true;
+    drag = null;
+    window.removeEventListener('wheel', noScroll);
+    document.body.style.userSelect = '';
+    navigate(`#/work/${link}`);
+  }
+
   if (!isCoarse) {
     window.addEventListener('mousemove', e => {
       accDX += e.clientX - rawX;
       accDY += e.clientY - rawY;
       rawX = e.clientX;
       rawY = e.clientY;
-      if (!drag) return;
+      if (!drag) {
+        // Pointer cursor when hovering a card
+        ray.setFromCamera(toNDC(e.clientX, e.clientY), camera);
+        document.body.style.cursor = ray.intersectObjects(meshes).length ? 'pointer' : '';
+        return;
+      }
       drag.hist.push(toWorld(e.clientX, e.clientY));
       if (drag.hist.length > 8) drag.hist.shift();
     });
@@ -238,11 +359,13 @@ export function initHero(bg) {
       };
       window.addEventListener('wheel', noScroll, { passive: false });
       document.body.style.userSelect = 'none';
+
+      const link = PROJECT_LINKS[meshes.indexOf(mesh)];
+      if (link) startHold(mesh, link);
     });
 
-    function noScroll(e) { e.preventDefault(); }
-
     function endDrag() {
+      cancelHold();
       if (!drag) return;
       const h = drag.hist;
       if (h.length >= 2) {
@@ -395,6 +518,8 @@ export function initHero(bg) {
 
     });
 
+    if (hold?.clones) updateHoldClones();
+
     if (nameMesh) nameMesh.position.y = (H / 2 - NAME_TOP * H) + scrollY;
     if (taglineMesh) {
       const nameSize = heroNameSize();
@@ -410,34 +535,17 @@ export function initHero(bg) {
     gsap.ticker.add(tick);
     canvas.style.opacity = '1';
 
-    // ── White curtain reveal ──────────────────────────────
-    const curtain = document.createElement('div');
-    curtain.setAttribute('aria-hidden', 'true');
-    curtain.style.cssText =
-      'position:fixed;top:0;left:0;width:100%;height:100vh;' +
-      'background:#fff;z-index:10;pointer-events:none;';
-    document.body.appendChild(curtain);
-
-    // Start cards at scale 0
+    // ── Reveal: black overlay fades out (main.js) → shader, then cards ─
     meshes.forEach(m => m.scale.set(0, 0, 1));
 
-    gsap.to(curtain, {
-      yPercent: 100,
-      duration: 1.2,
-      delay: 0.4,
-      ease: 'power3.inOut',
-      onComplete() {
-        curtain.remove();
-        // Staggered scale-in for cards
-        meshes.forEach((m, i) => {
-          gsap.to(m.scale, {
-            x: 1, y: 1,
-            duration: 0.7,
-            delay: i * 0.12,
-            ease: 'back.out(1.4)',
-          });
-        });
-      },
+    // Cards come in as the overlay clears — snappy, staggered
+    meshes.forEach((m, i) => {
+      gsap.to(m.scale, {
+        x: 1, y: 1,
+        duration: 0.6,
+        delay: 0.9 + i * 0.08,
+        ease: 'back.out(1.5)',
+      });
     });
   } else {
     canvas.style.opacity = '1';
@@ -478,6 +586,8 @@ export function initHero(bg) {
     pause()  { paused = true; canvas.style.display = 'none'; },
     resume() { paused = false; canvas.style.display = ''; },
     hideCards() {
+      // Tear down a held-card blur now that the curtain hides the swap
+      if (hold) { clearHoldVisuals(); hold = null; }
       paused = true;
       meshes.forEach(m => m.visible = false);
       if (nameMesh) nameMesh.visible = false;
