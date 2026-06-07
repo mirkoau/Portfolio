@@ -32,11 +32,11 @@ export function initHero(bg) {
   ];
 
   const CARDS_MOBILE = [
-    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 11, freq: 0.61, phase: 0.8 },
-    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 14, freq: 0.42, phase: 0.0 },
-    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 12, freq: 0.55, phase: 1.2 },
-    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 13, freq: 0.47, phase: 3.7 },
-    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 16, freq: 0.35, phase: 2.5 },
+    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 18, freq: 0.61, phase: 0.8 },
+    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 22, freq: 0.42, phase: 0.0 },
+    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 20, freq: 0.55, phase: 1.2 },
+    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 21, freq: 0.47, phase: 3.7 },
+    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 26, freq: 0.35, phase: 2.5 },
   ];
 
   let CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
