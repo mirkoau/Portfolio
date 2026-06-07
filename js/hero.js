@@ -73,7 +73,7 @@ export function initHero(bg) {
     return tex;
   }
 
-  const TEXT_MAX_BLUR = 22;   // px (CSS) at full scroll-out
+  const TEXT_MAX_BLUR = 26;   // px (CSS) at full scroll-out
 
   // Text mesh that can blur via scroll. Sharp text drawn once to a source
   // canvas; display canvas is re-rendered from it per quantized px. Blur via
@@ -596,15 +596,18 @@ export function initHero(bg) {
       const tagH = taglineMesh.geometry.parameters.height;
       taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
     }
-    // Blur name+tagline to nothing as you scroll (mobile). A late opacity fade
-    // finishes the dissolve so blur fringe doesn't linger. heroScatter > 0 only
-    // once scrolled, so this never clobbers the entrance opacity tween.
+    // Blur name+tagline to nothing as you scroll (mobile). Two stages so the
+    // blur actually reads: ramp to full blur over the first half while staying
+    // opaque, then fade out over the second half. heroScatter > 0 only once
+    // scrolled, so this never clobbers the entrance opacity tween.
     if (isCoarse) {
-      const blur = heroScatter * TEXT_MAX_BLUR;
+      const s = heroScatter;
+      const blur = Math.min(1, s / 0.5) * TEXT_MAX_BLUR;   // full blur by 50%
       if (nameMesh)    nameMesh.userData.setBlur(blur);
       if (taglineMesh) taglineMesh.userData.setBlur(blur);
-      if (heroScatter > 0) {
-        const op = 1 - heroScatter * heroScatter;   // vanish weighted to the end
+      if (s > 0) {
+        const f  = Math.min(1, Math.max(0, (s - 0.5) / 0.5)); // fade over 50→100%
+        const op = 1 - f * f * (3 - 2 * f);                   // smoothstep out
         if (nameMesh)    nameMesh.material.opacity    = op;
         if (taglineMesh) taglineMesh.material.opacity = op;
       }
