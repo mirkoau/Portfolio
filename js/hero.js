@@ -185,6 +185,7 @@ export function initHero(bg) {
       px: baseX(d), py: baseY(d, d.h),
       vx: 0, vy: 0,
       floatBlend: 0,
+      scatter: 0,
       aspect: null,
     };
     mesh.position.set(mesh.userData.px, mesh.userData.py, d.z);
@@ -486,11 +487,12 @@ export function initHero(bg) {
     // instead of gliding up. Cards scatter off-screen; name+tagline blur away.
     // Both reach their endpoint by 80% scroll-through. Desktop keeps the glide.
     const heroOffset = isCoarse ? 0 : scrollY;
-    let heroScatter = 0;   // 0 = home, 1 = fully scattered/blurred
+    let heroScatter = 0;   // 0 = home, 1 = fully scattered/blurred (smoothstep, for text)
+    let scatterProg = 0;   // linear 0–1 scroll-through, drives per-card staggered scatter
     if (isCoarse && heroRect) {
       const raw  = -heroRect.top / heroRect.height;   // 0 at top → 1 past hero
-      const prog = Math.min(1, Math.max(0, raw / 0.8)); // done by 80%
-      heroScatter = prog * prog * (3 - 2 * prog);      // smoothstep
+      scatterProg = Math.min(1, Math.max(0, raw / 0.8)); // done by 80%
+      heroScatter = scatterProg * scatterProg * (3 - 2 * scatterProg); // smoothstep
     }
 
     let kickDX = 0, kickDY = 0;
@@ -542,8 +544,19 @@ export function initHero(bg) {
       const floatX = (!noMotion && b > 0.01) ? Math.sin(time * d.freq * 0.6 + d.phase + 1.0) * d.amp * 0.3 * b : 0;
       const floatY = (!noMotion && b > 0.01) ? Math.sin(time * d.freq       + d.phase)         * d.amp       * b : 0;
 
-      const scX = isCoarse ? (d.sx || 0) * W * heroScatter : 0;
-      const scY = isCoarse ? (d.sy || 0) * H * heroScatter : 0;
+      // Scatter (mobile). Not locked 1:1 to scroll: each card has its own
+      // stagger window + a spring toward its target, so they leave organically.
+      let scX = 0, scY = 0;
+      if (isCoarse) {
+        const start  = (d.phase % 1) * 0.18;             // per-card delay 0–0.18, from phase
+        const local  = Math.min(1, Math.max(0, (scatterProg - start) / (1 - start)));
+        const target = local * local * (3 - 2 * local);  // smoothstep
+        ud.scatter  += (target - ud.scatter) * 0.12;     // spring → lag + settle
+        const s = ud.scatter;
+        const arc = Math.sin(s * Math.PI) * 0.10 * Math.sin(d.phase * 1.7); // curved flight, 0 at ends
+        scX = ((d.sx || 0) + arc) * W * s;
+        scY = (d.sy || 0) * H * s;
+      }
       mesh.position.x = ud.px + floatX + scX;
       mesh.position.y = ud.py + floatY + heroOffset + scY;
       mesh.position.z = d.z;
