@@ -525,7 +525,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
+  height: 54px;
   padding: 0 var(--space-md);
   border: 1px solid #fff;
   border-radius: 100px;
@@ -546,9 +546,9 @@
   opacity: 1;
 }
 
-/* X close — square, sits at the right of the row; reset button chrome */
+/* X close — square (matches burger 54px), sits at the right; reset chrome */
 .project-menu__item--close {
-  width: 48px;
+  width: 54px;
   padding: 0;
   font: inherit;
 }
@@ -658,11 +658,14 @@
     margin: -27px 0 0 0;
   }
 
-  /* Full-width vertical menu; Contact joins the list, X sits top-right */
+  /* Full-width vertical menu; Contact joins the list, X sits top-right.
+     No panel padding so the close X hugs the right gutter; pull up by half
+     its height (27px) so it lands exactly over the burger (nav vertical centre). */
   .project-menu {
-    top: var(--nav-height);
+    top: calc(var(--nav-height) / 2);
     width: calc(100vw - 2 * var(--gutter));
-    transform: translateX(-50%);
+    padding: 0;
+    transform: translate(-50%, -27px);
     flex-direction: column;
     align-items: flex-end;
     gap: var(--space-xs);
