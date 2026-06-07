@@ -365,7 +365,7 @@ function initProjectReveals() {
       stagger: 0.12,
       ease: 'power3.out',
     }),
-    start: isMobile ? '10% bottom' : 'top 80%',
+    start: isMobile ? '10% bottom' : 'top 95%',
     once: true,
   });
 
