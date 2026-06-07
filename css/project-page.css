@@ -144,21 +144,19 @@
   cursor: pointer;
 }
 
-/* Hover vignette — mirrors index work/personal images */
-.project-page__section-image::after,
-.project-page__image-frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+/* Hover edge-fade — mirrors index work/personal images.
+   --edge-fade declared in style.css :root via @property. */
+.project-page__section-image img,
+.project-page__image-frame img {
+  --edge-fade: 100%;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  transition: transform 0.5s var(--ease-out), --edge-fade 0.4s ease;
 }
 
-.project-page__section-image:hover::after,
-.project-page__section--image-only:hover .project-page__image-frame::after {
-  opacity: 1;
+.project-page__section-image:hover img,
+.project-page__section--image-only:hover .project-page__image-frame img {
+  --edge-fade: 55%;
 }
 
 /* ── Section: image only ─────────────────────────────── */

@@ -307,6 +307,14 @@ body {
   initial-value: 0px;
 }
 
+/* Edge-fade hover: how far the image stays fully opaque before its
+   edges mask out to transparent. 100% = no fade, 55% = soft faded edges. */
+@property --edge-fade {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
 /* Flat pill — white outline, transparent fill. On hover a white ball
    grows from the cursor and masks text/icon to black (see main.js). */
 .btn-cta,
@@ -719,11 +727,15 @@ body.is-project-view .scroll-bg {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  transition: transform 0.5s var(--ease-out);
+  --edge-fade: 100%;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  transition: transform 0.5s var(--ease-out), --edge-fade 0.4s ease;
 }
 
 .work__project-image:hover img {
   transform: scale(1.03);
+  --edge-fade: 55%;
 }
 
 .work__see-more {
@@ -738,19 +750,8 @@ body.is-project-view .scroll-bg {
 }
 
 
-.work__project-image::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
-.work__project-image:hover::after,
-.work__project-image:focus-visible::after {
-  opacity: 1;
+.work__project-image:focus-visible img {
+  --edge-fade: 55%;
 }
 
 
@@ -806,26 +807,19 @@ body.is-project-view .scroll-bg {
   width: 100%;
   height: auto;
   display: block;
-  transition: transform 0.5s var(--ease-out);
+  --edge-fade: 100%;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 var(--edge-fade), transparent 100%);
+  transition: transform 0.5s var(--ease-out), --edge-fade 0.4s ease;
 }
 
 .personal-work__item:hover .personal-work__media img {
   transform: scale(1.03);
 }
 
-.personal-work__media::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
-.personal-work__item:hover .personal-work__media::after,
-.personal-work__item:focus-visible .personal-work__media::after {
-  opacity: 1;
+.personal-work__item:hover .personal-work__media img,
+.personal-work__item:focus-visible .personal-work__media img {
+  --edge-fade: 55%;
 }
 
 /* ── About ──────────────────────────────────────────── */
