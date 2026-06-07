@@ -59,8 +59,9 @@ export function initLetsTalk(lenis) {
   function trackAbout() {
     if (!tracking) return;
     const r = aboutAnchor.getBoundingClientRect();
-    setL(r.left);
-    setT(r.top);
+    const p = clampPos({ left: r.left, top: r.top });
+    setL(p.left);
+    setT(p.top);
   }
 
   // ── Appear at nav ─────────────────────────────────────
@@ -102,8 +103,9 @@ export function initLetsTalk(lenis) {
 
     // Nadir: midpoint dips 110px below the lower of the two endpoints.
     // Button may pass off-screen — intentional.
-    const arcX = (fromL + dest.left) / 2;
-    const arcY = Math.max(fromT, dest.top) + 110;
+    const arc  = clampPos({ left: (fromL + dest.left) / 2, top: Math.max(fromT, dest.top) + 110 });
+    const arcX = arc.left;
+    const arcY = arc.top;
 
     tween = gsap.timeline();
 
@@ -139,10 +141,11 @@ export function initLetsTalk(lenis) {
         },
         onUpdate() {
           const r = aboutAnchor.getBoundingClientRect();
-          gsap.set(btn, {
+          const p = clampPos({
             left: r.left + offsetX * spring.t,
             top:  r.top  + offsetY * spring.t,
           });
+          gsap.set(btn, { left: p.left, top: p.top });
         },
         onComplete() {
           tracking = true;
@@ -177,6 +180,18 @@ export function initLetsTalk(lenis) {
   // ── Reduced motion check ─────────────────────────────
   const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isCoarse = matchMedia('(pointer: coarse)').matches;
+
+  // ── Mobile arc clamp — keep button within the viewport ─
+  const CLAMP_MARGIN = 16;
+  function clampPos(pos) {
+    if (!(isCoarse || window.innerWidth <= 768)) return pos;
+    const w = btn.offsetWidth;
+    const h = btn.offsetHeight;
+    return {
+      left: Math.max(CLAMP_MARGIN, Math.min(pos.left, window.innerWidth  - w - CLAMP_MARGIN)),
+      top:  Math.max(CLAMP_MARGIN, Math.min(pos.top,  window.innerHeight - h - CLAMP_MARGIN)),
+    };
+  }
 
 
   // ── Mail emoji animation ─────────────────────────────

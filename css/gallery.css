@@ -153,3 +153,67 @@
 .gallery-overlay__thumb:hover:not(.is-active) {
   opacity: 0.6;
 }
+
+/* ── Responsive: mobile — horizontal strip on top ───── */
+
+@media (max-width: 768px) {
+  .gallery-overlay {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Sidebar → full-width top bar */
+  .gallery-overlay__sidebar {
+    position: static;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    order: -1;
+    padding: var(--gutter) var(--gutter) 0;
+  }
+
+  /* Filmstrip → horizontal, native-scrollable, side fades */
+  .gallery-overlay__filmstrip {
+    flex: 0 0 auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-top: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  }
+
+  .gallery-overlay__filmstrip-track {
+    flex-direction: row;
+    gap: var(--space-xs);
+    padding-top: 0;
+  }
+
+  .gallery-overlay__thumb {
+    width: 64px;
+    flex: 0 0 auto;
+  }
+
+  /* Panel → fills below the strip */
+  .gallery-overlay__panel {
+    position: static;
+    inset: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .gallery-overlay__main {
+    padding: 0 var(--gutter) var(--gutter);
+  }
+
+  .gallery-overlay__close {
+    top: 16px;
+    left: 16px;
+    z-index: 20;
+  }
+}

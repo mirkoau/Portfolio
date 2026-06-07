@@ -1,7 +1,7 @@
 import { contentReady, data } from './content.js';
 
 let flatIndex       = 0;
-let personalList    = [];
+let activeList      = [];
 let triggerEl       = null;
 let lenis           = null;
 let filmstripTrack  = null;
@@ -12,21 +12,21 @@ const filmstrip = overlay.querySelector('.gallery-overlay__filmstrip');
 const sidebar   = overlay.querySelector('.gallery-overlay__sidebar');
 const closeBtn  = overlay.querySelector('.gallery-overlay__close');
 const backdrop  = overlay.querySelector('.gallery-overlay__backdrop');
+const panel     = overlay.querySelector('.gallery-overlay__panel');
+const mqMobile  = window.matchMedia('(max-width: 768px)');
 
 export async function initGallery(lenisInstance) {
   lenis = lenisInstance ?? null;
   await contentReady;
 
-  buildPersonalList();
+  const personalList = buildPersonalList();
 
-  // Personal work triggers only
+  // Personal work triggers
   const personalTriggers = document.querySelectorAll('[data-personal-trigger]');
   personalTriggers.forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.personalIdx, 10);
-      triggerEl = btn;
-      rebuildFilmstrip();
-      openOverlay(idx);
+      openGallery(personalList, idx, btn);
     });
   });
 
@@ -40,7 +40,7 @@ export async function initGallery(lenisInstance) {
 
   overlay.addEventListener('wheel', e => {
     e.preventDefault();
-    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, personalList.length - 1));
+    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
     else              setActive(Math.max(flatIndex - 1, 0));
   }, { passive: false });
 
@@ -51,34 +51,52 @@ export async function initGallery(lenisInstance) {
   filmstrip.addEventListener('wheel', e => {
     e.stopPropagation();
     e.preventDefault();
-    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, personalList.length - 1));
+    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
     else              setActive(Math.max(flatIndex - 1, 0));
   }, { passive: false });
 
-  // Touch swipe
+  // Touch swipe — scoped to the image panel so swiping the strip itself
+  // (native horizontal scroll on mobile) doesn't also advance the image.
   let touchX0 = 0, touchY0 = 0;
-  overlay.addEventListener('touchstart', e => {
+  const swipeTarget = panel ?? overlay;
+  swipeTarget.addEventListener('touchstart', e => {
     touchX0 = e.changedTouches[0].clientX;
     touchY0 = e.changedTouches[0].clientY;
   }, { passive: true });
-  overlay.addEventListener('touchend', e => {
+  swipeTarget.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - touchX0;
     const dy = e.changedTouches[0].clientY - touchY0;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-      if (dx < 0) setActive(Math.min(flatIndex + 1, personalList.length - 1));
+      if (dx < 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
       else        setActive(Math.max(flatIndex - 1, 0));
     }
   }, { passive: true });
+
+  // Re-center on breakpoint cross — strip axis flips, clear stale transform
+  mqMobile.addEventListener('change', () => {
+    if (overlay.hidden || !filmstripTrack) return;
+    gsap.set(filmstripTrack, { x: 0, y: 0 });
+    setActive(flatIndex);
+  });
+}
+
+// Open the overlay with an arbitrary list of { src, alt, caption }.
+export function openGallery(list, idx, trigger) {
+  if (!list || !list.length) return;
+  activeList = list;
+  triggerEl = trigger ?? null;
+  rebuildFilmstrip();
+  openOverlay(idx);
 }
 
 function buildPersonalList() {
-  personalList = data.personalWork.items.map(item => ({
+  return data.personalWork.items.map(item => ({
     src: item.src, alt: item.alt, caption: item.caption,
   }));
 }
 
 function rebuildFilmstrip() {
-  const items = personalList.map((item, i) => `
+  const items = activeList.map((item, i) => `
     <button class="gallery-overlay__thumb" role="option" data-idx="${i}" aria-label="Image ${i + 1}">
       <img src="${item.src}" alt="${item.alt}" loading="lazy" />
     </button>`).join('');
@@ -88,7 +106,7 @@ function rebuildFilmstrip() {
 
 function setActive(idx) {
   flatIndex = idx;
-  const item = personalList[idx];
+  const item = activeList[idx];
   mainImg.src = item.src;
   mainImg.alt = item.alt;
   caption.textContent = item.caption;
@@ -98,9 +116,15 @@ function setActive(idx) {
   });
   const activeThumb = filmstripTrack && filmstripTrack.querySelector('.gallery-overlay__thumb.is-active');
   if (activeThumb) {
-    const peekAmount = Math.round(activeThumb.offsetHeight * 0.4);
-    const targetY = -Math.max(0, activeThumb.offsetTop - peekAmount);
-    gsap.to(filmstripTrack, { y: targetY, duration: 0.4, ease: 'power2.out' });
+    if (mqMobile.matches) {
+      // Horizontal strip is natively scrollable — center via scroll, no transform
+      gsap.set(filmstripTrack, { x: 0, y: 0 });
+      activeThumb.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    } else {
+      const peekAmount = Math.round(activeThumb.offsetHeight * 0.4);
+      const targetY = -Math.max(0, activeThumb.offsetTop - peekAmount);
+      gsap.to(filmstripTrack, { y: targetY, duration: 0.4, ease: 'power2.out' });
+    }
   }
 }
 
@@ -175,6 +199,6 @@ function _hide() {
 function onKey(e) {
   if (overlay.hidden) return;
   if (e.key === 'Escape')     { closeOverlay(); return; }
-  if (e.key === 'ArrowRight') { setActive(Math.min(flatIndex + 1, personalList.length - 1)); }
+  if (e.key === 'ArrowRight') { setActive(Math.min(flatIndex + 1, activeList.length - 1)); }
   if (e.key === 'ArrowLeft')  { setActive(Math.max(flatIndex - 1, 0)); }
 }
