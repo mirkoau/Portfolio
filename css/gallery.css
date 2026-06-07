@@ -148,7 +148,7 @@
 
 .gallery-overlay__thumb.is-active {
   opacity: 0.5;
-  border-color: var(--color-yellow);
+  border-color: var(--color-teal);
 }
 
 .gallery-overlay__thumb:hover:not(.is-active) {
