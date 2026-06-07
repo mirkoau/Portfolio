@@ -614,6 +614,10 @@ body.is-project-view .scroll-bg {
 .section-label {
   position: sticky;
   top: calc(var(--nav-height) + var(--space-md));
+  /* Promote to its own compositor layer — Firefox Android stutters sticky
+     elements during the toolbar slide unless they're GPU-composited. */
+  will-change: transform;
+  transform: translateZ(0);
   display: block;
   font-family: var(--font-display);
   font-style: italic;
