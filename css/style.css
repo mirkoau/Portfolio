@@ -964,6 +964,12 @@ body.is-project-view .scroll-bg {
   }
   .work__entry { padding: var(--space-md); }
   .work__intro { max-width: none; }
+  /* Drop the desktop negative-offset; would overflow left when stacked */
+  .work__project-body,
+  .work__see-more {
+    margin-left: 0;
+    margin-right: 0;
+  }
 
   /* Personal — single column, reset staggered offsets */
   .personal-work__grid {
