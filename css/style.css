@@ -594,12 +594,16 @@ body.is-project-view .scroll-bg {
 
 .section-label {
   position: sticky;
-  top: calc(var(--nav-height) + var(--space-md));
+  /* Pin in the nav band so the label centers at the same height as the
+     flying Contact button (which sits centered in the nav). */
+  top: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
   /* Promote to its own compositor layer — Firefox Android stutters sticky
      elements during the toolbar slide unless they're GPU-composited. */
   will-change: transform;
   transform: translateZ(0);
-  display: block;
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
@@ -735,7 +739,7 @@ body.is-project-view .scroll-bg {
 
 .work__project-image:hover img {
   transform: scale(1.03);
-  --edge-fade: 30%;
+  --edge-fade: 80%;
 }
 
 .work__see-more {
@@ -751,7 +755,7 @@ body.is-project-view .scroll-bg {
 
 
 .work__project-image:focus-visible img {
-  --edge-fade: 30%;
+  --edge-fade: 80%;
 }
 
 
@@ -819,7 +823,7 @@ body.is-project-view .scroll-bg {
 
 .personal-work__item:hover .personal-work__media img,
 .personal-work__item:focus-visible .personal-work__media img {
-  --edge-fade: 30%;
+  --edge-fade: 80%;
 }
 
 /* ── About ──────────────────────────────────────────── */
