@@ -654,7 +654,7 @@
     width: calc(100vw - 2 * var(--gutter));
     transform: translateX(-50%);
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-end;
     gap: var(--space-xs);
   }
 
@@ -671,4 +671,7 @@
 
   /* Contact moves into the menu, so hide the flying nav pill on subpages */
   body.is-project-view > .btn-cta { display: none; }
+
+  /* Drop the nav__cta anchor on subpages so the burger hugs the right edge */
+  body.is-project-view .nav__cta { display: none; }
 }
