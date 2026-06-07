@@ -8,13 +8,34 @@
   "hero": { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron UI/UX work" },
   "sections": [
     {
-      "type": "text",
+      "type": "image-right",
+      "src": "assets/images/cleveron_home-locker_wireframes.png",
+      "alt": "Cleveron home locker mobile app — wireframe flows",
       "content": [
-        "Cleveron creates lockers and APMs (advanced parcel machines) bringing ease and efficiency to last mile logistics.",
-        "I joined Cleveron in 2020, when it had grown out of its original start-up status. However the company had kept the encouraging hands-on mindset, giving me the opportunity to introduce new ways of working for design and development processes."
+        "I was an in-house designer at Cleveron, a company building robotic parcel lockers that carry packages all the way from the warehouse to the end user's hands. Because the product spanned that whole journey, so did my work. I designed the touchscreens people use to send and receive parcels, the mobile app for folks operating their home lockers, the office software companies rely on to manage parcels, lockers, invoices, and allocations, and the internal tooling our own teams used to build the hardware — including AR software that showed assembly workers exactly which pieces to grab when putting a locker together."
       ]
     },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Cleveron APM touchscreen interface", "caption": "Cleveron — APM touchscreen interface" },
-    { "type": "image", "src": "assets/images/placeholder.svg", "alt": "Cleveron logistics web portal", "caption": "Cleveron — logistics web portal" }
+    {
+      "type": "image-left",
+      "src": "assets/images/cleveron_component-library.png",
+      "alt": "Cleveron Figma component library — hundreds of components and variants",
+      "content": [
+        "One of the first things I did was move the team over to Figma and build a component library from the ground up — hundreds of components and thousands of variants. It became the foundation that sped up nearly every design effort that followed, giving the whole team a consistent, reusable system to work from instead of rebuilding the same interface pieces over and over."
+      ]
+    },
+    {
+      "type": "text-only",
+      "content": [
+        "My goal was an interface that explains itself — so the 40-page manual stops being a prerequisite."
+      ]
+    },
+    {
+      "type": "image-left",
+      "src": "assets/images/cleveron_office-software.png",
+      "alt": "Cleveron office software — APM slot layout and allocation management",
+      "content": [
+        "I also took on a full redesign of the office software, reshaping it to feel more user-friendly and contemporary. The old version basically expected people to read a 40-page PDF manual before they could use it; my goal was an interface that explained itself, so the manual stopped being a prerequisite."
+      ]
+    }
   ]
 }
