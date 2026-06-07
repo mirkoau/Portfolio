@@ -938,21 +938,25 @@ body.is-project-view .scroll-bg {
 
   .hero { padding-top: calc(var(--nav-height) + 80px); }
 
-  /* Stack sections, label becomes inline heading on top */
+  /* Stack sections; label sticks to header as the section scrolls */
   .work,
   .personal-work,
   .about {
     flex-direction: column;
+    padding-top: var(--space-xl);
   }
 
+  /* Dissolve the aside box so the label's sticky container becomes the
+     full-height section (a short aside box would give it no travel) */
   .section-aside {
-    width: auto;
-    padding-left: var(--gutter);
+    display: contents;
   }
 
   .section-label {
-    position: static;
     width: auto;
+    padding-left: var(--gutter);
+    margin-bottom: var(--space-md);
+    top: calc(var(--nav-height) + var(--space-sm));
   }
 
   .section-main { padding: 0 var(--gutter); }
