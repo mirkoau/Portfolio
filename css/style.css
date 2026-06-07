@@ -735,7 +735,7 @@ body.is-project-view .scroll-bg {
 
 .work__project-image:hover img {
   transform: scale(1.03);
-  --edge-fade: 55%;
+  --edge-fade: 30%;
 }
 
 .work__see-more {
@@ -751,7 +751,7 @@ body.is-project-view .scroll-bg {
 
 
 .work__project-image:focus-visible img {
-  --edge-fade: 55%;
+  --edge-fade: 30%;
 }
 
 
@@ -819,7 +819,7 @@ body.is-project-view .scroll-bg {
 
 .personal-work__item:hover .personal-work__media img,
 .personal-work__item:focus-visible .personal-work__media img {
-  --edge-fade: 55%;
+  --edge-fade: 30%;
 }
 
 /* ── About ──────────────────────────────────────────── */

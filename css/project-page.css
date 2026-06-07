@@ -156,7 +156,7 @@
 
 .project-page__section-image:hover img,
 .project-page__section--image-only:hover .project-page__image-frame img {
-  --edge-fade: 55%;
+  --edge-fade: 30%;
 }
 
 /* ── Section: image only ─────────────────────────────── */
