@@ -5,8 +5,11 @@ export function initHeroBg() {
   if (typeof THREE === 'undefined') return null;
 
   // ── Renderer — fixed full-viewport, behind all content ─
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  // Coarse pointers (mobile): cap render res lower. Gradient is smooth +
+  // low-freq, so fewer pixels is imperceptible but slashes fragment cost.
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !coarse });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const canvas = renderer.domElement;
@@ -100,7 +103,7 @@ export function initHeroBg() {
       float val = 0.0;
       float amp = 0.55;
       float freq = 1.0;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < OCTAVES; i++) {
         val += amp * snoise(p * freq);
         freq *= 1.8;
         amp *= 0.45;
@@ -231,10 +234,14 @@ export function initHeroBg() {
     }
   `;
 
+  // Mobile: 3 FBM octaves (drop high-freq detail, ~2 fewer snoise/px).
+  // Desktop: full 4.
+  const octaves = coarse ? 3 : 4;
+
   const liquidMat = new THREE.ShaderMaterial({
     uniforms: liquidUniforms,
     vertexShader: liquidVert,
-    fragmentShader: liquidFrag,
+    fragmentShader: `#define OCTAVES ${octaves}\n` + liquidFrag,
     depthWrite: false,
     extensions: { derivatives: true },
   });
