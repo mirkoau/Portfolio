@@ -579,7 +579,13 @@ body.is-project-view .scroll-bg {
 
 .scroll-bg {
   position: fixed;
-  inset: 0;
+  /* Bleed past the safe areas (viewport-fit=cover) + 140px bottom overscan so
+     the darkening covers behind the iOS bottom bar + Firefox toolbar strip —
+     matching the shader canvas, no uncovered gap. */
+  top: calc(-1 * env(safe-area-inset-top, 0px));
+  right: calc(-1 * env(safe-area-inset-right, 0px));
+  bottom: calc(-140px - env(safe-area-inset-bottom, 0px));
+  left: calc(-1 * env(safe-area-inset-left, 0px));
   z-index: -1;
   background: color-mix(in lab, var(--color-bg) 20%, transparent);
   opacity: 0;
