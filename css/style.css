@@ -299,145 +299,104 @@ body {
 
 /* ── Buttons ────────────────────────────────────────── */
 
-/* iOS Glass Silver — shared base */
+/* Animatable radius for the cursor-fill ball (clip-path can't tween
+   on its own; a registered custom prop can). See button-fill in main.js. */
+@property --btn-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+/* Flat pill — white outline, transparent fill. On hover a white ball
+   grows from the cursor and masks text/icon to black (see main.js). */
 .btn-cta,
 .btn-secondary,
 .work__see-more,
 .nav__burger {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px;
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 500;
   font-size: 18px;
   letter-spacing: -0.01em;
-  color: rgba(245, 240, 230, 0.82);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition:
-    transform 0.25s var(--ease-spring),
-    box-shadow var(--duration-base) var(--ease-out),
-    background var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out);
-  background:
-    linear-gradient(180deg,
-      rgba(248, 242, 230, 0.06) 0%,
-      rgba(248, 242, 230, 0.01) 50%,
-      rgba(0, 0, 0, 0.05) 100%),
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.11) 0%,
-      rgba(248, 242, 230, 0.035) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.06) 100%);
-  border: 1px solid rgba(238, 230, 214, calc(0.14 * var(--be, 1)));
-  border-top-color: rgba(252, 246, 234, var(--hlt, 0.42));
-  border-bottom-color: rgba(0, 0, 0, 0.16);
-  border-radius: 12px;
-  padding: 10px 20px;
-  backdrop-filter: blur(20px) saturate(135%);
-  -webkit-backdrop-filter: blur(20px) saturate(135%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, var(--hlt, 0.42)),
-    inset 0 -1px 0 rgba(255, 255, 255, var(--hlb, 0)),
-    inset 0 -1px 0 rgba(0, 0, 0, calc(0.22 * var(--idb, 1))),
-    inset 0 1px 0 rgba(0, 0, 0, calc(0.22 * var(--idt, 0))),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 calc(6px * var(--shb, 1)) calc(20px * var(--shb, 1)) rgba(0, 0, 0, calc(0.18 * var(--shb, 1))),
-    0 calc(12px * var(--shb, 1)) calc(40px * var(--shb, 1)) rgba(0, 0, 0, calc(0.12 * var(--shb, 1))),
-    0 calc(-6px * var(--sht, 0)) calc(20px * var(--sht, 0)) rgba(0, 0, 0, calc(0.18 * var(--sht, 0))),
-    0 calc(-12px * var(--sht, 0)) calc(40px * var(--sht, 0)) rgba(0, 0, 0, calc(0.12 * var(--sht, 0)));
+  color: #fff;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 100px;
+  height: 54px;
+  padding: 15px 15px 15px 20px;
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
   overflow: hidden;
+  --btn-mx: 50%;
+  --btn-my: 50%;
+  --btn-r: 0px;
+  transition:
+    --btn-r 0.55s var(--ease-out),
+    transform 0.25s var(--ease-spring),
+    box-shadow var(--duration-base) var(--ease-out);
   transform: scale(1);
 }
 
-/* Top edge highlight line */
-.btn-cta::before,
-.btn-secondary::before,
-.work__see-more::before,
-.nav__burger::before {
-  content: '';
+/* Fixed-width text pills (Figma) */
+.nav__cta,
+.nav__back,
+.work__see-more {
+  width: 200px;
+}
+
+/* White ball that grows from the cursor, carrying a black copy of the
+   label so text/icons invert as it sweeps over them. Single layer above
+   the base content; the clone's colors are forced black inline in JS, so
+   no component rule (e.g. .project-menu__label) can override them. */
+.btn-fill {
   position: absolute;
-  top: 0;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 252, 244, var(--hlt, 0.45)), transparent);
+  inset: 0;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit;
+  gap: inherit;
+  padding: inherit;
+  background: #fff;
+  color: #000;
+  clip-path: circle(var(--btn-r, 0px) at var(--btn-mx, 50%) var(--btn-my, 50%));
   pointer-events: none;
   z-index: 2;
 }
 
-/* Hover: scale + fill brighten */
+/* Hover: slight scale + drop shadow (fill driven by JS) */
 .btn-cta:hover,
 .btn-secondary:hover,
 .work__see-more:hover,
 .nav__burger:hover {
-  color: rgba(255, 255, 255, 0.95);
   transform: scale(1.04);
-  background:
-    linear-gradient(180deg,
-      rgba(251, 246, 235, 0.13) 0%,
-      rgba(248, 242, 230, 0.06) 100%),
-    linear-gradient(180deg,
-      rgba(248, 242, 230, 0.06) 0%,
-      rgba(248, 242, 230, 0.01) 50%,
-      rgba(0, 0, 0, 0.05) 100%),
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.11) 0%,
-      rgba(248, 242, 230, 0.035) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.06) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.22),
-    0 14px 44px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 8px 6px rgba(0, 0, 0, 0.6);
 }
 
-/* Pressed: scale down + deep inset */
+/* Pressed */
 .btn-cta:active,
 .btn-secondary:active,
 .work__see-more:active,
 .nav__burger:active {
-  transform: scale(0.94);
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.35),
-    0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: scale(0.96);
 }
-
 
 .btn-cta:focus-visible,
 .btn-secondary:focus-visible,
 .work__see-more:focus-visible,
 .nav__burger:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline: 2px solid rgba(255, 255, 255, 0.6);
   outline-offset: 3px;
 }
 
-/* Alt button — lighter weight */
-.btn-secondary {
-  font-weight: 700;
-  font-size: 14px;
-  padding: 10px 22px;
-  background:
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.07) 0%,
-      rgba(248, 242, 230, 0.02) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.04) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, calc(var(--hlt, 0.42) * 0.71)),
-    inset 0 -1px 0 rgba(255, 255, 255, calc(var(--hlb, 0) * 0.71)),
-    inset 0 -1px 0 rgba(0, 0, 0, calc(0.16 * var(--idb, 1))),
-    inset 0 1px 0 rgba(0, 0, 0, calc(0.16 * var(--idt, 0))),
-    0 1px 3px rgba(0, 0, 0, 0.10),
-    0 calc(4px * var(--shb, 1)) calc(14px * var(--shb, 1)) rgba(0, 0, 0, calc(0.12 * var(--shb, 1))),
-    0 calc(-4px * var(--sht, 0)) calc(14px * var(--sht, 0)) rgba(0, 0, 0, calc(0.12 * var(--sht, 0)));
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta, .btn-secondary, .work__see-more, .nav__burger {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
 }
 
 .about .section-main {
@@ -454,10 +413,18 @@ body {
   margin-bottom: var(--space-xl);
 }
 
-.about__cta {
-  font-size: 45px;
-  padding: 18px 20px 18px 48px;
-  border-radius: 24px;
+/* Transformed (flying button lands here) — big stadium pill.
+   height:auto so it isn't clamped to the base 54px; the flying button
+   reads this anchor's geometry for its morph target. --about mirrors
+   the padding/gap onto the flying button itself. */
+.about__cta,
+.btn-cta--about {
+  height: auto;
+  font-size: 42px;
+  line-height: 1;
+  padding: 22px 36px;
+  gap: 24px;
+  border-radius: 100px;
 }
 
 /* about section secondary overrides */

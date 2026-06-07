@@ -120,62 +120,6 @@ export function initScroll() {
 
   if (noMotion) return lenis;
 
-  // ── Glass scroll-light ─────────────────────────────────
-  // A fixed light sits at the top of the viewport. p: 0 = button
-  // at top (about to exit), 0.5 = centered, 1 = at bottom (entering).
-  //  • entering (p>0.5): top highlight + bottom shadow, shadow grows heavy.
-  //  • centered  (p=0.5): exact static default look.
-  //  • exiting   (p<0.5): light passes overhead — top highlight and
-  //    bottom shadow slowly swap to the opposite edges.
-  // Drives --hlt/--hlb (edge highlights), --idt/--idb (inner darks),
-  // --sht/--shb (drop shadows). CSS fallbacks keep the static look.
-  const VARS = ['--hlt', '--hlb', '--idt', '--idb', '--sht', '--shb', '--be'];
-
-  function updateGlass() {
-    const H = window.innerHeight;
-    document.querySelectorAll('.btn-cta, .btn-secondary, .work__see-more').forEach(el => {
-      // Header buttons are fixed — don't react (incl. flying Contact docked in nav).
-      // Clear any inline vars so they fall back to the static default look.
-      if (el.closest('.nav') || el.classList.contains('btn-cta--nav') || el.classList.contains('gallery-overlay__close')) {
-        VARS.forEach(v => el.style.removeProperty(v));
-        return;
-      }
-      const r = el.getBoundingClientRect();
-      if (r.height === 0) return;
-      const p = Math.min(1, Math.max(0, (r.top + r.height / 2) / H));
-
-      let hlt, hlb, idt, idb, sht, shb;
-      if (p >= 0.5) {
-        const w = (p - 0.5) / 0.5;          // 0 centered .. 1 entering bottom
-        hlt = Math.max(0, 0.42 - 0.70 * w); // no top highlight until ~20% in view, then ramps to center
-        hlb = 0;
-        idt = 0; idb = 1;
-        sht = 0; shb = 1 + 2.4 * w;         // bottom shadow grows heavy
-      } else {
-        // Swap centered at ~80% travel (p≈0.20), eased with a smoothstep
-        // so the flip still feels like a natural light shift.
-        let s = (0.29 - p) / (0.29 - 0.11);
-        s = Math.min(1, Math.max(0, s));
-        const u = s * s * (3 - 2 * s);      // 0 above band .. 1 below band
-        hlt = 0.42 * (1 - u);              // top highlight → bottom highlight
-        hlb = 0.42 * u;
-        idt = u; idb = 1 - u;              // inner dark edge follows
-        sht = u; shb = 1 - u;              // bottom shadow → top shadow
-      }
-      el.style.setProperty('--hlt', hlt.toFixed(3));
-      el.style.setProperty('--hlb', hlb.toFixed(3));
-      el.style.setProperty('--idt', idt.toFixed(3));
-      el.style.setProperty('--idb', idb.toFixed(3));
-      el.style.setProperty('--sht', sht.toFixed(3));
-      el.style.setProperty('--shb', shb.toFixed(3));
-      // left/right edge brightness follows whichever edge is lit
-      el.style.setProperty('--be', Math.min(1, Math.max(hlt, hlb) / 0.42).toFixed(3));
-    });
-  }
-  lenis.on('scroll', updateGlass);
-  window.addEventListener('resize', updateGlass);
-  updateGlass();
-
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const START = isMobile ? '10% bottom' : '15% bottom';
 

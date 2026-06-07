@@ -83,12 +83,17 @@ function renderMenuRows(projects, currentId) {
     <a class="project-menu__item" href="#/work/${p.id}">
       <span class="project-menu__label">${p.title}</span>
     </a>`).join('');
+  // Contact lives in the menu on mobile only (desktop uses the flying button)
+  const contact = `
+    <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email">
+      <span class="project-menu__label">Contact</span>
+    </a>`;
   const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
   const close = `
     <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu">
       <span class="project-menu__label">${closeSvg}</span>
     </button>`;
-  return rows + close;
+  return rows + contact + close;
 }
 
 async function render(project, lenis) {
@@ -129,7 +134,7 @@ async function render(project, lenis) {
   // Reveals + contact button + burger menu + image gallery
   const cleanReveals = initProjectReveals();
   const cleanFooterArrows = initFooterArrows();
-  const cleanBurgerMenu = initBurgerMenu();
+  const cleanBurgerMenu = initBurgerMenu(lenis);
   const cleanGallery = initProjectGallery();
   const cleanHeroParallax = initHeroParallax(lenis);
   showForProject();
@@ -375,7 +380,7 @@ function initProjectReveals() {
 
 // ── Burger menu: reveal + open/close ──────────────────
 
-function initBurgerMenu() {
+function initBurgerMenu(lenis) {
   const burger   = document.querySelector('.nav__burger');
   const panel    = container.querySelector('.project-menu');
   const backdrop = container.querySelector('.project-menu__backdrop');
@@ -414,11 +419,15 @@ function initBurgerMenu() {
   const onBackdrop = () => setOpen(false);
   const onRow      = () => setOpen(false);              // navigation happens via href
   const onKey      = (e) => { if (e.key === 'Escape' && open) { setOpen(false); burger.focus(); } };
+  const onScroll   = () => { if (open) setOpen(false); };  // close on any scroll intent
 
   burger.addEventListener('click', onBurger);
   backdrop.addEventListener('click', onBackdrop);
   panel.querySelectorAll('.project-menu__item').forEach(r => r.addEventListener('click', onRow));
   document.addEventListener('keydown', onKey);
+  window.addEventListener('wheel', onScroll, { passive: true });
+  window.addEventListener('touchmove', onScroll, { passive: true });
+  if (lenis) lenis.on('scroll', onScroll);
 
   // Visible for the whole project page
   burger.classList.add('nav__burger--visible');
@@ -428,6 +437,9 @@ function initBurgerMenu() {
     burger.removeEventListener('click', onBurger);
     backdrop.removeEventListener('click', onBackdrop);
     document.removeEventListener('keydown', onKey);
+    window.removeEventListener('wheel', onScroll);
+    window.removeEventListener('touchmove', onScroll);
+    if (lenis) lenis.off('scroll', onScroll);
     burger.classList.remove('nav__burger--visible', 'nav__burger--open');
     burger.setAttribute('aria-expanded', 'false');
     burger.hidden = true;

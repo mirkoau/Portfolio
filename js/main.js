@@ -51,17 +51,18 @@ navBack.addEventListener('click', (e) => {
 });
 
 // ── Back arrow animation (mirrors See More arrow) ────
-const backArrow = navBack.querySelector('.nav__back-arrow');
-if (backArrow && typeof gsap !== 'undefined') {
+if (navBack.querySelector('.nav__back-arrow') && typeof gsap !== 'undefined') {
+  // querySelectorAll each time so the masked top-layer copy stays in sync
+  const arrows = () => navBack.querySelectorAll('.nav__back-arrow');
   navBack.addEventListener('mouseenter', () => {
     gsap.timeline()
-      .to(backArrow, { x: -20, opacity: 0, duration: 0.25, ease: 'power3.in' })
-      .set(backArrow, { x: 12 })
-      .to(backArrow, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+      .to(arrows(), { x: -20, opacity: 0, duration: 0.25, ease: 'power3.in' })
+      .set(arrows(), { x: 12 })
+      .to(arrows(), { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
   });
 
   navBack.addEventListener('mouseleave', () => {
-    gsap.to(backArrow, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+    gsap.to(arrows(), { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
   });
 }
 
@@ -82,6 +83,56 @@ function showIndex() {
   if (hero && hero.showCards) hero.showCards();
   if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
   if (lenis) lenis.start();
+}
+
+// ── Button cursor-fill ────────────────────────────────
+// White ball grows from the pointer + masks the label to black.
+// Delegated so dynamic buttons (see-more, project menu, flying Contact)
+// are covered with no per-render wiring.
+const FILL_SELECTOR =
+  '.btn-cta, .btn-secondary, .work__see-more, .nav__burger, .project-menu__item';
+const canHover = matchMedia('(hover: hover)').matches;
+
+function enhanceBtn(btn) {
+  if (btn.dataset.fill) return;
+  btn.dataset.fill = '1';
+  const fill = document.createElement('span');
+  fill.className = 'btn-fill';
+  fill.setAttribute('aria-hidden', 'true');
+  fill.innerHTML = btn.innerHTML;
+  // Force the cloned label/icons black — inline beats any component color
+  // rule (e.g. .project-menu__label) regardless of selector specificity.
+  fill.style.color = '#000';
+  fill.querySelectorAll('*').forEach(el => { el.style.color = '#000'; });
+  btn.append(fill);
+}
+
+if (canHover) {
+  document.addEventListener('pointerover', (e) => {
+    const btn = e.target.closest?.(FILL_SELECTOR);
+    if (!btn || btn.contains(e.relatedTarget)) return; // ignore moves between inner nodes
+    enhanceBtn(btn);
+    const r = btn.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    // radius reaches the farthest corner → ball always fully fills
+    const rad = Math.max(
+      Math.hypot(x, y), Math.hypot(r.width - x, y),
+      Math.hypot(x, r.height - y), Math.hypot(r.width - x, r.height - y),
+    );
+    btn.style.setProperty('--btn-mx', `${x}px`);
+    btn.style.setProperty('--btn-my', `${y}px`);
+    btn.style.setProperty('--btn-r', `${rad}px`);
+  });
+
+  document.addEventListener('pointerout', (e) => {
+    const btn = e.target.closest?.(FILL_SELECTOR);
+    if (!btn || btn.contains(e.relatedTarget)) return; // still inside
+    const r = btn.getBoundingClientRect();
+    btn.style.setProperty('--btn-mx', `${e.clientX - r.left}px`); // retract toward exit
+    btn.style.setProperty('--btn-my', `${e.clientY - r.top}px`);
+    btn.style.setProperty('--btn-r', '0px');
+  });
 }
 
 initRouter((route, prev) => {

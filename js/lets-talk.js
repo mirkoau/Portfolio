@@ -85,9 +85,11 @@ export function initLetsTalk(lenis) {
     state    = to;
     if (to === 'nav') {
       btn.classList.add('btn-cta--nav');
+      btn.classList.remove('btn-cta--about');
       if (linkedinBtn) gsap.to(linkedinBtn, { opacity: 0, duration: 0.3, ease: 'power2.in' });
     } else {
       btn.classList.remove('btn-cta--nav');
+      btn.classList.add('btn-cta--about');
     }
     if (tween) tween.kill();
     gsap.set(btn, { x: 0, y: 0 });
@@ -195,36 +197,39 @@ export function initLetsTalk(lenis) {
 
 
   // ── Mail emoji animation ─────────────────────────────
-  const emoji = btn.querySelector('.btn-emoji');
+  // querySelectorAll each time so the masked top-layer copy stays in sync
+  const emojis = () => btn.querySelectorAll('.btn-emoji');
   let emojiTween = null;
 
   function playMailAnim() {
-    if (!emoji || prefersReduced) return;
+    const els = emojis();
+    if (!els.length || prefersReduced) return;
     if (emojiTween) emojiTween.kill();
     emojiTween = gsap.timeline();
     // Lift + tilt like it's being sent
-    emojiTween.to(emoji, {
+    emojiTween.to(els, {
       y: -6, x: 4, rotation: -12, scale: 1.2,
       duration: 0.3, ease: 'power2.out',
     });
     // Little wiggle at the peak
-    emojiTween.to(emoji, {
+    emojiTween.to(els, {
       rotation: 8, duration: 0.15, ease: 'power1.inOut',
     });
-    emojiTween.to(emoji, {
+    emojiTween.to(els, {
       rotation: -6, duration: 0.12, ease: 'power1.inOut',
     });
     // Settle back with elastic bounce
-    emojiTween.to(emoji, {
+    emojiTween.to(els, {
       y: 0, x: 0, rotation: 0, scale: 1,
       duration: 0.6, ease: 'elastic.out(1, 0.4)',
     });
   }
 
   function resetMailAnim() {
-    if (!emoji || prefersReduced) return;
+    const els = emojis();
+    if (!els.length || prefersReduced) return;
     if (emojiTween) emojiTween.kill();
-    gsap.to(emoji, {
+    gsap.to(els, {
       y: 0, x: 0, rotation: 0, scale: 1,
       duration: 0.4, ease: 'power2.out',
     });
@@ -314,6 +319,7 @@ export function initLetsTalk(lenis) {
       tracking = false;
       state = 'nav';
       btn.classList.add('btn-cta--nav');
+      btn.classList.remove('btn-cta--about');
       const n = navTarget();
       gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height, x: 0, y: 0 });
     }

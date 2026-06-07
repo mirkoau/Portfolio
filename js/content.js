@@ -73,22 +73,22 @@ function initProjectLinks() {
 function initSeeMoreArrows() {
   if (typeof gsap === 'undefined') return;
   document.querySelectorAll('.work__project').forEach(project => {
-    const arrow = project.querySelector('.work__see-more-arrow');
-    if (!arrow) return;
+    const seeMore = project.querySelector('.work__see-more');
+    if (!seeMore || !seeMore.querySelector('.work__see-more-arrow')) return;
+
+    // querySelectorAll each time so the masked top-layer copy stays in sync
+    const arrows = () => seeMore.querySelectorAll('.work__see-more-arrow');
 
     // Hover — arrow shoots right and snaps back from left
-    const seeMore = project.querySelector('.work__see-more');
-    if (!seeMore) return;
-
     seeMore.addEventListener('mouseenter', () => {
       gsap.timeline()
-        .to(arrow, { x: 20, opacity: 0, duration: 0.25, ease: 'power3.in' })
-        .set(arrow, { x: -12 })
-        .to(arrow, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+        .to(arrows(), { x: 20, opacity: 0, duration: 0.25, ease: 'power3.in' })
+        .set(arrows(), { x: -12 })
+        .to(arrows(), { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
     });
 
     seeMore.addEventListener('mouseleave', () => {
-      gsap.to(arrow, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
+      gsap.to(arrows(), { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
     });
   });
 }

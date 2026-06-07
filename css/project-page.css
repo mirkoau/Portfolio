@@ -425,12 +425,13 @@
   width: 44px;
   height: 44px;
   padding: 0;
+  justify-content: center;
   opacity: 0;
   visibility: hidden;
   transition:
+    --btn-r 0.55s var(--ease-out),
     transform 0.25s var(--ease-spring),
     box-shadow var(--duration-base) var(--ease-out),
-    background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out),
     opacity 0.4s var(--ease-out),
     visibility 0.4s var(--ease-out);
@@ -511,76 +512,13 @@
   pointer-events: none;
 }
 
-/* Glass panel base — morphs from the burger button's size up to the full base
-   on open. Two stacked layers so the blur stays full-strength while the glass
-   tint sits at ~0.3: ::before = backdrop blur, ::after = button-glass tint. */
-.project-menu::before,
-.project-menu::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
-  border-radius: 12px;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 0;
-  transition:
-    width 0.4s var(--ease-out),
-    height 0.4s var(--ease-out),
-    border-radius 0.4s var(--ease-out),
-    opacity 0.4s var(--ease-out);
-}
-
-/* Frosted blur layer — full strength */
-.project-menu::before {
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
-}
-
-/* Glass tint layer — same style as the glass buttons, faded to ~0.3 */
-.project-menu::after {
-  border: 1px solid rgba(238, 230, 214, 0.14);
-  border-top-color: rgba(252, 246, 234, 0.42);
-  border-bottom-color: rgba(0, 0, 0, 0.16);
-  background:
-    linear-gradient(180deg,
-      rgba(248, 242, 230, 0.06) 0%,
-      rgba(248, 242, 230, 0.01) 50%,
-      rgba(0, 0, 0, 0.05) 100%),
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.11) 0%,
-      rgba(248, 242, 230, 0.035) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.06) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 6px 20px rgba(0, 0, 0, 0.18),
-    0 12px 40px rgba(0, 0, 0, 0.12);
-}
-
 .project-menu[hidden] { display: none; }
-
-.project-menu--open::before { opacity: 1; }
-.project-menu--open::after  { opacity: 0.3; }
-
-.project-menu--open::before,
-.project-menu--open::after {
-  width: 100%;
-  height: 100%;
-  border-radius: 18px;
-}
 
 .project-menu--open {
   pointer-events: all;
 }
 
-/* Menu rows — own component: compact glass buttons, label only.
-   Glass base lives on ::after. */
+/* Menu rows — outlined pill buttons, label only. No panel base. */
 .project-menu__item {
   position: relative;
   z-index: 1;
@@ -589,12 +527,17 @@
   justify-content: center;
   height: 48px;
   padding: 0 var(--space-md);
-  border-radius: 12px;
+  border: 1px solid #fff;
+  border-radius: 100px;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
   text-decoration: none;
   cursor: pointer;
   opacity: 0;
   /* fade in just behind the panel morph; delay only on opacity so hover stays snappy */
   transition:
+    --btn-r 0.55s var(--ease-out),
     transform 0.25s var(--ease-spring),
     opacity 0.25s var(--ease-out) 0.12s;
 }
@@ -607,100 +550,39 @@
 .project-menu__item--close {
   width: 48px;
   padding: 0;
-  background: none;
-  border: none;
   font: inherit;
-  color: inherit;
 }
 
-.project-menu__item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  border: 1px solid rgba(238, 230, 214, 0.14);
-  border-top-color: rgba(252, 246, 234, 0.42);
-  border-bottom-color: rgba(0, 0, 0, 0.16);
-  background:
-    linear-gradient(180deg,
-      rgba(248, 242, 230, 0.06) 0%,
-      rgba(248, 242, 230, 0.01) 50%,
-      rgba(0, 0, 0, 0.05) 100%),
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.11) 0%,
-      rgba(248, 242, 230, 0.035) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.06) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 1px 3px rgba(0, 0, 0, 0.12);
-  pointer-events: none;
-  z-index: 0;
-  transition:
-    background var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out);
+/* Contact lives in the menu on mobile only */
+.project-menu__item--contact {
+  display: none;
 }
 
 .project-menu__label {
   position: relative;
   z-index: 1;
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 500;
   font-size: 18px;
   letter-spacing: -0.01em;
-  color: rgba(245, 240, 230, 0.82);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
-/* Hover / active — glass brighten + scale like the buttons */
+/* Hover — slight scale + drop shadow (cursor-fill handles the rest) */
 .project-menu__item:hover {
   transform: scale(1.04);
-}
-
-.project-menu__item:hover::after {
-  background:
-    linear-gradient(180deg,
-      rgba(251, 246, 235, 0.13) 0%,
-      rgba(248, 242, 230, 0.06) 100%),
-    linear-gradient(180deg,
-      rgba(248, 242, 230, 0.06) 0%,
-      rgba(248, 242, 230, 0.01) 50%,
-      rgba(0, 0, 0, 0.05) 100%),
-    linear-gradient(135deg,
-      rgba(248, 242, 230, 0.11) 0%,
-      rgba(248, 242, 230, 0.035) 40%,
-      rgba(248, 242, 230, 0.01) 60%,
-      rgba(248, 242, 230, 0.06) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.22);
-}
-
-.project-menu__item:hover .project-menu__label {
-  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 6px rgba(0, 0, 0, 0.6);
 }
 
 .project-menu__item:active {
-  transform: scale(0.94);
-}
-
-.project-menu__item:active::after {
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.35),
-    0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: scale(0.96);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nav__burger,
   .nav__burger-line,
   .project-menu,
-  .project-menu::before,
-  .project-menu::after,
   .project-menu__item,
-  .project-menu__item::after,
   .project-menu__backdrop {
     transition: none;
   }
@@ -766,30 +648,27 @@
     height: 24px;
   }
 
-  /* Vertical menu list; burger itself becomes the X toggle */
+  /* Full-width vertical menu; Contact joins the list, X sits top-right */
   .project-menu {
     top: var(--nav-height);
+    width: calc(100vw - 2 * var(--gutter));
     transform: translateX(-50%);
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-xs);
   }
 
-  /* burger is the close affordance on mobile — drop the in-panel X */
-  .project-menu__item--close { display: none; }
+  /* Contact is part of the list on mobile */
+  .project-menu__item--contact {
+    display: flex;
+  }
 
-  /* Keep the burger visible + clickable while open, morph lines into an X */
-  .nav__burger--open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: all;
+  /* Close X — pull to the top-right of the stack */
+  .project-menu__item--close {
+    order: -1;
+    align-self: flex-end;
   }
-  .nav__burger--open .nav__burger-line:nth-child(1) {
-    transform: translateX(7px) rotate(45deg);
-  }
-  .nav__burger--open .nav__burger-line:nth-child(2) {
-    opacity: 0;
-  }
-  .nav__burger--open .nav__burger-line:nth-child(3) {
-    transform: translateX(-7px) rotate(-45deg);
-  }
+
+  /* Contact moves into the menu, so hide the flying nav pill on subpages */
+  body.is-project-view > .btn-cta { display: none; }
 }
