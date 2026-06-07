@@ -76,8 +76,9 @@ export function initHero(bg) {
   const TEXT_MAX_BLUR = 22;   // px (CSS) at full scroll-out
 
   // Text mesh that can blur via scroll. Sharp text drawn once to a source
-  // canvas; display canvas is re-rendered from it with ctx.filter blur, only
-  // when the quantized px changes. No geometry resize → top-of-page layout
+  // canvas; display canvas is re-rendered from it per quantized px. Blur via
+  // downscale→upscale (bilinear) — ctx.filter is unsupported on older iOS
+  // Safari, this works everywhere. No geometry resize → top-of-page layout
   // stays pixel-identical to the sharp build.
   function makeBlurredTextMesh(draw, tw, th) {
     const src = document.createElement('canvas');
@@ -89,6 +90,12 @@ export function initHero(bg) {
     const cv = document.createElement('canvas');
     cv.width = tw * dpr; cv.height = th * dpr;
     const cx = cv.getContext('2d');
+    cx.imageSmoothingEnabled = true;
+    cx.imageSmoothingQuality = 'high';
+    const tmp = document.createElement('canvas');
+    const tc  = tmp.getContext('2d');
+    tc.imageSmoothingEnabled = true;
+    tc.imageSmoothingQuality = 'high';
     const tex = makeTextTex(cv);
 
     const mesh = new THREE.Mesh(
@@ -102,9 +109,19 @@ export function initHero(bg) {
       if (px === mesh.userData.blurPx) return;
       mesh.userData.blurPx = px;
       cx.clearRect(0, 0, cv.width, cv.height);
-      cx.filter = px > 0 ? `blur(${px * dpr}px)` : 'none';
-      cx.drawImage(src, 0, 0);
-      cx.filter = 'none';
+      if (px <= 0) {
+        cx.drawImage(src, 0, 0);
+      } else {
+        // Stronger px → shrink harder → blurrier on the way back up.
+        const scale = Math.max(0.03, 1 - 0.97 * px / TEXT_MAX_BLUR);
+        const dw = Math.max(1, Math.round(cv.width  * scale));
+        const dh = Math.max(1, Math.round(cv.height * scale));
+        tmp.width = dw; tmp.height = dh;
+        tc.imageSmoothingEnabled = true;
+        tc.imageSmoothingQuality = 'high';
+        tc.drawImage(src, 0, 0, dw, dh);
+        cx.drawImage(tmp, 0, 0, dw, dh, 0, 0, cv.width, cv.height);
+      }
       tex.needsUpdate = true;
     };
     mesh.userData.setBlur(0);
