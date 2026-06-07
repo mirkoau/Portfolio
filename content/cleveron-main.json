@@ -12,7 +12,7 @@
       "src": "assets/images/cleveron_home-locker_wireframes.png",
       "alt": "Cleveron home locker mobile app — wireframe flows",
       "content": [
-        "I was an in-house designer at Cleveron, a company building robotic parcel lockers that carry packages all the way from the warehouse to the end user's hands. Because the product spanned that whole journey, so did my work. I designed the touchscreens people use to send and receive parcels, the mobile app for folks operating their home lockers, the office software companies rely on to manage parcels, lockers, invoices, and allocations, and the internal tooling our own teams used to build the hardware — including AR software that showed assembly workers exactly which pieces to grab when putting a locker together."
+        "I was an in-house designer at Cleveron, a company building robotic parcel lockers that carry packages all the way from the warehouse to the end user's hands. Because the product spanned that whole journey, so did my work. I designed the touchscreens people use to send and receive parcels, the mobile app for folks operating their home lockers, the office software companies rely on to manage parcels, lockers, invoices, and allocations, and the internal tooling our own teams used to build the hardware, including AR software that showed assembly workers exactly which pieces to grab when putting a locker together."
       ]
     },
     {
@@ -20,13 +20,13 @@
       "src": "assets/images/cleveron_component-library.png",
       "alt": "Cleveron Figma component library — hundreds of components and variants",
       "content": [
-        "One of the first things I did was move the team over to Figma and build a component library from the ground up — hundreds of components and thousands of variants. It became the foundation that sped up nearly every design effort that followed, giving the whole team a consistent, reusable system to work from instead of rebuilding the same interface pieces over and over."
+        "One of the first things I did was move the team over to Figma and build a component library from the ground up, with hundreds of components and thousands of variants. It became the foundation that sped up nearly every design effort that followed, giving the whole team a consistent, reusable system to work from instead of rebuilding the same interface pieces over and over."
       ]
     },
     {
       "type": "text-only",
       "content": [
-        "My goal was an interface that explains itself — so the 40-page manual stops being a prerequisite."
+        "My goal was an interface that explains itself, so the 40-page manual stops being a prerequisite."
       ]
     },
     {
