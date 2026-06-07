@@ -283,6 +283,20 @@ function renderSection(section) {
         ${section.content.map(p => `<p>${p}</p>`).join('')}
       </div>`;
 
+    // Two images side-by-side, paragraph below the first (left) image
+    case 'pair-text':
+      return `<div class="project-page__section project-page__section--pair-text">
+        <div class="project-page__pair-imgs">
+          ${section.images.map(img => `
+            <figure class="project-page__section-image">
+              <img src="${img.src}" alt="${img.alt}" loading="lazy" />
+            </figure>`).join('')}
+        </div>
+        <div class="project-page__pair-textblock">
+          ${section.content.map(p => `<p>${p}</p>`).join('')}
+        </div>
+      </div>`;
+
     // Legacy compat
     case 'text':
       return `<div class="project-page__section project-page__section--text-only">

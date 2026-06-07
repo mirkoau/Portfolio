@@ -231,6 +231,46 @@
   padding-top: var(--space-sm);
 }
 
+/* ── Section: image pair + text (text under the left image) ── */
+
+.project-page__section--pair-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.project-page__pair-imgs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.project-page__pair-imgs figure {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-page__pair-imgs img {
+  width: 100%;
+  display: block;
+}
+
+/* Paragraph sits below the first image, matching its column width */
+.project-page__pair-textblock {
+  width: calc(50% - var(--space-lg) / 2);
+}
+
+.project-page__pair-textblock p {
+  font-family: var(--font-ui);
+  font-size: var(--size-body-md);
+  color: var(--color-blue-dim);
+  line-height: var(--leading-normal);
+}
+
+.project-page__pair-textblock p + p {
+  margin-top: var(--space-sm);
+}
+
 /* ── Subpage footer ─────────────────────────────────── */
 
 .project-footer {
@@ -412,12 +452,18 @@
   height: 100%;
   background: currentColor;
   border-radius: 2px;
+  transform-origin: center;
   transition: transform 0.3s var(--ease-out), opacity 0.2s var(--ease-out);
 }
 
 .nav__burger-line:nth-child(1) { left: 0; }
 .nav__burger-line:nth-child(2) { left: 7px; }
 .nav__burger-line:nth-child(3) { left: 14px; }
+
+/* Open → lines contract vertically to nothing */
+.nav__burger--open .nav__burger-line {
+  transform: scaleY(0);
+}
 
 /* Burger hides while open — it morphs into the menu row (X item closes it) */
 .nav__burger--open {
@@ -692,6 +738,14 @@
 
   .project-page__section--image-pair {
     grid-template-columns: 1fr;
+  }
+
+  .project-page__pair-imgs {
+    grid-template-columns: 1fr;
+  }
+
+  .project-page__pair-textblock {
+    width: 100%;
   }
 
   .project-page__content {

@@ -8,37 +8,59 @@
   "hero": { "src": "assets/images/evocon-cover.png", "alt": "Evocon front page desktop" },
   "sections": [
     {
-      "type": "text",
+      "type": "image-left",
+      "src": "assets/images/evocon-6.png",
+      "alt": "Evocon office dashboard — OEE, scrap, quantity and downtime charts",
       "content": [
-        "Evocon is a manufacturing SaaS and a device that helps manufacturers around the world to waste less both time and materials.",
-        "It turns a complicated and data heavy task that's manufacture monitoring into an easy to understand and user-friendly experience.",
-        "In 2019, Evocon won EAS' award for Best Design Implementing."
-      ]
-    },
-    { "type": "image", "src": "assets/images/evocon-1.png", "alt": "Evocon design overview", "caption": "Evocon — design overview" },
-    { "type": "image", "src": "assets/images/evocon-2.png", "alt": "Evocon UI design", "caption": "Evocon — UI design" },
-    { "type": "image", "src": "assets/images/evocon-3.png", "alt": "Evocon interface design", "caption": "Evocon — interface design" },
-    { "type": "image", "src": "assets/images/evocon-4.png", "alt": "Evocon product design", "caption": "Evocon — product design" },
-    { "type": "image", "src": "assets/images/evocon-5.png", "alt": "Evocon visual design", "caption": "Evocon — visual design" },
-    { "type": "image", "src": "assets/images/evocon-6.png", "alt": "Evocon design detail", "caption": "Evocon — design detail" },
-    { "type": "image", "src": "assets/images/evocon-article_image_2.png", "alt": "Evocon article image", "caption": "Evocon — article imagery" },
-    {
-      "type": "image-pair",
-      "images": [
-        { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon Kodukas redesign", "caption": "Kodukas — redesign" },
-        { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon Kodukas original", "caption": "Kodukas — original" }
+        "I was an in-house designer at Evocon, a startup helping manufacturers improve production performance and waste less time and material. The work meant designing for two very different audiences at once. On one side was the office software, used on both PC and mobile by managers and office staff and built around large volumes of data represented through extensive tables and graphs."
       ]
     },
     {
-      "type": "image-pair",
-      "images": [
-        { "src": "assets/images/evocon-kodukas-uus-2.png", "alt": "Evocon Kodukas redesign detail", "caption": "Kodukas — redesign detail" },
-        { "src": "assets/images/evocon-kodukas-vana-2.png", "alt": "Evocon Kodukas original detail", "caption": "Kodukas — original detail" }
+      "type": "image-right",
+      "src": "assets/images/evocon-4.png",
+      "alt": "Evocon improvement view — reduce machine reset time",
+      "content": [
+        "The goal was to make all of that genuinely easy to understand — to help people pinpoint the exact problem holding their production back, see whether they'd been improving over time, and read real-time info on how every production line was running."
       ]
     },
-    { "type": "image", "src": "assets/images/evocon-kodukas-uus-3.png", "alt": "Evocon Kodukas redesign view", "caption": "Evocon — Kodukas redesign view" },
-    { "type": "image", "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon good speed animation", "caption": "Evocon — good speed indicator" },
-    { "type": "image", "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon slow speed animation", "caption": "Evocon — slow speed indicator" },
-    { "type": "image", "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon microstop animation", "caption": "Evocon — microstop speed indicator" }
+    {
+      "type": "text-only",
+      "content": [
+        "Designing for two opposite users at once: mountains of factory data turned into one clear answer, and a shop-floor screen simple enough to ask almost nothing."
+      ]
+    },
+    {
+      "type": "image-left",
+      "src": "assets/images/evocon-5.png",
+      "alt": "Evocon shop-floor tablet — factory view with live station status",
+      "content": [
+        "On the other side was the tablet software for the operators on the production lines. Here the challenge was the opposite: keep it dead simple and ask for as few button presses as possible to get the necessary info from the shop floor up to office management. It also had to make slowdowns impossible to miss — where production was lagging and why — so the floor could act the moment it happened."
+      ]
+    },
+    {
+      "type": "pair-text",
+      "images": [
+        { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon homepage — redesigned" },
+        { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon homepage — original" }
+      ],
+      "content": [
+        "Alongside the product work, I led Evocon's rebranding. Part of Evocon's mission is to teach its users about efficient production, so the brand needed to feel more contemporary and friendlier to match."
+      ]
+    },
+    {
+      "type": "image-left",
+      "src": "assets/images/evocon-3.png",
+      "alt": "Evocon brand illustration — operator, mascot and manager on the factory floor",
+      "content": [
+        "I shaped that through a friendly character, fun animations, and really easy-to-understand illustrations built to get the main idea across at a glance — work that stretched my range well beyond product UX into brand, illustration, and motion. In 2019, Evocon won the EAS award for Best Design Implementation."
+      ]
+    },
+    {
+      "type": "image-pair",
+      "images": [
+        { "src": "assets/images/evocon_iconset-1.gif", "alt": "Evocon animated icon set — production concepts" },
+        { "src": "assets/images/evocon_iconset-2.gif", "alt": "Evocon animated icon set — production concepts" }
+      ]
+    }
   ]
 }
