@@ -936,7 +936,7 @@ body.is-project-view .scroll-bg {
 
   .nav { padding: 0 var(--gutter); }
 
-  .hero { padding-top: calc(var(--nav-height) + 80px); }
+  .hero { min-height: 80vh; padding-top: calc(var(--nav-height) + 80px); }
 
   /* Stack sections; label sticks to header as the section scrolls */
   .work,
