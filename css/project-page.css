@@ -411,18 +411,6 @@
   color: var(--color-white);
 }
 
-@media (max-width: 768px) {
-  .project-footer__row {
-    height: 90px;
-    padding: 0 var(--gutter);
-  }
-
-  .project-footer__arrow {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 /* ── Header burger (project subpage) ────────────────── */
 
 /* Glass-pill base inherited from .btn-cta group; below = position + icon */
@@ -731,46 +719,4 @@
   opacity: 0.5;
   text-align: center;
   padding: calc(var(--space-2xl) * 2) var(--gutter);
-}
-
-/* ── Responsive ──────────────────────────────────────── */
-
-@media (max-width: 768px) {
-  .project-page__hero {
-    padding: 0 var(--gutter) var(--space-lg);
-  }
-
-  .project-page__info-card {
-    max-width: none;
-  }
-
-  .project-page__section--img-text-left,
-  .project-page__section--img-text-right {
-    grid-template-columns: 1fr;
-  }
-
-  .project-page__section--img-text-left .project-page__section-image {
-    order: 0;
-  }
-
-  .project-page__section--image-pair,
-  .project-page__section--image-trio {
-    grid-template-columns: 1fr;
-  }
-
-  .project-page__pair-imgs {
-    grid-template-columns: 1fr;
-  }
-
-  .project-page__pair-textblock {
-    width: 100%;
-  }
-
-  .project-page__content {
-    padding: var(--space-xl) 0 var(--space-2xl);
-  }
-
-  .project-page__body {
-    padding: 0 var(--gutter);
-  }
 }

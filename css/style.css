@@ -133,6 +133,17 @@
 html {
   -webkit-text-size-adjust: 100%;
   tab-size: 2;
+  background-color: var(--color-bg); /* black base — shader fades in over this */
+}
+
+/* Black load overlay — painted first paint, fades out via JS to reveal shader.
+   Covers the CSS hero-text load animation (orange FOUC) until Three.js owns it. */
+.load-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-bg);
+  z-index: 9999;
+  pointer-events: none;
 }
 
 body {
@@ -895,82 +906,3 @@ body.is-project-view .scroll-bg {
   opacity: 0.4;
 }
 
-
-/* ── Responsive: Tablet ≤1024px ────────────────────── */
-
-@media (max-width: 1024px) {
-  :root {
-    --gutter: 40px;
-    --space-xl: 60px;
-    --space-2xl: 80px;
-    --nav-height: 70px;
-  }
-
-  .work__project-image { width: 320px; }
-  .personal-work__grid { columns: 2; }
-  .about__content { gap: var(--space-xl); }
-  .about__portrait { width: 250px; }
-}
-
-/* ── Responsive: Mobile ≤768px ─────────────────────── */
-
-@media (max-width: 768px) {
-  :root {
-    --gutter: 20px;
-    --space-xl: 40px;
-    --space-2xl: 60px;
-    --space-lg: 32px;
-    --nav-height: 60px;
-    --col-offset: 0px;
-  }
-
-  /* Hero */
-  .hero { padding-top: calc(var(--nav-height) + 80px); }
-
-  /* Section layout reflow */
-  .work,
-  .personal-work,
-  .about { flex-direction: column; }
-
-  .section-aside {
-    width: auto;
-    padding-left: var(--gutter);
-  }
-
-  .section-label {
-    position: static;
-    width: auto;
-  }
-
-  .section-main { padding: 0 var(--gutter); }
-
-  /* Work */
-  .work__project-text { flex-direction: column; gap: var(--space-md); }
-  .work__entry { padding: var(--space-md); }
-  .work__intro { max-width: none; }
-
-  /* Personal Work */
-  .personal-work__grid { columns: 1; max-width: none; }
-  .personal-work__item:nth-child(n) { --pt: 0; margin-bottom: var(--space-lg); }
-
-  /* About */
-  .about__content { flex-direction: column-reverse; }
-  .about__portrait { width: 100%; max-width: 300px; }
-
-  .about__cta {
-    font-size: clamp(28px, 5vw, 45px);
-    padding: 10px 22px;
-    border-radius: 20px;
-  }
-
-  /* Nav */
-  .nav { padding: 0 var(--gutter); }
-
-  /* Footer */
-  .footer {
-    flex-direction: column;
-    gap: var(--space-sm);
-    text-align: center;
-  }
-
-}

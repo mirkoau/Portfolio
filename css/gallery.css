@@ -21,17 +21,19 @@
   top: 40px;
   left: 40px;
   z-index: 10;
-  padding: 14px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
 }
 
-/* X icon via mask */
+/* X icon via mask — match burger menu close (14px, 1.5 round) */
 .gallery-overlay__close span {
   display: block;
-  width: 22px;
-  height: 22px;
-  background: rgba(200, 210, 255, 0.75);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke='black' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E") center/100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke='black' stroke-width='3' stroke-linecap='square'/%3E%3C/svg%3E") center/100% no-repeat;
+  width: 14px;
+  height: 14px;
+  background: rgba(245, 240, 230, 0.82);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M1 1L13 13M13 1L1 13' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center/100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M1 1L13 13M13 1L1 13' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center/100% no-repeat;
 }
 
 /* Right sidebar — company list + filmstrip stacked */
@@ -150,13 +152,4 @@
 
 .gallery-overlay__thumb:hover:not(.is-active) {
   opacity: 0.6;
-}
-
-/* ── Gallery Mobile ≤768px ─────────────────────────── */
-
-@media (max-width: 768px) {
-  .gallery-overlay__sidebar { display: none; }
-  .gallery-overlay__panel { inset: 0; left: 0; right: 0; }
-  .gallery-overlay__close { top: 16px; left: 16px; }
-  .gallery-overlay__main { padding: 0 var(--gutter) var(--gutter); }
 }
