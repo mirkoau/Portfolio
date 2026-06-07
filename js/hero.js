@@ -31,12 +31,13 @@ export function initHero(bg) {
     { left: 0.654, top: 0.102, w: 0.143, h: 392, z:   1, amp: 22, freq: 0.35, phase: 2.5 },  // portrait top-right
   ];
 
+  // sx/sy = scroll-scatter vector (fraction of W/H) — where card flies off to.
   const CARDS_MOBILE = [
-    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 18, freq: 0.61, phase: 0.8 },
-    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 22, freq: 0.42, phase: 0.0 },
-    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 20, freq: 0.55, phase: 1.2 },
-    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 21, freq: 0.47, phase: 3.7 },
-    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 26, freq: 0.35, phase: 2.5 },
+    { left: 0.04, top: 0.62, w: 0.50, h: 160, z:   2, amp: 18, freq: 0.61, phase: 0.8, sx: -1.4, sy:  0.9 },
+    { left: 0.05, top: 0.22, w: 0.80, h: 340, z:  -5, amp: 22, freq: 0.42, phase: 0.0, sx: -1.6, sy:  0.4 },
+    { left: 0.10, top: 0.10, w: 0.46, h: 210, z:  20, amp: 20, freq: 0.55, phase: 1.2, sx: -1.1, sy: -1.3 },
+    { left: 0.50, top: 0.52, w: 0.46, h: 200, z:   3, amp: 21, freq: 0.47, phase: 3.7, sx:  1.5, sy:  0.9 },
+    { left: 0.55, top: 0.08, w: 0.28, h: 240, z:   1, amp: 26, freq: 0.35, phase: 2.5, sx:  1.3, sy: -1.4 },
   ];
 
   let CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
@@ -72,6 +73,44 @@ export function initHero(bg) {
     return tex;
   }
 
+  const TEXT_MAX_BLUR = 22;   // px (CSS) at full scroll-out
+
+  // Text mesh that can blur via scroll. Sharp text drawn once to a source
+  // canvas; display canvas is re-rendered from it with ctx.filter blur, only
+  // when the quantized px changes. No geometry resize → top-of-page layout
+  // stays pixel-identical to the sharp build.
+  function makeBlurredTextMesh(draw, tw, th) {
+    const src = document.createElement('canvas');
+    src.width = tw * dpr; src.height = th * dpr;
+    const sc = src.getContext('2d');
+    sc.scale(dpr, dpr);
+    draw(sc);
+
+    const cv = document.createElement('canvas');
+    cv.width = tw * dpr; cv.height = th * dpr;
+    const cx = cv.getContext('2d');
+    const tex = makeTextTex(cv);
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(tw, th),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true })
+    );
+
+    mesh.userData.blurPx = -1;
+    mesh.userData.setBlur = px => {
+      px = Math.round(px);
+      if (px === mesh.userData.blurPx) return;
+      mesh.userData.blurPx = px;
+      cx.clearRect(0, 0, cv.width, cv.height);
+      cx.filter = px > 0 ? `blur(${px * dpr}px)` : 'none';
+      cx.drawImage(src, 0, 0);
+      cx.filter = 'none';
+      tex.needsUpdate = true;
+    };
+    mesh.userData.setBlur(0);
+    return mesh;
+  }
+
   function buildTaglineMesh(W, H) {
     const fontSize = heroTaglineSize();
     const lineH    = Math.ceil(fontSize * 1.35);
@@ -84,21 +123,13 @@ export function initHero(bg) {
     const tw = Math.ceil(Math.max(...TAGLINE_LINES.map(l => mx.measureText(l).width))) + pad * 2;
     const th = lineH * TAGLINE_LINES.length + Math.ceil(fontSize * 0.4) + pad * 2;
 
-    const cv = document.createElement('canvas');
-    cv.width  = tw * dpr;
-    cv.height = th * dpr;
-    const cx  = cv.getContext('2d');
-    cx.scale(dpr, dpr);
-    cx.font         = fontStr;
-    cx.fillStyle    = '#ffffff';
-    cx.textBaseline = 'top';
-    cx.textAlign    = 'left';
-    TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
-
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(tw, th),
-      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
-    );
+    const mesh = makeBlurredTextMesh(cx => {
+      cx.font         = fontStr;
+      cx.fillStyle    = '#ffffff';
+      cx.textBaseline = 'top';
+      cx.textAlign    = 'left';
+      TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
+    }, tw, th);
 
     const leftX    = TEXT_LEFT * W - W / 2 + tw / 2;
     const nameY    = -(NAME_TOP * H);
@@ -122,21 +153,13 @@ export function initHero(bg) {
     const tw = Math.ceil(mx.measureText(text).width) + pad * 2;
     const th = Math.ceil(fontSize * 1.3) + pad * 2;
 
-    const cv = document.createElement('canvas');
-    cv.width  = tw * dpr;
-    cv.height = th * dpr;
-    const cx  = cv.getContext('2d');
-    cx.scale(dpr, dpr);
-    cx.font          = fontStr;
-    cx.fillStyle     = '#ffffff';
-    cx.textBaseline  = 'middle';
-    cx.textAlign     = 'left';
-    cx.fillText(text, pad, th / 2);
-
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(tw, th),
-      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
-    );
+    const mesh = makeBlurredTextMesh(cx => {
+      cx.font          = fontStr;
+      cx.fillStyle     = '#ffffff';
+      cx.textBaseline  = 'middle';
+      cx.textAlign     = 'left';
+      cx.fillText(text, pad, th / 2);
+    }, tw, th);
 
     const leftX = TEXT_LEFT * W - W / 2 + tw / 2 - fontSize * 0.06;
     const posY  = -(NAME_TOP * H);
@@ -480,14 +503,15 @@ export function initHero(bg) {
     const calm = 1 - motionSuppress;
 
     // Mobile: a fixed canvas can't track native scroll without 1-frame jitter.
-    // So pin the hero elements (no scroll offset) and fade them out as you
-    // scroll past instead of gliding them up. Desktop keeps the glide.
+    // So pin the hero elements (no scroll offset) and drive them off by scroll
+    // instead of gliding up. Cards scatter off-screen; name+tagline blur away.
+    // Both reach their endpoint by 60% scroll-through. Desktop keeps the glide.
     const heroOffset = isCoarse ? 0 : scrollY;
-    let heroFade = 1;
+    let heroScatter = 0;   // 0 = home, 1 = fully scattered/blurred
     if (isCoarse && heroRect) {
       const raw  = -heroRect.top / heroRect.height;   // 0 at top → 1 past hero
-      const prog = Math.min(1, Math.max(0, raw / 0.45)); // fully faded by 45%
-      heroFade = 1 - prog * prog * (3 - 2 * prog);     // smoothstep
+      const prog = Math.min(1, Math.max(0, raw / 0.6)); // done by 60%
+      heroScatter = prog * prog * (3 - 2 * prog);      // smoothstep
     }
 
     let kickDX = 0, kickDY = 0;
@@ -539,11 +563,11 @@ export function initHero(bg) {
       const floatX = (!noMotion && b > 0.01) ? Math.sin(time * d.freq * 0.6 + d.phase + 1.0) * d.amp * 0.3 * b : 0;
       const floatY = (!noMotion && b > 0.01) ? Math.sin(time * d.freq       + d.phase)         * d.amp       * b : 0;
 
-      mesh.position.x = ud.px + floatX;
-      mesh.position.y = ud.py + floatY + heroOffset;
+      const scX = isCoarse ? (d.sx || 0) * W * heroScatter : 0;
+      const scY = isCoarse ? (d.sy || 0) * H * heroScatter : 0;
+      mesh.position.x = ud.px + floatX + scX;
+      mesh.position.y = ud.py + floatY + heroOffset + scY;
       mesh.position.z = d.z;
-      if (isCoarse) mesh.material.opacity = heroFade;
-
     });
 
     if (hold?.clones) updateHoldClones();
@@ -555,11 +579,18 @@ export function initHero(bg) {
       const tagH = taglineMesh.geometry.parameters.height;
       taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
     }
-    // Fade text with the cards (mobile). heroFade < 1 only once scrolled, so
-    // this never clobbers the entrance opacity tween at the top.
-    if (isCoarse && heroFade < 1) {
-      if (nameMesh)    nameMesh.material.opacity    = heroFade;
-      if (taglineMesh) taglineMesh.material.opacity = heroFade;
+    // Blur name+tagline to nothing as you scroll (mobile). A late opacity fade
+    // finishes the dissolve so blur fringe doesn't linger. heroScatter > 0 only
+    // once scrolled, so this never clobbers the entrance opacity tween.
+    if (isCoarse) {
+      const blur = heroScatter * TEXT_MAX_BLUR;
+      if (nameMesh)    nameMesh.userData.setBlur(blur);
+      if (taglineMesh) taglineMesh.userData.setBlur(blur);
+      if (heroScatter > 0) {
+        const op = 1 - heroScatter * heroScatter;   // vanish weighted to the end
+        if (nameMesh)    nameMesh.material.opacity    = op;
+        if (taglineMesh) taglineMesh.material.opacity = op;
+      }
     }
 
     bg.render();
