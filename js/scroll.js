@@ -5,6 +5,9 @@ export function initScroll() {
     duration: 1.2,
     easing: t => 1 - Math.pow(1 - t, 4),
     smooth: true,
+    // Transform-drive touch scroll too, so the fixed hero canvas (name +
+    // cards) stays in lockstep with content on mobile — kills scroll shake.
+    smoothTouch: true,
     touchMultiplier: 2,
   });
 
