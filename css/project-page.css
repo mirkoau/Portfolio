@@ -750,7 +750,10 @@
   .project-page__content {
     padding: var(--space-xl) 0 var(--space-2xl);
   }
-  .project-page__body { padding: 0 var(--gutter); }
+  .project-page__body {
+    padding: 0 var(--gutter);
+    gap: var(--space-2xl);
+  }
 
   .project-footer__row { padding: 0 var(--gutter); }
   .project-footer__arrow {
