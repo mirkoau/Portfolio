@@ -124,7 +124,7 @@ export function initScroll() {
   const START = isMobile ? '10% bottom' : '15% bottom';
 
   // ── Work entry headers — role + company anchors the section ─
-  gsap.set('.work__entry-header', { y: 40, opacity: 0 });
+  gsap.set('.work__entry-header', { y: 8, opacity: 0 });
   ScrollTrigger.batch('.work__entry-header', {
     onEnter: batch => gsap.to(batch, {
       y: 0, opacity: 1,
@@ -136,29 +136,32 @@ export function initScroll() {
     once: true,
   });
 
-  // ── Work projects — text rises, image scales in after ──
-  gsap.set('.work__project-text', { y: 50, opacity: 0 });
+  // ── Work projects — image scales in, text rises ──
+  // Image and text reveal on their OWN entry, not the project container's.
+  // The text sits far below a tall image; triggering it on the container
+  // (whose top is the image) animated the text while still below the fold,
+  // so its reveal was never seen. Separate batches fix the trigger position.
+  gsap.set('.work__project-text', { y: 10, opacity: 0 });
   gsap.set('.work__project-image', { scale: 0.94, opacity: 0 });
 
-  ScrollTrigger.batch('.work__project', {
-    onEnter: batch => {
-      batch.forEach((project, i) => {
-        const delay = i * 0.15;
-        const text = project.querySelector('.work__project-text');
-        const img  = project.querySelector('.work__project-image');
+  ScrollTrigger.batch('.work__project-image', {
+    onEnter: batch => gsap.to(batch, {
+      scale: 1, opacity: 1,
+      duration: 1.0,
+      stagger: 0.15,
+      ease: 'power2.out',
+    }),
+    start: START,
+    once: true,
+  });
 
-        if (text) gsap.to(text, {
-          y: 0, opacity: 1,
-          duration: 0.8, delay,
-          ease: 'power3.out',
-        });
-        if (img) gsap.to(img, {
-          scale: 1, opacity: 1,
-          duration: 1.0, delay: delay + 0.15,
-          ease: 'power2.out',
-        });
-      });
-    },
+  ScrollTrigger.batch('.work__project-text', {
+    onEnter: batch => gsap.to(batch, {
+      y: 0, opacity: 1,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power3.out',
+    }),
     start: START,
     once: true,
   });
@@ -177,7 +180,7 @@ export function initScroll() {
   });
 
   // ── About paragraphs — gentle, reading-paced ──────────
-  gsap.set('.about__body', { y: 30, opacity: 0 });
+  gsap.set('.about__body', { y: 6, opacity: 0 });
   ScrollTrigger.batch('.about__body', {
     onEnter: batch => gsap.to(batch, {
       y: 0, opacity: 1,
