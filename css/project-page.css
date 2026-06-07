@@ -731,13 +731,14 @@
 
   .project-page__info-card { max-width: none; }
 
-  /* img-text rows stack; reset image order */
+  /* img-text rows stack; image always first, then text */
   .project-page__section--img-text-left,
   .project-page__section--img-text-right {
     grid-template-columns: 1fr;
   }
-  .project-page__section--img-text-left .project-page__section-image {
-    order: 0;
+  .project-page__section--img-text-left .project-page__section-image,
+  .project-page__section--img-text-right .project-page__section-image {
+    order: -1;
   }
 
   /* pair stays 2-up; trio drops to 2-up */
