@@ -755,6 +755,8 @@
     gap: var(--space-2xl);
   }
 
+  .project-footer__label { font-size: var(--size-heading-lg); }
+
   .project-footer__row { padding: 0 var(--gutter); }
   .project-footer__arrow {
     width: 24px;
