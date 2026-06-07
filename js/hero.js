@@ -484,12 +484,12 @@ export function initHero(bg) {
     // Mobile: a fixed canvas can't track native scroll without 1-frame jitter.
     // So pin the hero elements (no scroll offset) and drive them off by scroll
     // instead of gliding up. Cards scatter off-screen; name+tagline blur away.
-    // Both reach their endpoint by 60% scroll-through. Desktop keeps the glide.
+    // Both reach their endpoint by 80% scroll-through. Desktop keeps the glide.
     const heroOffset = isCoarse ? 0 : scrollY;
     let heroScatter = 0;   // 0 = home, 1 = fully scattered/blurred
     if (isCoarse && heroRect) {
       const raw  = -heroRect.top / heroRect.height;   // 0 at top → 1 past hero
-      const prog = Math.min(1, Math.max(0, raw / 0.6)); // done by 60%
+      const prog = Math.min(1, Math.max(0, raw / 0.8)); // done by 80%
       heroScatter = prog * prog * (3 - 2 * prog);      // smoothstep
     }
 
