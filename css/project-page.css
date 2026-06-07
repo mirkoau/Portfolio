@@ -14,7 +14,7 @@
 
 .project-page__hero {
   position: relative;
-  height: 65vh;
+  height: 65lvh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -298,10 +298,10 @@
   padding-bottom: 0;
   display: flex;
   flex-direction: column;
-  min-height: 50vh;
+  min-height: 50lvh;
 }
 
-/* Rows divide the footer's height evenly (50vh total) */
+/* Rows divide the footer's height evenly (50lvh total) */
 .project-footer > .project-footer__row {
   height: auto;
   flex: 1;
@@ -709,7 +709,7 @@
 /* ── Loading / error ─────────────────────────────────── */
 
 .project-page__loading {
-  height: 60vh;
+  height: 60lvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -727,7 +727,7 @@
 
 @media (max-width: 768px) {
   .project-page__hero {
-    height: 50vh;
+    height: 50lvh;
     padding: 0 var(--gutter) var(--space-lg);
   }
 
