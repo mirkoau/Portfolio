@@ -359,7 +359,7 @@ function initProjectReveals() {
       stagger: 0.12,
       ease: 'power3.out',
     }),
-    start: isMobile ? '5% bottom' : '15% bottom',
+    start: isMobile ? '10% bottom' : '15% bottom',
     once: true,
   });
 
