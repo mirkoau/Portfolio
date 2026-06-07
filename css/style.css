@@ -957,6 +957,7 @@ body.is-project-view .scroll-bg {
     padding-left: var(--gutter);
     margin-bottom: var(--space-md);
     top: calc(var(--nav-height) + var(--space-sm));
+    font-size: var(--size-heading-lg);
   }
 
   .section-main { padding: 0 var(--gutter); }
