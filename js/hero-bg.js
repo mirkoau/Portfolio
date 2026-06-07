@@ -14,23 +14,30 @@ export function initHeroBg() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.autoClear = false;            // two-pass render — clear manually
   const canvas = renderer.domElement;
-  // Canvas height = 100lvh (LARGEST viewport, a constant) so it overfills past
-  // the toolbar — no bottom gap when the toolbar retracts, even if the browser
-  // fires `resize` late (Firefox does). The shader is a clip-space fullscreen
-  // quad → fills this buffer at any size with zero distortion.
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100lvh;pointer-events:none;z-index:-2;';
+  // The CANVAS BOX is what covers the screen (the buffer just renders into it).
+  // 100lvh alone still left a Firefox bottom gap, so overfill the box past lvh
+  // by OVERSCAN px — guaranteed to cover the strip the toolbar reveals. The
+  // shader is a clip-space quad → fills the taller box with zero distortion.
+  const OVERSCAN = 140;
+  canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:calc(100lvh + ${OVERSCAN}px);pointer-events:none;z-index:-2;`;
   document.body.appendChild(canvas);
 
-  let W = window.innerWidth;
-  let H = canvas.clientHeight || window.innerHeight;   // 100lvh in px
-  renderer.setSize(W, H, false);         // false → keep the 100lvh CSS, set buffer only
+  // Two heights, decoupled:
+  //   Hb = buffer/box height (lvh + overscan) → renderer + camera frustum, so
+  //        cards stay 1px=1px and the box overfills the viewport (no gap).
+  //   H  = design height (~lvh) → card/text LAYOUT only, so the overscan never
+  //        pushes cards down. Cards sit in the top H px; overscan is dead space.
+  let W  = window.innerWidth;
+  let Hb = canvas.clientHeight || (window.innerHeight + OVERSCAN);
+  let H  = Hb - OVERSCAN;
+  renderer.setSize(W, Hb, false);        // false → keep the lvh+overscan CSS
 
   // ── Card camera — TOP-ANCHORED ───────────────────────
   // Top edge pinned to y=0 (viewport top); the toolbar grows/shrinks the
-  // BOTTOM, so a larger H only moves the camera's bottom edge → top-anchored
+  // BOTTOM, so a larger Hb only moves the camera's bottom edge → top-anchored
   // cards never shift on toolbar toggle (a centered camera would move all by
   // ΔH/2). 1 world unit = 1 css px. Cards + text live in this scene.
-  const camera = new THREE.OrthographicCamera(-W / 2, W / 2, 0, -H, 0.1, 1000);
+  const camera = new THREE.OrthographicCamera(-W / 2, W / 2, 0, -Hb, 0.1, 1000);
   camera.position.z = 500;
   const scene = new THREE.Scene();
 
@@ -40,7 +47,7 @@ export function initHeroBg() {
   // ── Liquid gradient background ────────────────────
   const liquidUniforms = {
     uTime:       { value: 0 },
-    uResolution: { value: new THREE.Vector2(W, H) },
+    uResolution: { value: new THREE.Vector2(W, Hb) },
     uMouse:      { value: new THREE.Vector2(0.5, 0.5) }, // uv space, y-up
     uMouseStr:   { value: 0 },                            // 0..1 eased influence
     uHeroVis:    { value: 0 },                            // 1 in hero → 0 scrolled past
@@ -294,12 +301,13 @@ export function initHeroBg() {
     if (coarse && window.innerWidth === lastW) return;
     lastW = window.innerWidth;
     W = window.innerWidth;
-    H = canvas.clientHeight || window.innerHeight;
-    renderer.setSize(W, H, false);       // keep 100lvh CSS, set buffer only
+    Hb = canvas.clientHeight || (window.innerHeight + OVERSCAN);
+    H  = Hb - OVERSCAN;
+    renderer.setSize(W, Hb, false);      // keep lvh+overscan CSS, set buffer only
     camera.left = -W / 2; camera.right = W / 2;
-    camera.top  = 0;      camera.bottom = -H;
+    camera.top  = 0;      camera.bottom = -Hb;
     camera.updateProjectionMatrix();
-    liquidUniforms.uResolution.value.set(W, H);
+    liquidUniforms.uResolution.value.set(W, Hb);
   });
 
   return {
@@ -334,6 +342,6 @@ export function initHeroBg() {
         liquidUniforms.uMouseStr.value = mStr;
       }
     },
-    getSize() { return { W, H }; },
+    getSize() { return { W, H, Hb }; },
   };
 }

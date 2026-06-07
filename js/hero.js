@@ -20,7 +20,7 @@ export function initHero(bg) {
   const heroTaglineEl = document.querySelector('.hero__tagline');
   if (heroTaglineEl) { heroTaglineEl.style.animation = 'none'; heroTaglineEl.style.opacity = '0'; }
 
-  let { W, H } = bg.getSize();
+  let { W, H, Hb } = bg.getSize();   // H = design height (cards), Hb = buffer/camera height
 
   // ── Card layouts (matched to Figma 124:41) ─────────
   const CARDS_DESKTOP = [
@@ -213,7 +213,8 @@ export function initHero(bg) {
   let accDX = 0, accDY = 0;
 
   function toNDC(cx, cy) {
-    return new THREE.Vector2((cx / W) * 2 - 1, -((cy / H) * 2 - 1));
+    // y over Hb — the camera frustum spans the full buffer (lvh+overscan).
+    return new THREE.Vector2((cx / W) * 2 - 1, -((cy / Hb) * 2 - 1));
   }
   function toWorld(cx, cy) {
     return { x: cx - W / 2, y: -cy };   // top-anchored: y=0 at viewport top
@@ -593,7 +594,7 @@ export function initHero(bg) {
     // text geometry mid-scroll causes the cards to jump. Width change only.
     if (isCoarse && window.innerWidth === lastResizeW) return;
     lastResizeW = window.innerWidth;
-    ({ W, H } = bg.getSize());
+    ({ W, H, Hb } = bg.getSize());
     CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
     meshes.forEach((mesh, i) => {
       const d  = CARDS[i];
