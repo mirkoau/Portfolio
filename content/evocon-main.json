@@ -56,10 +56,13 @@
       ]
     },
     {
-      "type": "image-pair",
+      "type": "pair-text",
       "images": [
         { "src": "assets/images/evocon_iconset-1.gif", "alt": "Evocon animated icon set — production concepts" },
         { "src": "assets/images/evocon_iconset-2.gif", "alt": "Evocon animated icon set — production concepts" }
+      ],
+      "content": [
+        "Simple animated icons that trigger on hover (or on press on tablets) that simplify common concepts used in Evocon."
       ]
     }
   ]
