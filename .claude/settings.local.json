@@ -44,7 +44,31 @@
       "Bash(claude update *)",
       "Bash(git reset *)",
       "Skill(update-config)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git revert *)",
+      "mcp__figma__whoami",
+      "mcp__figma__get_screenshot",
+      "mcp__figma__get_metadata",
+      "Bash(curl -s -o /tmp/aw2.png \"https://www.figma.com/api/mcp/asset/c2210db1-3a1e-4c75-afc9-9ca317165ab9\")",
+      "Bash(curl -s -o \"C:/Users/mirko/Documents/portfoolio/.text-base/aw2.png\" \"https://www.figma.com/api/mcp/asset/c2210db1-3a1e-4c75-afc9-9ca317165ab9\")",
+      "Bash(curl -s -o aw2-intro.png \"https://www.figma.com/api/mcp/asset/27439e71-e0c0-4114-8bbc-dc35003f0ed9\")",
+      "Bash(curl -s -o aw2-caseboard.png \"https://www.figma.com/api/mcp/asset/920e1785-22e7-40ae-9e9d-66c865be9410\")",
+      "Bash(curl -s -o aw2-maps.png \"https://www.figma.com/api/mcp/asset/a916f6cb-9b21-43ed-a859-f4fd64842b41\")",
+      "Bash(curl -s -o aw2-caseboard-wide.png \"https://www.figma.com/api/mcp/asset/29df357d-c7e9-4751-991c-ec263bf71e86\")",
+      "Bash(curl -s -o aw2-photomode.png \"https://www.figma.com/api/mcp/asset/9c42c7fc-a6a9-4102-b0e6-02db94f5f3e6\")",
+      "Bash(python -c \"import json;json.load\\(open\\('content/alan-wake-2.json'\\)\\)\")",
+      "Skill(run)",
+      "WebFetch(domain:monopo.london)",
+      "Bash(curl -sL https://monopo.london/)",
+      "Bash(curl -sL \"https://monopo.london/_nuxt/c906f4c.js\")",
+      "Bash(grep -oE 'precision highp float[^`\"]{1,2500}' /tmp/mono.js)",
+      "Bash(curl -sL \"https://monopo.london/_nuxt/aaa3fb1.js\")",
+      "Bash(curl -sL \"https://monopo.london/_nuxt/fc1ae5f.js\")",
+      "Bash(grep -oE 'precision [a-z]+ float;[^`]{1,1800}gl_FragColor[^`]{1,200}' a.js)",
+      "Bash(grep -oE 'uniform [^;\\\\\\\\]{1,40};|varying [^;\\\\\\\\]{1,40};' a.js)",
+      "Bash(grep -ioE 'new [A-Za-z.$]*\\(Shader|Mesh|Geometry|Filter|Program\\)|Shader\\\\.from|Geometry\\\\\\(|uTime|requestAnimationFrame|\\\\.time' a.js)",
+      "Bash(cd /tmp)",
+      "Bash(grep -rn \"personal-work__item img\\\\|personal-work__item::after\\\\|personal-work__item:hover\\\\|personal-work__media\" /c/Users/mirko/Documents/portfoolio/css /c/Users/mirko/Documents/portfoolio/js /c/Users/mirko/Documents/portfoolio/index.html)"
     ]
   }
 }

@@ -18,6 +18,21 @@ const heroBg = initHeroBg();
 const hero = initHero(heroBg);
 initGallery(lenis);
 
+// ── Black load overlay fades out → reveals shader ──────
+const loadOverlay = document.querySelector('.load-overlay');
+if (loadOverlay) {
+  if (typeof gsap !== 'undefined') {
+    gsap.to(loadOverlay, {
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      onComplete() { loadOverlay.remove(); },
+    });
+  } else {
+    loadOverlay.remove();
+  }
+}
+
 // Index sections hidden via body.is-project-view class (see style.css)
 // CSS-driven hide is robust against accidental inline style overrides.
 const projectView = document.getElementById('project-view');

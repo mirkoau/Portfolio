@@ -15,3 +15,6 @@ desktop.ini
 # Env
 .env
 .env.local
+
+# Scratch / working notes
+.text-base/
