@@ -37,6 +37,10 @@ export function initScroll() {
   if (typeof ScrollTrigger === 'undefined') return lenis;
 
   gsap.registerPlugin(ScrollTrigger);
+  // Don't refresh on the height-only resize from mobile browser chrome
+  // (Firefox/Android bottom toolbar show/hide) — that refresh resyncs the
+  // Lenis proxy and jumps the content. Only real (width) changes refresh.
+  ScrollTrigger.config({ ignoreMobileResize: true });
   ScrollTrigger.scrollerProxy(document.body, {
     scrollTop(value) {
       if (arguments.length) lenis.scrollTo(value, { immediate: true });
