@@ -485,6 +485,27 @@ body {
 .hero__card--4 { animation-delay: 1.12s; }
 .hero__card--5 { animation-delay: 1.21s; }
 
+/* ── Scroll cue — small down arrow, fades on scroll ──── */
+
+.hero__scroll-cue {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: 20px;
+  height: 20px;
+  color: var(--color-orange);
+  z-index: 1;
+  pointer-events: none;
+  animation: load-fade-up 0.7s 1.4s var(--ease-out) backwards;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+body.is-scrolled .hero__scroll-cue {
+  opacity: 0;
+}
+
 /* ── Hero tagline (base styles) ─────────────────────── */
 
 .hero__tagline {

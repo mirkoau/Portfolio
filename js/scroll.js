@@ -24,6 +24,7 @@ export function initScroll() {
   const work = document.querySelector('.work');
 
   function updateBg() {
+    document.body.classList.toggle('is-scrolled', lenis.scroll > 40);
     if (!work) return;
     const H       = window.innerHeight;
     const workTop = work.getBoundingClientRect().top;
