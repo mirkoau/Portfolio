@@ -50,6 +50,7 @@ export function initLetsTalk(lenis) {
   // ── State ─────────────────────────────────────────────
   let state = 'hidden';  // hidden | nav | about
   let tween = null;
+  let handedOff = false; // true once parked on the static about anchor
 
   // ── Scroll tracking (active while state === 'about') ──
   let tracking = false;
@@ -86,6 +87,7 @@ export function initLetsTalk(lenis) {
     if (to === 'nav') {
       btn.classList.add('btn-cta--nav');
       btn.classList.remove('btn-cta--about');
+      if (handedOff) restoreFlying();  // fake takes over from the static anchor
       if (linkedinBtn) gsap.to(linkedinBtn, { opacity: 0, duration: 0.3, ease: 'power2.in' });
     } else {
       btn.classList.remove('btn-cta--nav');
@@ -150,7 +152,8 @@ export function initLetsTalk(lenis) {
           gsap.set(btn, { left: p.left, top: p.top });
         },
         onComplete() {
-          tracking = true;
+          tracking = false;
+          showStatic();  // hand off to the in-flow anchor — kills scroll jitter
           if (linkedinBtn) gsap.to(linkedinBtn, { opacity: 1, duration: 0.4, ease: 'power2.out' });
         },
       }));
@@ -197,43 +200,39 @@ export function initLetsTalk(lenis) {
 
 
   // ── Mail emoji animation ─────────────────────────────
-  // querySelectorAll each time so the masked top-layer copy stays in sync
-  const emojis = () => btn.querySelectorAll('.btn-emoji');
-  let emojiTween = null;
-
-  function playMailAnim() {
-    const els = emojis();
-    if (!els.length || prefersReduced) return;
-    if (emojiTween) emojiTween.kill();
-    emojiTween = gsap.timeline();
-    // Lift + tilt like it's being sent
-    emojiTween.to(els, {
-      y: -6, x: 4, rotation: -12, scale: 1.2,
-      duration: 0.3, ease: 'power2.out',
-    });
-    // Little wiggle at the peak
-    emojiTween.to(els, {
-      rotation: 8, duration: 0.15, ease: 'power1.inOut',
-    });
-    emojiTween.to(els, {
-      rotation: -6, duration: 0.12, ease: 'power1.inOut',
-    });
-    // Settle back with elastic bounce
-    emojiTween.to(els, {
-      y: 0, x: 0, rotation: 0, scale: 1,
-      duration: 0.6, ease: 'elastic.out(1, 0.4)',
-    });
+  // Factory so both the flying button and the static about anchor (the
+  // duplicate it hands off to) share identical mail-send micro-anims.
+  // querySelectorAll each time so the masked top-layer fill copy stays in sync.
+  function makeMailAnim(el) {
+    const emojis = () => el.querySelectorAll('.btn-emoji');
+    let tl = null;
+    return {
+      play() {
+        const els = emojis();
+        if (!els.length || prefersReduced) return;
+        if (tl) tl.kill();
+        tl = gsap.timeline();
+        // Lift + tilt like it's being sent
+        tl.to(els, { y: -6, x: 4, rotation: -12, scale: 1.2, duration: 0.3, ease: 'power2.out' });
+        // Little wiggle at the peak
+        tl.to(els, { rotation: 8, duration: 0.15, ease: 'power1.inOut' });
+        tl.to(els, { rotation: -6, duration: 0.12, ease: 'power1.inOut' });
+        // Settle back with elastic bounce
+        tl.to(els, { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+      },
+      reset() {
+        const els = emojis();
+        if (!els.length || prefersReduced) return;
+        if (tl) tl.kill();
+        gsap.to(els, { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.4, ease: 'power2.out' });
+      },
+    };
   }
 
-  function resetMailAnim() {
-    const els = emojis();
-    if (!els.length || prefersReduced) return;
-    if (emojiTween) emojiTween.kill();
-    gsap.to(els, {
-      y: 0, x: 0, rotation: 0, scale: 1,
-      duration: 0.4, ease: 'power2.out',
-    });
-  }
+  const flyMail   = makeMailAnim(btn);
+  const anchorMail = makeMailAnim(aboutAnchor);
+  const playMailAnim  = flyMail.play;
+  const resetMailAnim = flyMail.reset;
 
   // ── Hover & press feedback ────────────────────────────
   let isNav = () => btn.classList.contains('btn-cta--nav');
@@ -278,6 +277,53 @@ export function initLetsTalk(lenis) {
     gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
   }, { passive: true });
 
+  // ── Static anchor handoff ─────────────────────────────
+  // While parked in the about section the fixed flying button jitters: it
+  // chases the anchor one frame behind Lenis' smooth-scroll transform. So
+  // once the landing finishes we hand off to the real in-flow anchor (a
+  // duplicate that scrolls natively, zero lag) and hide the fake. On the way
+  // back to nav we restore the fake at the anchor's current spot, then fly.
+  function showStatic() {
+    handedOff = true;
+    gsap.set(aboutAnchor, { opacity: 1 });
+    aboutAnchor.style.pointerEvents = 'auto';
+    gsap.set(btn, { opacity: 0 });
+    btn.style.pointerEvents = 'none';
+  }
+  function restoreFlying() {
+    handedOff = false;
+    const r = aboutAnchor.getBoundingClientRect();
+    gsap.set(btn, {
+      left: r.left, top: r.top, width: r.width, height: r.height,
+      fontSize: computedPx(aboutAnchor, 'fontSize'),
+      borderRadius: computedPx(aboutAnchor, 'borderRadius'),
+      opacity: 1, x: 0, y: 0,
+    });
+    btn.style.pointerEvents = 'auto';
+    gsap.set(aboutAnchor, { opacity: 0 });
+    aboutAnchor.style.pointerEvents = 'none';
+  }
+
+  // Anchor mirrors the flying button's about-state hover/press feedback
+  aboutAnchor.addEventListener('mouseenter', () => {
+    if (prefersReduced) return;
+    anchorMail.play();
+    gsap.to(aboutAnchor, { scale: 1.08, duration: 0.4, ease: 'power2.out' });
+  });
+  aboutAnchor.addEventListener('mouseleave', () => {
+    if (prefersReduced) return;
+    anchorMail.reset();
+    gsap.to(aboutAnchor, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+  });
+  aboutAnchor.addEventListener('mousedown', () => {
+    if (prefersReduced) return;
+    gsap.to(aboutAnchor, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
+  });
+  aboutAnchor.addEventListener('mouseup', () => {
+    if (prefersReduced) return;
+    gsap.to(aboutAnchor, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
+  });
+
   // ── Appear trigger: scrolled 80% into Work section ─────
   function checkWorkProgress() {
     if (state !== 'hidden') return;
@@ -317,11 +363,15 @@ export function initLetsTalk(lenis) {
       appear();
     } else if (state === 'about') {
       tracking = false;
+      handedOff = false;
       state = 'nav';
       btn.classList.add('btn-cta--nav');
       btn.classList.remove('btn-cta--about');
+      gsap.set(aboutAnchor, { opacity: 0 });        // drop the static duplicate
+      aboutAnchor.style.pointerEvents = 'none';
       const n = navTarget();
-      gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height, x: 0, y: 0 });
+      gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height, x: 0, y: 0, opacity: 1 });
+      btn.style.pointerEvents = 'auto';
     }
     // nav state — already visible, nothing to do
   };
