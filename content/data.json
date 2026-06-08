@@ -8,15 +8,15 @@
       "projects": [
         {
           "id": "control-resonant",
-          "title": "Control: Resonant",
+          "title": "Control Resonant",
           "role": "Senior UX Designer · 2026",
           "tags": ["Interaction Design", "UI Design", "Game Design", "Content Creation"],
           "body": [
-            "I joined Control: Resonant deep into production as Senior UX designer, focused on improving problematic interactions and mechanics.",
+            "I joined Control Resonant deep into production as Senior UX designer, focused on improving problematic interactions and mechanics.",
             "I helped push several features to shipping quality, among them the character customization screen, and supported the team with asset and image content creation."
           ],
           "gallery": [
-            { "src": "assets/images/control-resonant_cover.png", "alt": "Control: Resonant UI/UX work", "caption": "Control: Resonant — overview" }
+            { "src": "assets/images/control-resonant_cover.png", "alt": "Control Resonant UI/UX work", "caption": "Control Resonant — overview" }
           ]
         },
         {

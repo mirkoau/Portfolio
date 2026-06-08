@@ -1,16 +1,16 @@
 {
   "id": "control-resonant",
-  "title": "Control: Resonant",
+  "title": "Control Resonant",
   "company": "Remedy Entertainment",
   "role": "Senior UX Designer",
   "period": "2026",
   "tags": ["Interaction Design", "UI Design", "Game Design", "Content Creation"],
-  "hero": { "src": "assets/images/control-resonant_cover.png", "alt": "Control: Resonant UI/UX work" },
+  "hero": { "src": "assets/images/control-resonant_cover.png", "alt": "Control Resonant UI/UX work" },
   "sections": [
     {
       "type": "text-only",
       "content": [
-        "I joined Control: Resonant deep into production as Senior UX designer. My focus was improving problematic interactions and mechanics across the game."
+        "I joined Control Resonant deep into production as Senior UX designer. My focus was improving problematic interactions and mechanics across the game."
       ]
     },
     {
