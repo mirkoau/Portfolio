@@ -128,17 +128,24 @@ if (canHover) {
     fillRetract(btn, e.clientX, e.clientY); // retract toward exit
   });
 } else {
-  // Touch: no hover, so fire the fill on press and retract on release.
+  // Touch: no hover. Fill the whole button on press, then retract — but a tap
+  // releases almost instantly, so hold until the fill visibly completes.
+  const FILL_MS = 550; // matches --btn-r transition in style.css
   let pressed = null;
+  let pressedAt = 0;
   document.addEventListener('pointerdown', (e) => {
     const btn = e.target.closest?.(FILL_SELECTOR);
     if (!btn) return;
     pressed = btn;
+    pressedAt = performance.now();
     fillExpand(btn, e.clientX, e.clientY);
   });
   const release = (e) => {
     if (!pressed) return;
-    fillRetract(pressed, e.clientX, e.clientY);
+    const btn = pressed;
+    const cx = e.clientX, cy = e.clientY;
+    const wait = Math.max(0, FILL_MS - (performance.now() - pressedAt));
+    setTimeout(() => fillRetract(btn, cx, cy), wait);
     pressed = null;
   };
   document.addEventListener('pointerup', release);
