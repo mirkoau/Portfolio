@@ -112,7 +112,7 @@ async function render(project, lenis) {
           <div class="project-page__info-header">
             <div class="project-page__info-title-group">
               <p class="project-page__info-title">${project.title}</p>
-              <p class="project-page__info-role">${project.role}  / ${project.period}</p>
+              <p class="project-page__info-role">${project.role} · ${project.period}</p>
             </div>
           </div>
         </div>

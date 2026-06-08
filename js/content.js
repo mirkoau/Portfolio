@@ -20,13 +20,13 @@ function buildProject(project, entry) {
   const cover = project.gallery[0];
   return `
     <div class="work__project" data-project-id="${project.id}">
-      ${entry && project.title ? `<header class="work__entry-header"><div class="work__entry-heading"><p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} — ${entry.period}</h2></div></header>` : ''}
+      ${entry && project.title ? `<header class="work__entry-header"><div class="work__entry-heading"><p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} · ${entry.period}</h2></div></header>` : ''}
       <button class="work__project-image" aria-label="View ${project.title || 'project'}" data-project-link="${project.id}">
         <img src="${cover.src}" alt="${cover.alt}" loading="lazy" />
       </button>
       <div class="work__project-text">
         <div class="work__project-header">
-          ${entry && !project.title ? `<p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} — ${entry.period}</h2>` : ''}
+          ${entry && !project.title ? `<p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} · ${entry.period}</h2>` : ''}
           ${project.title ? `<h3 class="work__project-title">${project.title}</h3>` : ''}
           ${project.role  ? `<p  class="work__project-role">${project.role}</p>`   : ''}
         </div>
