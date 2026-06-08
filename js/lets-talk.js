@@ -341,11 +341,15 @@ export function initLetsTalk(lenis) {
     if (collapseTween) collapseTween.kill();
     if (collapse) {
       // Offset that carries the (flush-right) ✉ to the 54px circle's centre.
+      // Measure the icon centre's true distance from the pill's right edge
+      // (which holds still during contract) — deriving it from padding + glyph
+      // advance is unreliable, emoji side-bearings leave the ✉ off-centre.
       const emoji = btn.querySelector('.btn-emoji');
       if (emoji) {
-        const padR = parseFloat(getComputedStyle(btn).paddingRight) || 0;
-        const ew = emoji.getBoundingClientRect().width || 16;
-        btn.style.setProperty('--icon-shift', `${(27 - (54 - padR - ew / 2)).toFixed(2)}px`);
+        const bRect = btn.getBoundingClientRect();
+        const eRect = emoji.getBoundingClientRect();
+        const distFromRight = bRect.right - (eRect.left + eRect.width / 2);
+        btn.style.setProperty('--icon-shift', `${(distFromRight - 27).toFixed(2)}px`);
       }
     }
     btn.classList.toggle('btn-cta--collapsed', collapse);
