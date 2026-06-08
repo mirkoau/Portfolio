@@ -278,6 +278,8 @@ body {
 
 .nav__back {
   flex-direction: row;
+  /* mirror see-more: arrow side 15px, text side 20px */
+  padding: 15px 20px 15px 15px;
 }
 
 .nav__back-arrow {
