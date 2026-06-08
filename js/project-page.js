@@ -231,59 +231,50 @@ function initHeaderCollapse(lenis) {
   const navBack = document.querySelector('.nav__back');
   if (!navBack) return null;
 
-  let collapsedByScroll = false;
-  let hovering = false;
+  let collapsed = false;
   let lastY = lenis ? lenis.scroll : window.scrollY;
-  // Mistake space: need this much consistent-direction scroll before toggling.
-  const THRESHOLD = 72;
+  // Mistake space: need this much consistent-direction scroll before toggling,
+  // applied symmetrically (collapse on down, reveal on up). Any reversal resets
+  // the budget, so small jitters never flip it.
+  const THRESHOLD = 160;
   let accum = 0;
 
   const apply = () => {
-    const want = collapsedByScroll && !hovering;
-    navBack.classList.toggle('nav__back--collapsed', want);
-    setContactCollapsed(want);
+    navBack.classList.toggle('nav__back--collapsed', collapsed);
+    setContactCollapsed(collapsed);
   };
 
   const onScroll = () => {
     const y = lenis ? lenis.scroll : window.scrollY;
     const dy = y - lastY;
     lastY = y;
-    if (y <= 4) { collapsedByScroll = false; accum = 0; apply(); return; } // top → full
-    // Build intent toward the opposite of the current state; any reversal
-    // resets the budget, so small jitters never flip it.
-    if (collapsedByScroll) {
+    if (y <= 4) { collapsed = false; accum = 0; apply(); return; } // top → full
+    if (collapsed) {
       accum = dy < 0 ? accum + dy : 0;           // need upward intent to reveal
-      if (accum <= -THRESHOLD) { collapsedByScroll = false; accum = 0; }
+      if (accum <= -THRESHOLD) { collapsed = false; accum = 0; apply(); }
     } else {
       accum = dy > 0 ? accum + dy : 0;           // need downward intent to collapse
-      if (accum >= THRESHOLD) { collapsedByScroll = true; accum = 0; }
+      if (accum >= THRESHOLD) { collapsed = true; accum = 0; apply(); }
     }
-    apply();
   };
 
-  // Hover any header button → reveal all (overrides scroll collapse)
+  // Hover any header button → reveal and latch open; only a fresh downward
+  // scroll past the deadzone collapses again.
   const HEADER_SEL = '.nav__back, .nav__burger, .btn-cta--nav';
   const onOver = (e) => {
     const btn = e.target.closest?.(HEADER_SEL);
     if (!btn || btn.contains(e.relatedTarget)) return;
-    hovering = true; apply();
-  };
-  const onOut = (e) => {
-    const btn = e.target.closest?.(HEADER_SEL);
-    if (!btn || btn.contains(e.relatedTarget)) return;
-    hovering = false; apply();
+    collapsed = false; accum = 0; apply();
   };
 
   if (lenis) lenis.on('scroll', onScroll);
   else window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('pointerover', onOver);
-  document.addEventListener('pointerout', onOut);
 
   return () => {
     if (lenis) lenis.off('scroll', onScroll);
     else window.removeEventListener('scroll', onScroll);
     document.removeEventListener('pointerover', onOver);
-    document.removeEventListener('pointerout', onOut);
     navBack.classList.remove('nav__back--collapsed');
     setContactCollapsed(false);
   };
