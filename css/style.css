@@ -433,29 +433,23 @@ body {
   width: 54px;
 }
 
-.nav__back--collapsed,
-.btn-cta--collapsed {
-  justify-content: center;
-  gap: 0;
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* Beat .nav__back.btn-cta (0,2,0) padding so Home actually loses its inset */
-.nav__back--collapsed.btn-cta {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 .nav__back--collapsed .nav__back-label,
 .btn-cta--collapsed .btn-label {
   max-width: 0;
   opacity: 0;
 }
 
+/* Icon holds its flex position as the pill contracts (no jitter), then eases
+   the small remaining distance to the circle's centre. --icon-shift is the
+   per-button offset, measured in JS (depends on icon width + padding). */
+.nav__back-arrow,
+.btn-emoji {
+  transition: transform 0.45s var(--ease-out);
+}
+
 .nav__back--collapsed .nav__back-arrow,
 .btn-cta--collapsed .btn-emoji {
-  margin: 0 auto;
+  transform: translateX(var(--icon-shift, 0px));
 }
 
 .about .section-main {

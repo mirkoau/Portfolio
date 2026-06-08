@@ -231,6 +231,14 @@ function initHeaderCollapse(lenis) {
   const navBack = document.querySelector('.nav__back');
   if (!navBack) return null;
 
+  // Offset that carries the (flush-left) arrow to the 54px circle's centre.
+  const arrow = navBack.querySelector('.nav__back-arrow');
+  if (arrow) {
+    const padL = parseFloat(getComputedStyle(navBack).paddingLeft) || 0;
+    const w = arrow.getBoundingClientRect().width || 18;
+    navBack.style.setProperty('--icon-shift', `${(27 - (padL + w / 2)).toFixed(2)}px`);
+  }
+
   let collapsed = false;
   let lastY = lenis ? lenis.scroll : window.scrollY;
   // Mistake space: need this much consistent-direction scroll before toggling,

@@ -339,6 +339,15 @@ export function initLetsTalk(lenis) {
     if (collapse === collapsedNav) return;
     collapsedNav = collapse;
     if (collapseTween) collapseTween.kill();
+    if (collapse) {
+      // Offset that carries the (flush-right) ✉ to the 54px circle's centre.
+      const emoji = btn.querySelector('.btn-emoji');
+      if (emoji) {
+        const padR = parseFloat(getComputedStyle(btn).paddingRight) || 0;
+        const ew = emoji.getBoundingClientRect().width || 16;
+        btn.style.setProperty('--icon-shift', `${(27 - (54 - padR - ew / 2)).toFixed(2)}px`);
+      }
+    }
     btn.classList.toggle('btn-cta--collapsed', collapse);
     if (collapse) {
       const left = parseFloat(gsap.getProperty(btn, 'left'));
