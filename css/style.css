@@ -1025,7 +1025,12 @@ body.is-project-view .scroll-bg {
     --col-offset: 0px;
   }
 
-  .nav { padding: 0 var(--gutter); }
+  /* Top spacing matches side gutter (was center-aligned in nav bar = too tight) */
+  .nav {
+    height: auto;
+    align-items: flex-start;
+    padding: var(--gutter) var(--gutter) 0;
+  }
 
   /* Nav pills hug their label (not fixed 200px) */
   .nav__back,
@@ -1056,7 +1061,9 @@ body.is-project-view .scroll-bg {
     top: 0;
     height: var(--nav-height);
     display: flex;
-    align-items: center;
+    /* Align with nav buttons, now top-pinned at the gutter (was centered) */
+    align-items: flex-start;
+    padding-top: var(--gutter);
     font-size: var(--size-heading-lg);
     z-index: 10;
   }
@@ -1070,6 +1077,9 @@ body.is-project-view .scroll-bg {
   }
   .work__entry { padding: var(--space-md); }
   .work__intro { max-width: none; }
+  /* Bigger gap between stacked projects (multi-project entries like Remedy) */
+  .work__project { margin-top: var(--space-2xl); }
+  .work__project:first-child { margin-top: 0; }
   /* Drop the desktop negative-offset; would overflow left when stacked */
   .work__project-body,
   .work__see-more,
