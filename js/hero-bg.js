@@ -15,11 +15,14 @@ export function initHeroBg() {
   renderer.autoClear = false;            // two-pass render — clear manually
   const canvas = renderer.domElement;
   // The CANVAS BOX is what covers the screen (the buffer just renders into it).
-  // 100lvh alone still left a Firefox bottom gap, so overfill the box past lvh
-  // by OVERSCAN px — guaranteed to cover the strip the toolbar reveals. The
-  // shader is a clip-space quad → fills the taller box with zero distortion.
+  // Use the frozen --hero-lock px (set in project-page.js) so the box height
+  // never changes when the toolbar slides. lvh is meant to be constant but
+  // isn't on Firefox iOS — there the box grew while the resize rebuild is
+  // skipped (width unchanged), stretching the frozen buffer. OVERSCAN px of
+  // overfill still covers the strip the toolbar reveals; the shader is a
+  // clip-space quad → fills the taller box with zero distortion.
   const OVERSCAN = 140;
-  canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:calc(100lvh + ${OVERSCAN}px);pointer-events:none;z-index:-2;`;
+  canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:calc(var(--hero-lock, 100lvh) + ${OVERSCAN}px);pointer-events:none;z-index:-2;`;
   document.body.appendChild(canvas);
 
   // Two heights, decoupled:
