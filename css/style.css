@@ -519,7 +519,7 @@ body.is-scrolled .hero__scroll-cue {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
+  background: #fff;
   opacity: 0;
   transform: scale(0.3);
   transition: transform 0.4s var(--ease-spring), opacity 0.3s var(--ease-out);
@@ -527,12 +527,16 @@ body.is-scrolled .hero__scroll-cue {
 
 .hero__scroll-cue svg {
   position: relative;
-  transition: transform 0.3s var(--ease-spring);
+  transition: transform 0.3s var(--ease-spring), color 0.2s var(--ease-out);
 }
 
 .hero__scroll-cue:hover::before {
   opacity: 1;
   transform: scale(1);
+}
+
+.hero__scroll-cue:hover svg {
+  color: var(--color-bg);
 }
 
 .hero__scroll-cue:hover svg {
