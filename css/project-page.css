@@ -70,7 +70,8 @@
   line-height: var(--leading-normal);
 }
 
-.project-page__info-role {
+.project-page__info-role,
+.project-footer__role {
   font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--size-body-sm);
@@ -386,11 +387,6 @@
 }
 
 .project-footer__role {
-  font-family: var(--font-ui);
-  font-weight: 500;
-  font-size: var(--size-body-sm);
-  color: var(--color-blue);
-  opacity: 0.5;
   transition: color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
 }
 

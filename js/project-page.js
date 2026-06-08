@@ -58,7 +58,7 @@ function renderProjectRows(projects, currentId) {
   return projects
     .filter(p => p.id !== currentId)
     .map(p => {
-      const meta = [p.role, p.period].filter(Boolean).join('  / ');
+      const meta = [p.role, p.period].filter(Boolean).join(' · ');
       const bg = `
       <div class="project-footer__row-bg">
         ${p.hero ? `<img src="${p.hero}" alt="" loading="lazy" />` : ''}
