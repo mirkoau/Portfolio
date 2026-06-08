@@ -200,7 +200,7 @@ export function initHeroBg() {
       flow = smoothstep(0.1, 0.9, flow);
 
       // ── Unified palette — purple undertone ties all hues ─
-      vec3 base   = vec3(0.013, 0.011, 0.02);    // purple-black
+      vec3 base   = vec3(0.021, 0.017, 0.033);   // purple-black — ambient floor, never void
       vec3 col1   = vec3(0.04, 0.05, 0.18);      // deep indigo
       vec3 col2   = vec3(0.02, 0.10, 0.14);      // dark cyan — blue-leaning teal
       vec3 col3   = vec3(0.13, 0.04, 0.07);      // dark plum — warm but purple-bridged
@@ -246,7 +246,7 @@ export function initHeroBg() {
 
       // ── Subtle vignette to darken edges ───────────
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
-      col *= mix(0.75, 1.0, vig);
+      col *= mix(0.82, 1.0, vig);
 
       // ── Film grain ────────────────────────────────
       float grain = hash(uv * uResolution + fract(uTime * 100.0)) - 0.5;
