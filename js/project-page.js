@@ -103,10 +103,11 @@ function renderProjectRows(projects, currentId) {
 }
 
 // Burger menu rows — distinct from the footer: compact glass buttons in a row
-// (the burger morphs into a glass panel of them). Last item is the X close.
+// (the burger morphs into a glass panel of them). The burger itself is the X
+// toggle, so there's no separate close item here.
 function renderMenuRows(projects, currentId) {
   // --i drives the mobile stagger, set in visual top-to-bottom order
-  // (close sits on top, then project rows, then Contact at the bottom)
+  // (project rows, then Contact at the bottom)
   const items = projects.filter(p => p.id !== currentId);
   const rows = items.map((p, k) => `
     <a class="project-menu__item" href="#/work/${p.id}" style="--i:${k + 1}">
@@ -117,12 +118,7 @@ function renderMenuRows(projects, currentId) {
     <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
       <span class="project-menu__label">Contact</span>
     </a>`;
-  const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  const close = `
-    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:0">
-      <span class="project-menu__label">${closeSvg}</span>
-    </button>`;
-  return rows + contact + close;
+  return rows + contact;
 }
 
 async function render(project, lenis) {
@@ -438,7 +434,7 @@ function initBurgerMenu(lenis) {
     open = next;
     burger.setAttribute('aria-expanded', String(open));
     if (open) {
-      // burger fades out as the panel grows over it
+      // burger morphs into an X; panel grows alongside it
       burger.classList.add('nav__burger--open');
       scrollAccum = 0; lenisAnchor = null;  // fresh intent budget per open
       panel.hidden = false;
@@ -449,12 +445,10 @@ function initBurgerMenu(lenis) {
       panel.classList.add('project-menu--open');
       backdrop.classList.add('project-menu__backdrop--open');
     } else {
-      // reverse the morph: collapse the panel first, then bring the burger
-      // back once the panel has shrunk into its spot — otherwise the burger
-      // pops up in the middle of the still-collapsing panel
+      // reverse in sync: X folds back to burger as the panel collapses
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
-      setTimeout(() => { if (!open) burger.classList.remove('nav__burger--open'); }, 280);
+      burger.classList.remove('nav__burger--open');
       // hide after the morph completes so it leaves the a11y tree
       setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 450);
     }

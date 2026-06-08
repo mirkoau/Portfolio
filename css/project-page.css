@@ -471,7 +471,7 @@
   height: 14px;
 }
 
-/* Three vertical bars side by side */
+/* Desktop: three vertical bars side by side */
 .nav__burger-line {
   position: absolute;
   top: 0;
@@ -480,23 +480,23 @@
   background: currentColor;
   border-radius: 2px;
   transform-origin: center;
-  transition: transform 0.3s var(--ease-out), opacity 0.2s var(--ease-out);
+  transition: transform 0.32s var(--ease-out), opacity 0.18s var(--ease-out);
 }
 
 .nav__burger-line:nth-child(1) { left: 0; }
 .nav__burger-line:nth-child(2) { left: 7px; }
 .nav__burger-line:nth-child(3) { left: 14px; }
 
-/* Open → lines contract vertically to nothing */
-.nav__burger--open .nav__burger-line {
-  transform: scaleY(0);
+/* Open → outer bars slide to centre and cross into an X, middle fades.
+   Burger stays the toggle. */
+.nav__burger--open .nav__burger-line:nth-child(1) {
+  transform: translateX(7px) rotate(45deg);
 }
-
-/* Burger hides while open — it morphs into the menu row (X item closes it) */
-.nav__burger--open {
+.nav__burger--open .nav__burger-line:nth-child(2) {
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+}
+.nav__burger--open .nav__burger-line:nth-child(3) {
+  transform: translateX(-7px) rotate(-45deg);
 }
 
 /* ── Project menu (burger dropdown) ─────────────────── */
@@ -563,13 +563,6 @@
 
 .project-menu--open .project-menu__item {
   opacity: 1;
-}
-
-/* X close — square (matches burger 54px), sits at the right; reset chrome */
-.project-menu__item--close {
-  width: 54px;
-  padding: 0;
-  font: inherit;
 }
 
 /* Contact lives in the menu on mobile only */
@@ -676,14 +669,32 @@
     margin: -27px 0 0 0;
   }
 
-  /* Full-width vertical menu; Contact joins the list, X sits top-right.
-     No panel padding so the close X hugs the right gutter; pull up by half
-     its height (27px) so it lands exactly over the burger (nav vertical centre). */
+  /* Mobile: horizontal bars stacked (desktop is vertical) */
+  .nav__burger-line {
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 2px;
+  }
+  .nav__burger-line:nth-child(1) { top: 0; }
+  .nav__burger-line:nth-child(2) { top: 50%; left: 0; transform: translateY(-50%); }
+  .nav__burger-line:nth-child(3) { top: auto; left: 0; bottom: 0; }
+
+  /* Open → cross into an X from the horizontal bars */
+  .nav__burger--open .nav__burger-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .nav__burger--open .nav__burger-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Full-width vertical menu; Contact joins the list. Burger stays the X
+     toggle in the nav, so the list cascades below it (no in-panel close). */
   .project-menu {
-    top: calc(var(--nav-height) / 2);
+    top: var(--nav-height);
     width: calc(100vw - 2 * var(--gutter));
     padding: 0;
-    transform: translate(-50%, -27px);
+    transform: translate(-50%, var(--space-xs));
     flex-direction: column;
     align-items: flex-end;
     gap: var(--space-xs);
@@ -700,12 +711,6 @@
   /* Contact is part of the list on mobile */
   .project-menu__item--contact {
     display: flex;
-  }
-
-  /* Close X — pull to the top-right of the stack */
-  .project-menu__item--close {
-    order: -1;
-    align-self: flex-end;
   }
 
   /* Contact moves into the menu, so hide the flying nav pill on subpages */
