@@ -50,22 +50,6 @@ navBack.addEventListener('click', (e) => {
   }, { reverse: true });
 });
 
-// ── Back arrow animation (mirrors See More arrow) ────
-if (navBack.querySelector('.nav__back-arrow') && typeof gsap !== 'undefined') {
-  // querySelectorAll each time so the masked top-layer copy stays in sync
-  const arrows = () => navBack.querySelectorAll('.nav__back-arrow');
-  navBack.addEventListener('mouseenter', () => {
-    gsap.timeline()
-      .to(arrows(), { x: -20, opacity: 0, duration: 0.25, ease: 'power3.in' })
-      .set(arrows(), { x: 12 })
-      .to(arrows(), { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
-  });
-
-  navBack.addEventListener('mouseleave', () => {
-    gsap.to(arrows(), { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
-  });
-}
-
 function hideIndex() {
   _scrollY = window.scrollY;
   document.body.classList.add('is-project-view');

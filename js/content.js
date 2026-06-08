@@ -18,12 +18,17 @@ async function _init() {
 
 function buildProject(project, entry) {
   const cover = project.gallery[0];
+  const soon  = project.comingSoon;
+  const image = soon
+    ? `<div class="work__project-image work__project-image--soon"><img src="${cover.src}" alt="${cover.alt}" loading="lazy" /></div>`
+    : `<button class="work__project-image" aria-label="View ${project.title || 'project'}" data-project-link="${project.id}"><img src="${cover.src}" alt="${cover.alt}" loading="lazy" /></button>`;
+  const cta = soon
+    ? `<span class="work__coming-soon">Coming Soon <svg class="work__coming-soon-x" aria-hidden="true" width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>`
+    : `<span class="work__see-more" aria-hidden="true">See More <svg class="work__see-more-arrow" width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
   return `
     <div class="work__project" data-project-id="${project.id}">
       ${entry && project.title ? `<header class="work__entry-header"><div class="work__entry-heading"><p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} · ${entry.period}</h2></div></header>` : ''}
-      <button class="work__project-image" aria-label="View ${project.title || 'project'}" data-project-link="${project.id}">
-        <img src="${cover.src}" alt="${cover.alt}" loading="lazy" />
-      </button>
+      ${image}
       <div class="work__project-text">
         <div class="work__project-header">
           ${entry && !project.title ? `<p class="work__meta">${entry.company}</p><h2 class="work__role">${entry.role} · ${entry.period}</h2>` : ''}
@@ -32,7 +37,7 @@ function buildProject(project, entry) {
         </div>
         <div class="work__project-desc">
           ${project.body.map(p => `<p class="work__project-body">${p}</p>`).join('')}
-          <span class="work__see-more" aria-hidden="true">See More <svg class="work__see-more-arrow" width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          ${cta}
         </div>
       </div>
     </div>`;
@@ -48,7 +53,6 @@ function buildEntry(entry) {
 function renderWork(work) {
   const el = document.querySelector('#work .section-main');
   if (el) el.innerHTML = work.map(buildEntry).join('');
-  initSeeMoreArrows();
   initSeeMoreInteractions();
   initProjectLinks();
 }
@@ -66,29 +70,6 @@ function initProjectLinks() {
     if (!seeMore || !btn) return;
     seeMore.addEventListener('click', () => {
       navigate(`#/work/${btn.dataset.projectLink}`);
-    });
-  });
-}
-
-function initSeeMoreArrows() {
-  if (typeof gsap === 'undefined') return;
-  document.querySelectorAll('.work__project').forEach(project => {
-    const seeMore = project.querySelector('.work__see-more');
-    if (!seeMore || !seeMore.querySelector('.work__see-more-arrow')) return;
-
-    // querySelectorAll each time so the masked top-layer copy stays in sync
-    const arrows = () => seeMore.querySelectorAll('.work__see-more-arrow');
-
-    // Hover — arrow shoots right and snaps back from left
-    seeMore.addEventListener('mouseenter', () => {
-      gsap.timeline()
-        .to(arrows(), { x: 20, opacity: 0, duration: 0.25, ease: 'power3.in' })
-        .set(arrows(), { x: -12 })
-        .to(arrows(), { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
-    });
-
-    seeMore.addEventListener('mouseleave', () => {
-      gsap.to(arrows(), { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
     });
   });
 }
@@ -112,6 +93,16 @@ function initSeeMoreInteractions() {
       gsap.to(el, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
     });
 
+  });
+
+  // Coming Soon — size change on hover only (not clickable, no fill, no press)
+  document.querySelectorAll('.work__coming-soon').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      gsap.to(el, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
+    });
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+    });
   });
 }
 

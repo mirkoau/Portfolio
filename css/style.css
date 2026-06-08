@@ -312,6 +312,7 @@ body {
 .btn-cta,
 .btn-secondary,
 .work__see-more,
+.work__coming-soon,
 .nav__burger {
   position: relative;
   display: flex;
@@ -345,7 +346,8 @@ body {
 /* Fixed-width text pills (Figma) */
 .nav__cta,
 .nav__back,
-.work__see-more {
+.work__see-more,
+.work__coming-soon {
   width: 200px;
 }
 
@@ -740,6 +742,33 @@ body.is-project-view .scroll-bg {
   flex-shrink: 0;
 }
 
+/* Coming Soon — pill base, but muted + non-interactive (no fill, no nav).
+   Only the JS hover-scale applies. */
+.work__coming-soon {
+  align-self: flex-start;
+  margin-top: var(--space-md);
+  margin-left: calc(-1 * var(--space-2xl));
+  cursor: default;
+  color: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.work__coming-soon-x {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Coming Soon cover — static, no zoom / pointer / vignette */
+.work__project-image--soon {
+  cursor: default;
+}
+.work__project-image--soon:hover img {
+  transform: none;
+}
+.work__project-image--soon::after {
+  content: none;
+}
+
 
 .work__project-image::after {
   content: '';
@@ -963,7 +992,8 @@ body.is-project-view .scroll-bg {
   .work__intro { max-width: none; }
   /* Drop the desktop negative-offset; would overflow left when stacked */
   .work__project-body,
-  .work__see-more {
+  .work__see-more,
+  .work__coming-soon {
     margin-left: 0;
     margin-right: 0;
   }

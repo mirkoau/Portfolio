@@ -199,47 +199,11 @@ export function initLetsTalk(lenis) {
   }
 
 
-  // ── Mail emoji animation ─────────────────────────────
-  // Factory so both the flying button and the static about anchor (the
-  // duplicate it hands off to) share identical mail-send micro-anims.
-  // querySelectorAll each time so the masked top-layer fill copy stays in sync.
-  function makeMailAnim(el) {
-    const emojis = () => el.querySelectorAll('.btn-emoji');
-    let tl = null;
-    return {
-      play() {
-        const els = emojis();
-        if (!els.length || prefersReduced) return;
-        if (tl) tl.kill();
-        tl = gsap.timeline();
-        // Lift + tilt like it's being sent
-        tl.to(els, { y: -6, x: 4, rotation: -12, scale: 1.2, duration: 0.3, ease: 'power2.out' });
-        // Little wiggle at the peak
-        tl.to(els, { rotation: 8, duration: 0.15, ease: 'power1.inOut' });
-        tl.to(els, { rotation: -6, duration: 0.12, ease: 'power1.inOut' });
-        // Settle back with elastic bounce
-        tl.to(els, { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
-      },
-      reset() {
-        const els = emojis();
-        if (!els.length || prefersReduced) return;
-        if (tl) tl.kill();
-        gsap.to(els, { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.4, ease: 'power2.out' });
-      },
-    };
-  }
-
-  const flyMail   = makeMailAnim(btn);
-  const anchorMail = makeMailAnim(aboutAnchor);
-  const playMailAnim  = flyMail.play;
-  const resetMailAnim = flyMail.reset;
-
   // ── Hover & press feedback ────────────────────────────
   let isNav = () => btn.classList.contains('btn-cta--nav');
 
   btn.addEventListener('mouseenter', () => {
     if (tween?.isActive() || prefersReduced) return;
-    playMailAnim();
     if (isNav()) {
       gsap.to(btn, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
     } else {
@@ -249,7 +213,6 @@ export function initLetsTalk(lenis) {
 
   btn.addEventListener('mouseleave', () => {
     if (prefersReduced) return;
-    resetMailAnim();
     if (isNav()) {
       gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
     } else {
@@ -307,12 +270,10 @@ export function initLetsTalk(lenis) {
   // Anchor mirrors the flying button's about-state hover/press feedback
   aboutAnchor.addEventListener('mouseenter', () => {
     if (prefersReduced) return;
-    anchorMail.play();
     gsap.to(aboutAnchor, { scale: 1.08, duration: 0.4, ease: 'power2.out' });
   });
   aboutAnchor.addEventListener('mouseleave', () => {
     if (prefersReduced) return;
-    anchorMail.reset();
     gsap.to(aboutAnchor, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
   });
   aboutAnchor.addEventListener('mousedown', () => {
