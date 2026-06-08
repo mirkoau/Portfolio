@@ -261,10 +261,38 @@ function initHeaderCollapse(lenis) {
   // Hover any header button → reveal and latch open; only a fresh downward
   // scroll past the deadzone collapses again.
   const HEADER_SEL = '.nav__back, .nav__burger, .btn-cta--nav';
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  const navCta = document.querySelector('.nav__cta');
+
+  // main.js sized the cursor-fill ball for the collapsed circle; once hover
+  // expands the pill to its full width the ball would only cover the circle.
+  // Recompute it against the expanded box so it grows from the cursor and
+  // fills the whole pill. Home keeps its left edge; Contact slides back to the
+  // nav anchor. (Both expand to the .nav__cta width token.)
+  const refillExpanded = (btn, x, y) => {
+    const cur = btn.getBoundingClientRect();
+    const a = navCta ? navCta.getBoundingClientRect() : null;
+    const width = a ? a.width : cur.width;
+    const left = btn.classList.contains('btn-cta--nav') && a ? a.left : cur.left;
+    const px = x - left, py = y - cur.top, h = cur.height;
+    const rad = Math.max(
+      Math.hypot(px, py), Math.hypot(width - px, py),
+      Math.hypot(px, h - py), Math.hypot(width - px, h - py),
+    );
+    btn.style.setProperty('--btn-mx', `${px}px`);
+    btn.style.setProperty('--btn-my', `${py}px`);
+    btn.style.setProperty('--btn-r', `${rad}px`);
+  };
+
   const onOver = (e) => {
     const btn = e.target.closest?.(HEADER_SEL);
     if (!btn || btn.contains(e.relatedTarget)) return;
+    const wasCollapsed = collapsed;
     collapsed = false; accum = 0; apply();
+    // Only the two collapsible pills resize on hover; the burger never does.
+    if (wasCollapsed && canHover && !btn.classList.contains('nav__burger')) {
+      refillExpanded(btn, e.clientX, e.clientY);
+    }
   };
 
   if (lenis) lenis.on('scroll', onScroll);
