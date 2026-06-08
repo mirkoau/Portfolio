@@ -909,18 +909,6 @@ body.is-project-view .scroll-bg {
   flex-shrink: 0;
 }
 
-/* Coming Soon cover — static, no zoom / pointer / vignette */
-.work__project-image--soon {
-  cursor: default;
-}
-.work__project-image--soon:hover img {
-  transform: none;
-}
-.work__project-image--soon::after {
-  content: none;
-}
-
-
 .work__project-image::after {
   content: '';
   position: absolute;
@@ -934,6 +922,18 @@ body.is-project-view .scroll-bg {
 .work__project-image:hover::after,
 .work__project-image:focus-visible::after {
   opacity: 1;
+}
+
+/* Coming Soon cover — static, no zoom / pointer / vignette. Must follow the
+   base + hover rules above: equal specificity, so source order wins. */
+.work__project-image--soon {
+  cursor: default;
+}
+.work__project-image--soon:hover img {
+  transform: none;
+}
+.work__project-image--soon::after {
+  content: none;
 }
 
 
