@@ -14,7 +14,7 @@ async function getAllProjects() {
   const projects = [];
   for (const company of data.work) {
     for (const p of company.projects) {
-      projects.push({ id: p.id, title: p.title || company.company });
+      projects.push({ id: p.id, title: p.title || company.company, comingSoon: !!p.comingSoon });
     }
   }
   // Fetch hero images + role/period from per-project JSONs
@@ -59,15 +59,28 @@ function renderProjectRows(projects, currentId) {
     .filter(p => p.id !== currentId)
     .map(p => {
       const meta = [p.role, p.period].filter(Boolean).join('  / ');
-      return `
-    <a class="project-footer__row" href="#/work/${p.id}">
+      const bg = `
       <div class="project-footer__row-bg">
         ${p.hero ? `<img src="${p.hero}" alt="" loading="lazy" />` : ''}
-      </div>
+      </div>`;
+      const titleGroup = `
       <div class="project-footer__title-group">
         <span class="project-footer__title">${p.title}</span>
         ${meta ? `<span class="project-footer__role">${meta}</span>` : ''}
-      </div>
+      </div>`;
+      // Coming Soon — non-clickable row, label in place of the arrow
+      if (p.comingSoon) {
+        return `
+    <div class="project-footer__row project-footer__row--soon">
+      ${bg}
+      ${titleGroup}
+      <span class="project-footer__soon">Coming Soon</span>
+    </div>`;
+      }
+      return `
+    <a class="project-footer__row" href="#/work/${p.id}">
+      ${bg}
+      ${titleGroup}
       ${arrowSvg}
     </a>`;
     })

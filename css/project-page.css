@@ -413,6 +413,29 @@
   color: var(--color-white);
 }
 
+/* Coming Soon — non-clickable More Work row; no hover reveal, label for arrow */
+.project-footer__row--soon {
+  cursor: default;
+}
+.project-footer__row--soon:hover .project-footer__row-bg { opacity: 0; }
+.project-footer__row--soon:hover .project-footer__title { color: var(--color-blue); }
+.project-footer__row--soon:hover .project-footer__role {
+  color: var(--color-blue);
+  opacity: 0.5;
+}
+
+.project-footer__soon {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--size-body-sm);
+  letter-spacing: -0.01em;
+  color: var(--color-blue);
+  opacity: 0.6;
+}
+
 /* ── Header burger (project subpage) ────────────────── */
 
 /* Glass-pill base inherited from .btn-cta group; below = position + icon */
