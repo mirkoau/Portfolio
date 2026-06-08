@@ -2,6 +2,11 @@ import { showForProject } from './lets-talk.js';
 import { openGallery } from './gallery.js';
 
 const container = document.getElementById('project-view');
+
+// Lock hero height to load-time viewport — frozen, ignores later resizes
+// (desktop window drag + mobile address-bar show/hide)
+document.documentElement.style.setProperty('--hero-lock', `${window.innerHeight}px`);
+
 let _currentId = null;
 let _cleanup = null;
 let _allProjects = null;

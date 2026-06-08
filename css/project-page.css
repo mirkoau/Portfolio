@@ -14,7 +14,7 @@
 
 .project-page__hero {
   position: relative;
-  height: 65lvh;
+  height: calc(0.65 * var(--hero-lock, 65lvh));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -627,7 +627,7 @@
 
 @media (max-width: 768px) {
   .project-page__hero {
-    height: 75lvh;
+    height: calc(0.75 * var(--hero-lock, 75lvh));
     padding: 0 var(--gutter) var(--space-lg);
   }
 
