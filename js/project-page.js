@@ -234,6 +234,9 @@ function initHeaderCollapse(lenis) {
   let collapsedByScroll = false;
   let hovering = false;
   let lastY = lenis ? lenis.scroll : window.scrollY;
+  // Mistake space: need this much consistent-direction scroll before toggling.
+  const THRESHOLD = 72;
+  let accum = 0;
 
   const apply = () => {
     const want = collapsedByScroll && !hovering;
@@ -243,10 +246,18 @@ function initHeaderCollapse(lenis) {
 
   const onScroll = () => {
     const y = lenis ? lenis.scroll : window.scrollY;
-    if (y <= 4) collapsedByScroll = false;             // at top → full pills
-    else if (y > lastY + 2) collapsedByScroll = true;  // down → collapse
-    else if (y < lastY - 2) collapsedByScroll = false; // up → reveal
+    const dy = y - lastY;
     lastY = y;
+    if (y <= 4) { collapsedByScroll = false; accum = 0; apply(); return; } // top → full
+    // Build intent toward the opposite of the current state; any reversal
+    // resets the budget, so small jitters never flip it.
+    if (collapsedByScroll) {
+      accum = dy < 0 ? accum + dy : 0;           // need upward intent to reveal
+      if (accum <= -THRESHOLD) { collapsedByScroll = false; accum = 0; }
+    } else {
+      accum = dy > 0 ? accum + dy : 0;           // need downward intent to collapse
+      if (accum >= THRESHOLD) { collapsedByScroll = true; accum = 0; }
+    }
     apply();
   };
 

@@ -334,7 +334,8 @@ export function initLetsTalk(lenis) {
   // label mask + icon centering are CSS (.btn-cta--collapsed).
   _setContactCollapsed = (collapse) => {
     if (prefersReduced || state !== 'nav') return;
-    if (btn.offsetParent === null) return;      // hidden (mobile) — Contact in menu
+    // fixed-position btn has null offsetParent — test display, not offsetParent
+    if (getComputedStyle(btn).display === 'none') return; // hidden (mobile) — Contact in menu
     if (collapse === collapsedNav) return;
     collapsedNav = collapse;
     if (collapseTween) collapseTween.kill();
