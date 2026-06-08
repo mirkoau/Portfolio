@@ -102,13 +102,17 @@ function renderProjectRows(projects, currentId) {
     .join('');
 }
 
-// Burger menu rows — distinct from the footer: compact glass buttons in a row
-// (the burger morphs into a glass panel of them). The burger itself is the X
-// toggle, so there's no separate close item here.
+// Burger menu rows — compact pills. One markup, two layouts (CSS-driven):
+//   • Desktop — pills open as a row on the header line; the burger fades out and
+//     the close (X) button is the right-most item here. Contact is hidden (the
+//     flying/nav Contact pill is used instead).
+//   • Mobile — the burger itself is the X toggle and the list cascades below it;
+//     the close button is hidden and Contact joins the list.
+// The close button is a .project-menu__item, so it inherits the row's close-on-
+// click wiring for free. Order (rows → contact → close) puts close right-most.
 function renderMenuRows(projects, currentId) {
-  // --i drives the mobile stagger, set in visual top-to-bottom order
-  // (project rows, then Contact at the bottom). Coming-soon projects are
-  // omitted — they're not navigable.
+  // --i drives the mobile stagger, set in visual top-to-bottom order.
+  // Coming-soon projects are omitted — they're not navigable.
   const items = projects.filter(p => p.id !== currentId && !p.comingSoon);
   const rows = items.map((p, k) => `
     <a class="project-menu__item" href="#/work/${p.id}" style="--i:${k + 1}">
@@ -119,7 +123,13 @@ function renderMenuRows(projects, currentId) {
     <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
       <span class="project-menu__label">Contact</span>
     </a>`;
-  return rows + contact;
+  // Desktop close (X) — right-most pill; hidden on mobile (burger is the X)
+  const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  const close = `
+    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:0">
+      <span class="project-menu__label">${closeSvg}</span>
+    </button>`;
+  return rows + contact + close;
 }
 
 async function render(project, lenis) {
@@ -435,7 +445,8 @@ function initBurgerMenu(lenis) {
     open = next;
     burger.setAttribute('aria-expanded', String(open));
     if (open) {
-      // burger morphs into an X; panel grows alongside it
+      // --open drives both layouts: desktop fades the burger out (the row's
+      // close X takes over), mobile morphs the burger into the X in place
       burger.classList.add('nav__burger--open');
       scrollAccum = 0; lenisAnchor = null;  // fresh intent budget per open
       panel.hidden = false;
@@ -446,7 +457,7 @@ function initBurgerMenu(lenis) {
       panel.classList.add('project-menu--open');
       backdrop.classList.add('project-menu__backdrop--open');
     } else {
-      // reverse in sync: X folds back to burger as the panel collapses
+      // reverse in sync: row collapses while the burger fades/morphs back
       panel.classList.remove('project-menu--open');
       backdrop.classList.remove('project-menu__backdrop--open');
       burger.classList.remove('nav__burger--open');

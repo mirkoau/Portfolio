@@ -434,7 +434,7 @@
 
 /* ── Header burger (project subpage) ────────────────── */
 
-/* Glass-pill base inherited from .btn-cta group; below = position + icon */
+/* Pill base inherited from .btn-cta group; below = position + icon */
 .nav__burger {
   position: absolute;
   left: 50%;
@@ -471,6 +471,14 @@
   height: 14px;
 }
 
+/* Menu has two distinct layouts (see also renderMenuRows in project-page.js):
+   • Desktop — the burger sits centred in the header and FADES OUT on open; the
+     pill row opens on the same header line, and a dedicated close (X)
+     button is the right-most item in that row.
+   • Mobile — the burger stays put top-right and MORPHS into the X toggle
+     itself; the list cascades below it and there is no in-row close button.
+   The rules below are the desktop defaults; the mobile media block overrides. */
+
 /* Desktop: three vertical bars side by side */
 .nav__burger-line {
   position: absolute;
@@ -487,16 +495,11 @@
 .nav__burger-line:nth-child(2) { left: 7px; }
 .nav__burger-line:nth-child(3) { left: 14px; }
 
-/* Open → outer bars slide to centre and cross into an X, middle fades.
-   Burger stays the toggle. */
-.nav__burger--open .nav__burger-line:nth-child(1) {
-  transform: translateX(7px) rotate(45deg);
-}
-.nav__burger--open .nav__burger-line:nth-child(2) {
+/* Desktop open → burger fades out; the row's own close X takes over */
+.nav__burger--open {
   opacity: 0;
-}
-.nav__burger--open .nav__burger-line:nth-child(3) {
-  transform: translateX(-7px) rotate(-45deg);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* ── Project menu (burger dropdown) ─────────────────── */
@@ -511,11 +514,11 @@
 
 .project-menu__backdrop[hidden] { display: none; }
 
-/* Glass-pill row that drops just below the header — the burger stays the
-   centered X toggle above it (no overlap). The pills carry the glass. */
+/* Desktop: pill row on the header line itself (the faded-out burger sat
+   here). Centred in the nav band; rightmost item is the close X. */
 .project-menu {
   position: fixed;
-  top: var(--nav-height);
+  top: calc(var(--nav-height) / 2);
   left: 50%;
   width: max-content;
   max-width: calc(100vw - 2 * var(--gutter));
@@ -526,7 +529,7 @@
   gap: 6px;
   padding: var(--space-xs);
   border-radius: 18px;
-  transform: translate(-50%, var(--space-xs));
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
@@ -562,6 +565,14 @@
 
 .project-menu--open .project-menu__item {
   opacity: 1;
+}
+
+/* Desktop close — square (matches burger 54px), sits last = rightmost.
+   Hidden on mobile, where the burger itself is the X (see mobile block). */
+.project-menu__item--close {
+  width: 54px;
+  padding: 0;
+  font: inherit;
 }
 
 /* Contact lives in the menu on mobile only */
@@ -681,12 +692,27 @@
   .nav__burger-line:nth-child(2) { top: 50%; left: 0; transform: translateY(-50%); }
   .nav__burger-line:nth-child(3) { top: auto; left: 0; bottom: 0; }
 
-  /* Open → cross into an X from the horizontal bars */
+  /* Mobile keeps the burger visible — it IS the X toggle (desktop fades it) */
+  .nav__burger--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+  }
+
+  /* Open → cross into an X from the horizontal bars; middle bar fades */
   .nav__burger--open .nav__burger-line:nth-child(1) {
     transform: translateY(6px) rotate(45deg);
   }
+  .nav__burger--open .nav__burger-line:nth-child(2) {
+    opacity: 0;
+  }
   .nav__burger--open .nav__burger-line:nth-child(3) {
     transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* No in-row close on mobile — the burger is the X */
+  .project-menu__item--close {
+    display: none;
   }
 
   /* Full-width vertical menu; Contact joins the list. Burger stays the X
