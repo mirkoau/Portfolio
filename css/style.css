@@ -433,6 +433,14 @@ body {
   width: 54px;
 }
 
+/* Drop the inter-item gap once collapsed: the lone icon then fits the narrow
+   box, so flex `space-between` keeps it flush (no overflow → flex-start jump).
+   The icon stays put through the contract; only a small ease to centre remains. */
+.nav__back--collapsed,
+.btn-cta--collapsed {
+  gap: 0;
+}
+
 .nav__back--collapsed .nav__back-label,
 .btn-cta--collapsed .btn-label {
   max-width: 0;
