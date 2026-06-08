@@ -138,6 +138,8 @@
 .project-page__section-image img {
   width: 100%;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .project-page__section.is-zoomable,
@@ -176,6 +178,8 @@
 .project-page__section--image-only img {
   width: 100%;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .project-page__section--image-only figcaption {
@@ -223,6 +227,8 @@
 .project-page__section--image-pair img {
   width: 100%;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .project-page__section--image-pair figcaption {
@@ -249,6 +255,8 @@
 .project-page__section--image-trio img {
   width: 100%;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 /* ── Section: image pair + text (text under the left image) ── */
@@ -272,6 +280,8 @@
 .project-page__pair-imgs img {
   width: 100%;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 /* Paragraph sits below the first image, matching its column width */
