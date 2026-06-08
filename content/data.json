@@ -125,7 +125,8 @@
       { "id": "p5", "src": "assets/images/personal-5.png", "alt": "Personal work", "caption": "Personal work" },
       { "id": "p9", "src": "assets/images/iwe.gif", "alt": "Indiefest animation", "caption": "Indiefest" },
       { "id": "p2", "src": "assets/images/personal-2.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p4", "src": "assets/images/personal-4.png", "alt": "Personal work", "caption": "Personal work" }
+      { "id": "p4", "src": "assets/images/personal-4.png", "alt": "Personal work", "caption": "Personal work" },
+      { "id": "p12", "src": "assets/images/delfi_illustration.webp", "alt": "Delfi illustration", "caption": "Delfi illustration" }
     ]
   },
   "about": {
