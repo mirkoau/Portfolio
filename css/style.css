@@ -284,6 +284,13 @@ body {
    mirror see-more: arrow side 15px, text side 20px */
 .nav__back.btn-cta {
   padding: 15px 20px 15px 15px;
+  transition:
+    width 0.45s var(--ease-out),
+    padding 0.45s var(--ease-out),
+    gap 0.45s var(--ease-out),
+    --btn-r 0.55s var(--ease-out),
+    transform 0.25s var(--ease-spring),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 
 .nav__back-arrow {
@@ -404,6 +411,51 @@ body {
   .btn-cta, .btn-secondary, .work__see-more, .nav__burger {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+}
+
+/* ── Header pill collapse (project subpage) ───────────── */
+/* Scroll-down retracts Home + the flying Contact to icon-only circles; the
+   label is masked (max-width → 0) while the icon re-centers. Reveal on
+   scroll-up, at the top, or hovering any header button (JS toggles classes). */
+.nav__back-label,
+.btn-label {
+  display: inline-block;
+  max-width: 240px;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  transition:
+    max-width 0.45s var(--ease-out),
+    opacity 0.28s var(--ease-out);
+}
+
+.nav__back--collapsed {
+  width: 54px;
+}
+
+.nav__back--collapsed,
+.btn-cta--collapsed {
+  justify-content: center;
+  gap: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Beat .nav__back.btn-cta (0,2,0) padding so Home actually loses its inset */
+.nav__back--collapsed.btn-cta {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nav__back--collapsed .nav__back-label,
+.btn-cta--collapsed .btn-label {
+  max-width: 0;
+  opacity: 0;
+}
+
+.nav__back--collapsed .nav__back-arrow,
+.btn-cta--collapsed .btn-emoji {
+  margin: 0 auto;
 }
 
 .about .section-main {

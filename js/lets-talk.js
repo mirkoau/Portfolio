@@ -2,8 +2,13 @@
 // nav__cta and about__cta are invisible layout anchors only.
 
 let _showForProject = null;
+let _setContactCollapsed = null;
 
 export function showForProject() { if (_showForProject) _showForProject(); }
+
+// Project header: retract the parked nav pill to an icon-only circle (true) or
+// restore the full pill (false). No-op off the nav state / when hidden.
+export function setContactCollapsed(c) { if (_setContactCollapsed) _setContactCollapsed(c); }
 
 export function initLetsTalk(lenis) {
   if (typeof gsap === 'undefined') return;
@@ -25,7 +30,7 @@ export function initLetsTalk(lenis) {
   const btn = document.createElement('a');
   btn.href        = navAnchor.href;
   btn.className   = 'btn-cta';
-  btn.innerHTML = 'Contact<span class="btn-emoji" aria-hidden="true">✉</span>';
+  btn.innerHTML = '<span class="btn-label">Contact</span><span class="btn-emoji" aria-hidden="true">✉</span>';
   btn.setAttribute('aria-label', 'Contact Mirko via email');
   btn.style.cssText = 'position:fixed;margin:0;z-index:200;opacity:0;';
   document.body.appendChild(btn);
@@ -51,6 +56,8 @@ export function initLetsTalk(lenis) {
   let state = 'hidden';  // hidden | nav | about
   let tween = null;
   let handedOff = false; // true once parked on the static about anchor
+  let collapsedNav = false; // nav pill retracted to icon-only circle (project header)
+  let collapseTween = null;
 
   // ── Scroll tracking (active while state === 'about') ──
   let tracking = false;
@@ -84,6 +91,10 @@ export function initLetsTalk(lenis) {
     if (state === 'hidden' || state === to) return;
     tracking = false;
     state    = to;
+    // Leaving the parked nav pill — drop any collapsed geometry/class
+    collapsedNav = false;
+    btn.classList.remove('btn-cta--collapsed');
+    if (collapseTween) collapseTween.kill();
     if (to === 'nav') {
       btn.classList.add('btn-cta--nav');
       btn.classList.remove('btn-cta--about');
@@ -317,9 +328,32 @@ export function initLetsTalk(lenis) {
   }, { threshold: 0.05 });
   aboutObserver.observe(aboutAnchor);
 
+  // ── Project header collapse ───────────────────────────
+  // Parked nav pill retracts to an icon-only circle on scroll-down. GSAP owns
+  // the inline width/left (right edge stays put so the ✉ holds its spot); the
+  // label mask + icon centering are CSS (.btn-cta--collapsed).
+  _setContactCollapsed = (collapse) => {
+    if (prefersReduced || state !== 'nav') return;
+    if (btn.offsetParent === null) return;      // hidden (mobile) — Contact in menu
+    if (collapse === collapsedNav) return;
+    collapsedNav = collapse;
+    if (collapseTween) collapseTween.kill();
+    btn.classList.toggle('btn-cta--collapsed', collapse);
+    if (collapse) {
+      const left = parseFloat(gsap.getProperty(btn, 'left'));
+      const w    = parseFloat(gsap.getProperty(btn, 'width'));
+      collapseTween = gsap.to(btn, { left: left + w - 54, width: 54, duration: 0.45, ease: 'power3.out' });
+    } else {
+      const n = navTarget();
+      collapseTween = gsap.to(btn, { left: n.left, width: n.width, duration: 0.45, ease: 'power3.out' });
+    }
+  };
+
   // ── Project page helpers ────────────────────────────
   // Keep button visible in nav position on subpages
   _showForProject = () => {
+    collapsedNav = false;
+    btn.classList.remove('btn-cta--collapsed');
     if (state === 'hidden') {
       appear();
     } else if (state === 'about') {

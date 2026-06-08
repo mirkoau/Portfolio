@@ -1,4 +1,4 @@
-import { showForProject } from './lets-talk.js';
+import { showForProject, setContactCollapsed } from './lets-talk.js';
 import { openGallery } from './gallery.js';
 
 const container = document.getElementById('project-view');
@@ -173,6 +173,7 @@ async function render(project, lenis) {
   const cleanBurgerMenu = initBurgerMenu(lenis);
   const cleanGallery = initProjectGallery();
   const cleanHeroParallax = initHeroParallax(lenis);
+  const cleanHeaderCollapse = initHeaderCollapse(lenis);
   showForProject();
 
   _cleanup = () => {
@@ -181,6 +182,7 @@ async function render(project, lenis) {
     if (cleanBurgerMenu) cleanBurgerMenu();
     if (cleanGallery) cleanGallery();
     if (cleanHeroParallax) cleanHeroParallax();
+    if (cleanHeaderCollapse) cleanHeaderCollapse();
   };
 }
 
@@ -214,6 +216,65 @@ function initHeroParallax(lenis) {
     else window.removeEventListener('scroll', onScroll);
     img.style.willChange = '';
     img.style.transform = '';
+  };
+}
+
+// ── Header pill collapse on scroll ────────────────────
+// Scroll down → Home (and the flying Contact on desktop) retract to icon-only
+// circles, masking the label. Scroll up, return to the top, or hover any header
+// button → labels reveal. Mobile shows Home only (Contact lives in the menu).
+
+function initHeaderCollapse(lenis) {
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (noMotion) return null;
+
+  const navBack = document.querySelector('.nav__back');
+  if (!navBack) return null;
+
+  let collapsedByScroll = false;
+  let hovering = false;
+  let lastY = lenis ? lenis.scroll : window.scrollY;
+
+  const apply = () => {
+    const want = collapsedByScroll && !hovering;
+    navBack.classList.toggle('nav__back--collapsed', want);
+    setContactCollapsed(want);
+  };
+
+  const onScroll = () => {
+    const y = lenis ? lenis.scroll : window.scrollY;
+    if (y <= 4) collapsedByScroll = false;             // at top → full pills
+    else if (y > lastY + 2) collapsedByScroll = true;  // down → collapse
+    else if (y < lastY - 2) collapsedByScroll = false; // up → reveal
+    lastY = y;
+    apply();
+  };
+
+  // Hover any header button → reveal all (overrides scroll collapse)
+  const HEADER_SEL = '.nav__back, .nav__burger, .btn-cta--nav';
+  const onOver = (e) => {
+    const btn = e.target.closest?.(HEADER_SEL);
+    if (!btn || btn.contains(e.relatedTarget)) return;
+    hovering = true; apply();
+  };
+  const onOut = (e) => {
+    const btn = e.target.closest?.(HEADER_SEL);
+    if (!btn || btn.contains(e.relatedTarget)) return;
+    hovering = false; apply();
+  };
+
+  if (lenis) lenis.on('scroll', onScroll);
+  else window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('pointerover', onOver);
+  document.addEventListener('pointerout', onOut);
+
+  return () => {
+    if (lenis) lenis.off('scroll', onScroll);
+    else window.removeEventListener('scroll', onScroll);
+    document.removeEventListener('pointerover', onOver);
+    document.removeEventListener('pointerout', onOut);
+    navBack.classList.remove('nav__back--collapsed');
+    setContactCollapsed(false);
   };
 }
 
