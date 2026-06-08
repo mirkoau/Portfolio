@@ -439,10 +439,10 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  margin: -22px 0 0 -22px;
+  margin: -27px 0 0 -27px;
   pointer-events: all;
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   padding: 0;
   justify-content: center;
   opacity: 0;
