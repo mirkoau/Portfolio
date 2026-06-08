@@ -440,9 +440,11 @@ body {
 
 .hero {
   position: relative;
-  /* lvh = constant largest viewport; ignores iOS toolbar show/hide so the
-     hero height (and scroll/snap reference) never jumps mid-scroll. */
-  min-height: 100lvh;
+  /* Frozen px height captured at load (--hero-lock = innerHeight, set in
+     project-page.js). lvh is meant to be constant but still jitters on some
+     mobile browsers when the toolbar slides; a baked px value never does.
+     Falls back to 100lvh if the var is unset. Same trick as project hero. */
+  min-height: var(--hero-lock, 100lvh);
   padding-top: calc(var(--nav-height) + 180px);
 }
 
@@ -1029,7 +1031,7 @@ body.is-project-view .scroll-bg {
   .nav__back,
   .nav__cta { width: auto; }
 
-  .hero { min-height: 80lvh; padding-top: calc(var(--nav-height) + 80px); }
+  .hero { min-height: calc(0.8 * var(--hero-lock, 100lvh)); padding-top: calc(var(--nav-height) + 80px); }
 
   /* Stack sections; label sticks to header as the section scrolls */
   .work,

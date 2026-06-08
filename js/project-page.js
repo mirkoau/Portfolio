@@ -4,8 +4,18 @@ import { openGallery } from './gallery.js';
 const container = document.getElementById('project-view');
 
 // Lock hero height to load-time viewport — frozen, ignores later resizes
-// (desktop window drag + mobile address-bar show/hide)
-document.documentElement.style.setProperty('--hero-lock', `${window.innerHeight}px`);
+// (desktop window drag + mobile address-bar show/hide). Used by both the
+// project hero and the index hero (css). Re-freeze only on width/orientation
+// change; the toolbar's height-only resize must NOT touch it (that's the jump).
+const lockHero = () =>
+  document.documentElement.style.setProperty('--hero-lock', `${window.innerHeight}px`);
+lockHero();
+let _heroLockW = window.innerWidth;
+window.addEventListener('resize', () => {
+  if (window.innerWidth === _heroLockW) return;
+  _heroLockW = window.innerWidth;
+  lockHero();
+});
 
 let _currentId = null;
 let _cleanup = null;
