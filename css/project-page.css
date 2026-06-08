@@ -511,12 +511,11 @@
 
 .project-menu__backdrop[hidden] { display: none; }
 
-/* Inline row on the nav header — the burger morphs into these pills.
-   No tray background; the items themselves carry the glass. */
-/* Inline glass panel on the nav header — the burger morphs into it. */
+/* Glass-pill row that drops just below the header — the burger stays the
+   centered X toggle above it (no overlap). The pills carry the glass. */
 .project-menu {
   position: fixed;
-  top: calc(var(--nav-height) / 2);
+  top: var(--nav-height);
   left: 50%;
   width: max-content;
   max-width: calc(100vw - 2 * var(--gutter));
@@ -527,7 +526,7 @@
   gap: 6px;
   padding: var(--space-xs);
   border-radius: 18px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, var(--space-xs));
   pointer-events: none;
 }
 
@@ -659,14 +658,16 @@
     height: 24px;
   }
 
-  /* Burger to the top-right corner; circle = normal pill height (54px) */
+  /* In-flow flex item so it shares the nav's gutter padding (top + right)
+     exactly like the Home / Contact pills. Circle = pill height (54px). */
   .nav__burger {
+    position: relative;
     left: auto;
-    right: var(--gutter);
-    top: 50%;
+    right: auto;
+    top: auto;
+    margin: 0 0 0 auto;
     width: 54px;
     height: 54px;
-    margin: -27px 0 0 0;
   }
 
   /* Mobile: horizontal bars stacked (desktop is vertical) */

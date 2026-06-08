@@ -107,8 +107,9 @@ function renderProjectRows(projects, currentId) {
 // toggle, so there's no separate close item here.
 function renderMenuRows(projects, currentId) {
   // --i drives the mobile stagger, set in visual top-to-bottom order
-  // (project rows, then Contact at the bottom)
-  const items = projects.filter(p => p.id !== currentId);
+  // (project rows, then Contact at the bottom). Coming-soon projects are
+  // omitted — they're not navigable.
+  const items = projects.filter(p => p.id !== currentId && !p.comingSoon);
   const rows = items.map((p, k) => `
     <a class="project-menu__item" href="#/work/${p.id}" style="--i:${k + 1}">
       <span class="project-menu__label">${p.title}</span>
