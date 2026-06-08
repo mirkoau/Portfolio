@@ -493,17 +493,24 @@ body {
   left: 0;
   right: 0;
   margin-inline: auto;
-  width: 20px;
-  height: 20px;
-  color: var(--color-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
   z-index: 1;
-  pointer-events: none;
   animation: load-fade-up 0.7s 1.4s var(--ease-out) backwards;
   transition: opacity 0.4s var(--ease-out);
 }
 
 body.is-scrolled .hero__scroll-cue {
   opacity: 0;
+  pointer-events: none;
 }
 
 /* ── Hero tagline (base styles) ─────────────────────── */

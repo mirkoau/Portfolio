@@ -109,6 +109,20 @@ export function initScroll() {
       }, { passive: false, capture: true });
     }
 
+    // Scroll cue — click scrolls to work like the snap
+    const scrollCue = document.querySelector('.hero__scroll-cue');
+    if (scrollCue) {
+      scrollCue.addEventListener('click', () => {
+        if (snapping) return;
+        snapping = true;
+        lenis.scrollTo(work, {
+          duration: 1.2,
+          easing: t => 1 - Math.pow(1 - t, 3),
+          onComplete: () => { inHero = false; snapping = false; },
+        });
+      });
+    }
+
     // Sync inHero with actual scroll position — fixes false snap after
     // returning from project pages (scroll restored past hero zone)
     lenis.on('scroll', () => {
