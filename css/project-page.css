@@ -718,7 +718,9 @@
   /* Full-width vertical menu; Contact joins the list. Burger stays the X
      toggle in the nav, so the list cascades below it (no in-panel close). */
   .project-menu {
-    top: var(--nav-height);
+    /* Burger sits at gutter-top, 54px tall → start list below its bottom edge
+       (was anchored to nav-height, which overlapped the X) */
+    top: calc(var(--gutter) + 54px);
     width: calc(100vw - 2 * var(--gutter));
     padding: 0;
     transform: translate(-50%, var(--space-xs));
