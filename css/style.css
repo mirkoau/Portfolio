@@ -278,7 +278,11 @@ body {
 
 .nav__back {
   flex-direction: row;
-  /* mirror see-more: arrow side 15px, text side 20px */
+}
+
+/* higher specificity than shared .btn-cta padding (later in source).
+   mirror see-more: arrow side 15px, text side 20px */
+.nav__back.btn-cta {
   padding: 15px 20px 15px 15px;
 }
 
