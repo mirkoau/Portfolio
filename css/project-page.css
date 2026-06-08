@@ -568,10 +568,9 @@
   color: #fff;
 }
 
-/* Hover — slight scale + drop shadow (cursor-fill handles the rest) */
+/* Hover — slight scale (cursor-fill handles the rest) */
 .project-menu__item:hover {
   transform: scale(1.04);
-  box-shadow: 0 8px 6px rgba(0, 0, 0, 0.6);
 }
 
 .project-menu__item:active {

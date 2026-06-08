@@ -412,6 +412,7 @@ function initBurgerMenu(lenis) {
     if (open) {
       // burger fades out as the panel grows over it
       burger.classList.add('nav__burger--open');
+      scrollAccum = 0; lenisAnchor = null;  // fresh intent budget per open
       panel.hidden = false;
       backdrop.hidden = false;
       // force reflow so the closed state is committed as the transition's
@@ -431,19 +432,36 @@ function initBurgerMenu(lenis) {
     }
   }
 
+  // Close on a deliberate scroll, not a stray trackpad/touch nudge. Accumulate
+  // intent and only close past a threshold; reset whenever the menu reopens.
+  const CLOSE_THRESHOLD = 60;
+  let scrollAccum = 0;
+  let lenisAnchor = null;
+  function bumpScroll(amount) {
+    if (!open || !Number.isFinite(amount)) return;
+    scrollAccum += Math.abs(amount);
+    if (scrollAccum >= CLOSE_THRESHOLD) setOpen(false);
+  }
+
   const onBurger   = () => setOpen(!open);
   const onBackdrop = () => setOpen(false);
   const onRow      = () => setOpen(false);              // navigation happens via href
   const onKey      = (e) => { if (e.key === 'Escape' && open) { setOpen(false); burger.focus(); } };
-  const onScroll   = () => { if (open) setOpen(false); };  // close on any scroll intent
+  const onWheel    = (e) => bumpScroll(e.deltaY);
+  const onLenis    = (e) => {
+    const y = e && typeof e.scroll === 'number' ? e.scroll : (lenis ? lenis.scroll : 0);
+    if (lenisAnchor === null) lenisAnchor = y;
+    bumpScroll(y - lenisAnchor);
+    lenisAnchor = y;
+  };
 
   burger.addEventListener('click', onBurger);
   backdrop.addEventListener('click', onBackdrop);
   panel.querySelectorAll('.project-menu__item').forEach(r => r.addEventListener('click', onRow));
   document.addEventListener('keydown', onKey);
-  window.addEventListener('wheel', onScroll, { passive: true });
-  window.addEventListener('touchmove', onScroll, { passive: true });
-  if (lenis) lenis.on('scroll', onScroll);
+  window.addEventListener('wheel', onWheel, { passive: true });
+  window.addEventListener('touchmove', onWheel, { passive: true });
+  if (lenis) lenis.on('scroll', onLenis);
 
   // Visible for the whole project page
   burger.classList.add('nav__burger--visible');
@@ -453,9 +471,9 @@ function initBurgerMenu(lenis) {
     burger.removeEventListener('click', onBurger);
     backdrop.removeEventListener('click', onBackdrop);
     document.removeEventListener('keydown', onKey);
-    window.removeEventListener('wheel', onScroll);
-    window.removeEventListener('touchmove', onScroll);
-    if (lenis) lenis.off('scroll', onScroll);
+    window.removeEventListener('wheel', onWheel);
+    window.removeEventListener('touchmove', onWheel);
+    if (lenis) lenis.off('scroll', onLenis);
     burger.classList.remove('nav__burger--visible', 'nav__burger--open');
     burger.setAttribute('aria-expanded', 'false');
     burger.hidden = true;

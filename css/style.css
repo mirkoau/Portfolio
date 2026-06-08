@@ -368,13 +368,12 @@ body {
   z-index: 2;
 }
 
-/* Hover: slight scale + drop shadow (fill driven by JS) */
+/* Hover: slight scale (fill driven by JS) */
 .btn-cta:hover,
 .btn-secondary:hover,
 .work__see-more:hover,
 .nav__burger:hover {
   transform: scale(1.04);
-  box-shadow: 0 8px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* Pressed */
