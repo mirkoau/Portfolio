@@ -91,32 +91,58 @@ function enhanceBtn(btn) {
   btn.append(fill);
 }
 
+// Grow the fill ball from (clientX, clientY) to cover the whole button.
+function fillExpand(btn, clientX, clientY) {
+  enhanceBtn(btn);
+  const r = btn.getBoundingClientRect();
+  const x = clientX - r.left;
+  const y = clientY - r.top;
+  // radius reaches the farthest corner → ball always fully fills
+  const rad = Math.max(
+    Math.hypot(x, y), Math.hypot(r.width - x, y),
+    Math.hypot(x, r.height - y), Math.hypot(r.width - x, r.height - y),
+  );
+  btn.style.setProperty('--btn-mx', `${x}px`);
+  btn.style.setProperty('--btn-my', `${y}px`);
+  btn.style.setProperty('--btn-r', `${rad}px`);
+}
+
+// Retract the ball toward the exit/release point.
+function fillRetract(btn, clientX, clientY) {
+  const r = btn.getBoundingClientRect();
+  btn.style.setProperty('--btn-mx', `${clientX - r.left}px`);
+  btn.style.setProperty('--btn-my', `${clientY - r.top}px`);
+  btn.style.setProperty('--btn-r', '0px');
+}
+
 if (canHover) {
   document.addEventListener('pointerover', (e) => {
     const btn = e.target.closest?.(FILL_SELECTOR);
     if (!btn || btn.contains(e.relatedTarget)) return; // ignore moves between inner nodes
-    enhanceBtn(btn);
-    const r = btn.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    // radius reaches the farthest corner → ball always fully fills
-    const rad = Math.max(
-      Math.hypot(x, y), Math.hypot(r.width - x, y),
-      Math.hypot(x, r.height - y), Math.hypot(r.width - x, r.height - y),
-    );
-    btn.style.setProperty('--btn-mx', `${x}px`);
-    btn.style.setProperty('--btn-my', `${y}px`);
-    btn.style.setProperty('--btn-r', `${rad}px`);
+    fillExpand(btn, e.clientX, e.clientY);
   });
 
   document.addEventListener('pointerout', (e) => {
     const btn = e.target.closest?.(FILL_SELECTOR);
     if (!btn || btn.contains(e.relatedTarget)) return; // still inside
-    const r = btn.getBoundingClientRect();
-    btn.style.setProperty('--btn-mx', `${e.clientX - r.left}px`); // retract toward exit
-    btn.style.setProperty('--btn-my', `${e.clientY - r.top}px`);
-    btn.style.setProperty('--btn-r', '0px');
+    fillRetract(btn, e.clientX, e.clientY); // retract toward exit
   });
+} else {
+  // Touch: no hover, so fire the fill on press and retract on release.
+  let pressed = null;
+  document.addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest?.(FILL_SELECTOR);
+    if (!btn) return;
+    pressed = btn;
+    fillExpand(btn, e.clientX, e.clientY);
+  });
+  const release = (e) => {
+    if (!pressed) return;
+    fillRetract(pressed, e.clientX, e.clientY);
+    pressed = null;
+  };
+  document.addEventListener('pointerup', release);
+  document.addEventListener('pointercancel', release);
 }
 
 initRouter((route, prev) => {
