@@ -340,16 +340,18 @@ export function initLetsTalk(lenis) {
     collapsedNav = collapse;
     if (collapseTween) collapseTween.kill();
     if (collapse) {
-      // Offset that carries the (flush-right) ✉ to the 54px circle's centre.
-      // Measure the icon centre's true distance from the pill's right edge
-      // (which holds still during contract) — deriving it from padding + glyph
-      // advance is unreliable, emoji side-bearings leave the ✉ off-centre.
+      // Carry the ✉ to the 54px circle's centre. The collapsed pill is too
+      // narrow for label+gap+icon, so flex `space-between` degrades to
+      // flex-start: the ✉ rests at borderL + padL + gap from the inner-left
+      // (NOT flush-right). Shift it from that resting spot to the circle centre.
       const emoji = btn.querySelector('.btn-emoji');
       if (emoji) {
-        const bRect = btn.getBoundingClientRect();
-        const eRect = emoji.getBoundingClientRect();
-        const distFromRight = bRect.right - (eRect.left + eRect.width / 2);
-        btn.style.setProperty('--icon-shift', `${(distFromRight - 27).toFixed(2)}px`);
+        const cs   = getComputedStyle(btn);
+        const bL   = parseFloat(cs.borderLeftWidth) || 0;
+        const padL = parseFloat(cs.paddingLeft) || 0;
+        const gap  = parseFloat(cs.columnGap) || parseFloat(cs.gap) || 0;
+        const ew   = emoji.getBoundingClientRect().width || 16;
+        btn.style.setProperty('--icon-shift', `${(27 - (bL + padL + gap + ew / 2)).toFixed(2)}px`);
       }
     }
     btn.classList.toggle('btn-cta--collapsed', collapse);
