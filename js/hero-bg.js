@@ -8,7 +8,14 @@ export function initHeroBg() {
   // Coarse pointers (mobile): cap render res lower. Gradient is smooth +
   // low-freq, so fewer pixels is imperceptible but slashes fragment cost.
   const coarse = window.matchMedia('(pointer: coarse)').matches;
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !coarse });
+  // GL context creation can throw (no WebGL, GPU on browser blocklist,
+  // headless, --disable-gpu). Bail to null → CSS gradient on <html> shows.
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !coarse });
+  } catch (e) {
+    return null;
+  }
   renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -21,9 +28,17 @@ export function initHeroBg() {
   // skipped (width unchanged), stretching the frozen buffer. OVERSCAN px of
   // overfill still covers the strip the toolbar reveals; the shader is a
   // clip-space quad → fills the taller box with zero distortion.
-  const OVERSCAN = 140;
+  const OVERSCAN = 220;
   canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:calc(var(--hero-lock, 100lvh) + ${OVERSCAN}px);pointer-events:none;z-index:-2;`;
   document.body.appendChild(canvas);
+
+  // GPU context loss (driver reset, tab parked too long) → hide the canvas so
+  // the CSS gradient fallback on <html> shows through. preventDefault keeps the
+  // canvas restorable, but we don't auto-rebuild — the static gradient is fine.
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    canvas.style.display = 'none';
+  });
 
   // Two heights, decoupled:
   //   Hb = buffer/box height (lvh + overscan) → renderer + camera frustum, so

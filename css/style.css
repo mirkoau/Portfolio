@@ -133,7 +133,17 @@
 html {
   -webkit-text-size-adjust: 100%;
   tab-size: 2;
-  background-color: var(--color-bg); /* black base — shader fades in over this */
+  /* Static gradient fallback — frozen snapshot of the shader palette (indigo
+     top-right, teal bottom-left, plum bottom-mid over a purple-black floor).
+     Paints at the very back; the WebGL canvas (z-index:-2) covers it when GL
+     works. Shows through automatically when Three.js/WebGL is absent, the
+     renderer throws, or the GPU context is lost. */
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse 80% 65% at 78% 22%, rgba(40, 46, 120, 0.55), transparent 70%),
+    radial-gradient(ellipse 75% 60% at 18% 72%, rgba(18, 56, 76, 0.45), transparent 70%),
+    radial-gradient(ellipse 65% 55% at 48% 98%, rgba(64, 26, 48, 0.40), transparent 70%);
+  background-attachment: fixed;
 }
 
 /* Black load overlay — painted first paint, fades out via JS to reveal shader.
@@ -687,13 +697,14 @@ body.is-project-view .scroll-bg {
 
 .scroll-bg {
   position: fixed;
-  /* Mirror the shader canvas exactly: top-anchored + 100lvh+140px overscan so
+  /* Mirror the shader canvas exactly: top-anchored + 100lvh+220px overscan so
      the darkening bleeds behind the iOS bottom bar + Firefox toolbar strip,
-     leaving no uncovered gap. */
+     leaving no uncovered gap. Firefox iOS hides top URL bar + bottom nav, so
+     the reveal delta is bigger than Safari's — 140 was short. */
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100lvh + 140px);
+  height: calc(100lvh + 220px);
   z-index: -1;
   background: color-mix(in lab, var(--color-bg) 20%, transparent);
   opacity: 0;
