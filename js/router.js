@@ -3,7 +3,9 @@ let _currentRoute = null;
 
 const routes = {
   index: { pattern: /^$|^#\/?$/ },
-  project: { pattern: /^#\/work\/(.+)$/ },
+  // id restricted to [a-z0-9-]: stops path traversal + junk reaching fetch()/innerHTML.
+  // Anything else falls through to the index view.
+  project: { pattern: /^#\/work\/([a-z0-9-]+)$/ },
 };
 
 function parseHash(hash) {
