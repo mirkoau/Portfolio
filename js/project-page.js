@@ -1,4 +1,4 @@
-import { showForProject, setContactCollapsed } from './lets-talk.js';
+import { showForProject, setContactCollapsed, decodeEmails } from './lets-talk.js';
 import { openGallery } from './gallery.js';
 
 const container = document.getElementById('project-view');
@@ -120,7 +120,7 @@ function renderMenuRows(projects, currentId) {
     </a>`).join('');
   // Contact lives in the menu on mobile only (desktop uses the flying button)
   const contact = `
-    <a class="project-menu__item project-menu__item--contact" href="mailto:mirko.aus@proton.me" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
+    <a class="project-menu__item project-menu__item--contact" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
       <span class="project-menu__label">Contact</span>
     </a>`;
   // Desktop close (X) — right-most pill; hidden on mobile (burger is the X)
@@ -166,6 +166,8 @@ async function render(project, lenis) {
         ${renderMenuRows(allProjects, project.id)}
       </nav>
     </article>`;
+
+  decodeEmails(container); // wire the menu's obfuscated contact mailto
 
   // Reveals + contact button + burger menu + image gallery
   const cleanReveals = initProjectReveals();

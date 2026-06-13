@@ -1,7 +1,7 @@
 import { initContent  } from './content.js';
 import { initCursor   } from './cursor.js';
 import { initScroll   } from './scroll.js';
-import { initLetsTalk } from './lets-talk.js';
+import { initLetsTalk, decodeEmails } from './lets-talk.js';
 import { initHeroBg   } from './hero-bg.js';
 import { initHero     } from './hero.js';
 import { initGallery  } from './gallery.js';
@@ -13,6 +13,7 @@ await initContent(); // DOM populated before observers attach
 
 // initCursor(); // white dot cursor hidden
 const lenis = initScroll();
+decodeEmails(); // wire mailto hrefs before flying button copies navAnchor.href
 initLetsTalk(lenis);
 const heroBg = initHeroBg();
 const hero = initHero(heroBg);

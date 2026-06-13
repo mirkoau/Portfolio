@@ -1,6 +1,19 @@
 // One fixed button physically travels between nav and about positions.
 // nav__cta and about__cta are invisible layout anchors only.
 
+// ── Email anti-scrape ─────────────────────────────────
+// Address parts live base64-encoded in data-c / data-d so the raw HTML/JS
+// source carries no plain address, no "@", no "mailto:" for regex scrapers
+// to grab. Assembled into a real href at runtime (option 1 + 2 combined).
+// Idempotent: strips the data attrs once wired.
+export function decodeEmails(root = document) {
+  root.querySelectorAll('[data-c][data-d]').forEach(a => {
+    a.href = 'mailto:' + atob(a.dataset.c) + '@' + atob(a.dataset.d);
+    a.removeAttribute('data-c');
+    a.removeAttribute('data-d');
+  });
+}
+
 let _showForProject = null;
 let _setContactCollapsed = null;
 
