@@ -967,9 +967,16 @@ body.is-project-view .scroll-bg {
   padding-top: var(--pt, 0);
 }
 
-.personal-work__item:nth-child(3n+1) { --pt: 0; }
-.personal-work__item:nth-child(3n+2) { --pt: 100px; }
-.personal-work__item:nth-child(3n+3) { --pt: 40px; }
+.personal-work__item:nth-child(1)  { --pt: 0; }
+.personal-work__item:nth-child(2)  { --pt: 50px; }
+.personal-work__item:nth-child(3)  { --pt: 15px; }
+.personal-work__item:nth-child(4)  { --pt: 70px; }
+.personal-work__item:nth-child(5)  { --pt: 30px; }
+.personal-work__item:nth-child(6)  { --pt: 0; }
+.personal-work__item:nth-child(7)  { --pt: 55px; }
+.personal-work__item:nth-child(8)  { --pt: 20px; }
+.personal-work__item:nth-child(9)  { --pt: 40px; }
+.personal-work__item:nth-child(10) { --pt: 10px; }
 
 /* Media wrapper == image box: clips hover scale + carries the vignette,
    so neither spills into the stagger padding above. */
