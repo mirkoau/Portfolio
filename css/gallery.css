@@ -75,13 +75,11 @@
 }
 
 .gallery-overlay__media {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr auto;
   width: 100%;
   flex: 1;
   min-height: 0;
-  align-items: center;
-  justify-content: center;
 }
 
 .gallery-overlay__image {
@@ -91,6 +89,8 @@
   height: auto;
   object-fit: contain;
   display: block;
+  justify-self: center;
+  align-self: center;
 }
 
 .gallery-overlay__caption {
