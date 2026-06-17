@@ -16,7 +16,7 @@ export function initHeroBg() {
   } catch (e) {
     return null;
   }
-  renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.0 : 1.5));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.autoClear = false;            // two-pass render — clear manually
@@ -274,9 +274,9 @@ export function initHeroBg() {
     }
   `;
 
-  // Mobile: 3 FBM octaves (drop high-freq detail, ~2 fewer snoise/px).
-  // Desktop: full 4.
-  const octaves = coarse ? 3 : 4;
+  // 3 FBM octaves — gradient is low-freq, 4th octave is imperceptible but
+  // costs ~25% extra shader work on desktop.
+  const octaves = 3;
 
   const liquidMat = new THREE.ShaderMaterial({
     uniforms: liquidUniforms,
@@ -328,10 +328,20 @@ export function initHeroBg() {
     liquidUniforms.uResolution.value.set(W, Hb);
   });
 
+  let _skipCount = 0;
+
   return {
     renderer, camera, scene, canvas,
     // Two passes, one buffer: shader fills the background, cards composite over.
     render() {
+      // Hero offscreen: render every 4th frame (~15fps). Gradient moves at
+      // t*0.04 so motion is imperceptible at reduced rate.
+      if (hVis < 0.05) {
+        _skipCount = (_skipCount + 1) & 3;
+        if (_skipCount) return;
+      } else {
+        _skipCount = 0;
+      }
       renderer.clear();                  // color + depth (autoClear off)
       renderer.render(bgScene, camera);  // shader quad (depthTest off → always)
       renderer.clearDepth();             // fresh depth for the card pass
