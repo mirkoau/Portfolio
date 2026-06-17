@@ -951,13 +951,13 @@ body.is-project-view .scroll-bg {
 
 .personal-work__grid {
   columns: 4;
-  column-gap: var(--space-xl);
+  column-gap: var(--space-sm);
 }
 
 .personal-work__item {
   position: relative;
   break-inside: avoid;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-sm);
   cursor: pointer;
   display: block;
   border: none;
@@ -979,12 +979,12 @@ body.is-project-view .scroll-bg {
   overflow: hidden;
 }
 
-.personal-work__item:nth-child(1)  { margin-bottom: 60px; }
-.personal-work__item:nth-child(2)  { margin-bottom: 120px; }
-.personal-work__item:nth-child(4)  { margin-bottom: 40px; }
-.personal-work__item:nth-child(5)  { margin-bottom: 90px; }
-.personal-work__item:nth-child(7)  { margin-bottom: 50px; }
-.personal-work__item:nth-child(8)  { margin-bottom: 110px; }
+.personal-work__item:nth-child(1)  { margin-bottom: 30px; }
+.personal-work__item:nth-child(2)  { margin-bottom: 60px; }
+.personal-work__item:nth-child(4)  { margin-bottom: 20px; }
+.personal-work__item:nth-child(5)  { margin-bottom: 45px; }
+.personal-work__item:nth-child(7)  { margin-bottom: 25px; }
+.personal-work__item:nth-child(8)  { margin-bottom: 55px; }
 
 .personal-work__media img {
   width: 100%;
