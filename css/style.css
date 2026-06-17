@@ -101,14 +101,14 @@
   --space-xs:   8px;
   --space-sm:   16px;
   --space-md:   25px;
-  --space-lg:   45px;
-  --space-xl:   95px;
-  --space-2xl:  135px;
-  --space-3xl:  200px;
+  --space-lg:   clamp(32px,  28px + 1.16vw, 45px);
+  --space-xl:   clamp(40px,  24px + 5vw,    95px);
+  --space-2xl:  clamp(60px,  39px + 6.7vw,  135px);
+  --space-3xl:  clamp(80px,  46px + 10.7vw, 200px);
 
   /* Layout */
-  --nav-height:  80px;
-  --gutter:      80px;
+  --nav-height: clamp(60px,  54px + 1.79vw, 80px);
+  --gutter:     clamp(20px,  3px + 5.36vw,  80px);
   --col-offset:  calc(8.33% + var(--gutter));
 
   /* Radius */
@@ -1072,13 +1072,6 @@ body.is-project-view .scroll-bg {
 /* ── Responsive: tablet ─────────────────────────────── */
 
 @media (max-width: 1024px) {
-  :root {
-    --gutter:     40px;
-    --space-xl:   60px;
-    --space-2xl:  80px;
-    --nav-height: 70px;
-  }
-
   .personal-work__grid { columns: 2; }
 
   .about__portrait { width: 250px; }
@@ -1089,11 +1082,6 @@ body.is-project-view .scroll-bg {
 
 @media (max-width: 768px) {
   :root {
-    --gutter:     20px;
-    --space-xl:   40px;
-    --space-2xl:  60px;
-    --space-lg:   32px;
-    --nav-height: 60px;
     --col-offset: 0px;
   }
 
