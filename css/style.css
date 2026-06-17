@@ -951,7 +951,7 @@ body.is-project-view .scroll-bg {
 
 .personal-work__grid {
   columns: 4;
-  column-gap: var(--space-sm);
+  column-gap: var(--space-md);
 }
 
 .personal-work__item {
