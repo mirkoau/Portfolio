@@ -728,7 +728,7 @@ body.is-project-view .scroll-bg {
   width: 100%;
   height: calc(100lvh + 220px);
   z-index: -1;
-  background: color-mix(in lab, var(--color-bg) 20%, transparent);
+  background: color-mix(in lab, var(--color-bg) 10%, transparent);
   opacity: 0;
   pointer-events: none;
 }

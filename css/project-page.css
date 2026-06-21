@@ -3,7 +3,7 @@
 #project-view {
   position: relative;
   z-index: 2;
-  background: color-mix(in lab, var(--color-bg) 40%, transparent);
+  background: color-mix(in lab, var(--color-bg) 10%, transparent);
 }
 
 #project-view[hidden] {
