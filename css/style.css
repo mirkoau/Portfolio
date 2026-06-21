@@ -87,7 +87,7 @@
   --size-heading-md:   clamp(22px, 1.2vw + 12px, 32px);
   --size-body-lg:      clamp(22px, 1.5vw + 10px, 36px);
   --size-body-base:    clamp(20px, 1vw + 10px, 27px);
-  --size-body-md:      clamp(18px, 0.5vw + 16px, 21px);
+  --size-body-md:      clamp(18px, 0.5vw + 16px, 20px);
   --size-body-sm:      clamp(13px, 0.3vw + 12px, 15px);
 
   --leading-tight:  1.05;
