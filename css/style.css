@@ -657,8 +657,8 @@ body.is-scrolled .hero__scroll-cue {
   font-size: var(--size-hero-name);
   line-height: 1;
   color: #fff;
-  /* -0.5em lifts the glyph center to 42%; -0.06em optical left nudge */
-  margin: -0.5em 0 0 -0.06em;
+  /* -0.5em lifts the glyph center to 42%; optical left nudge + 5px right */
+  margin: -0.5em 0 0 calc(-0.06em + 5px);
   user-select: none;
 }
 
