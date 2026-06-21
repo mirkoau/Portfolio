@@ -46,7 +46,7 @@
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <button class="nav__back btn-cta" hidden aria-label="Home">
-      <svg class="nav__back-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14 9H4M8 5l-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="nav__back-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 8L9 3L15 8V15H11V10.5H7V15H3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="nav__back-label">Home</span>
     </button>
     <button class="nav__burger" hidden aria-label="Open menu" aria-expanded="false" aria-controls="project-menu">
@@ -61,11 +61,13 @@
 
   <!-- Hero -->
   <section class="hero" id="hero" aria-label="Introduction">
-    <h1 class="sr-only">Mirko Aus</h1>
-    <p class="hero__tagline">
-      Design generalist currently working as<br />
-      Senior UX Designer at Remedy Entertainment.
-    </p>
+    <div class="hero__intro">
+      <h1 class="hero__name">Mirko Aus</h1>
+      <p class="hero__tagline">
+        Design generalist currently working as<br />
+        Senior UX Designer at Remedy Entertainment.
+      </p>
+    </div>
     <!-- Five project cards. Three.js takes over in Phase 7. -->
     <div class="hero__cards" aria-hidden="true">
       <div class="hero__card hero__card--1"><img src="assets/images/evocon-cover.png" alt="" /></div>

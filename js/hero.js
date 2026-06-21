@@ -1,4 +1,4 @@
-// Three.js hero cards + text
+// Three.js hero cards (name + tagline are DOM text — see .hero__intro)
 // Desktop: organic float, mouse-contact kick, drag + throw
 // Mobile:  organic float, device motion → chaotic card physics
 
@@ -16,9 +16,11 @@ export function initHero(bg) {
 
   document.querySelectorAll('.hero__card').forEach(el => (el.style.display = 'none'));
 
-  // Hide CSS tagline — Three.js renders it as a mesh
-  const heroTaglineEl = document.querySelector('.hero__tagline');
-  if (heroTaglineEl) { heroTaglineEl.style.animation = 'none'; heroTaglineEl.style.opacity = '0'; }
+  // Name + tagline are DOM text (.hero__intro) — kept OUT of the WebGL scene so
+  // the shader's reduced DPR never softens them. We only blur/hide the element.
+  // Scroll cue blurs alongside it on hold (both are DOM, above the canvas).
+  const heroIntro = document.querySelector('.hero__intro');
+  const heroCue   = document.querySelector('.hero__scroll-cue');
 
   let { W, H, Hb } = bg.getSize();   // H = design height (cards), Hb = buffer/camera height
 
@@ -41,131 +43,6 @@ export function initHero(bg) {
   ];
 
   let CARDS = W <= 768 ? CARDS_MOBILE : CARDS_DESKTOP;
-
-  // ── Text mesh helpers (left-aligned, Figma 124:41) ──
-  function heroNameSize() {
-    return Math.min(180, Math.max(50, W * 0.085));
-  }
-
-  function heroTaglineSize() {
-    return Math.min(28, Math.max(14, W * 0.015));
-  }
-
-  const TEXT_LEFT = 0.089;   // 170 / 1920
-  const NAME_TOP  = 0.42;
-
-  let nameMesh     = null;
-  let taglineMesh  = null;
-  let fontsReady   = false;
-
-  const TAGLINE_LINES = [
-    'Design generalist currently working as',
-    'Senior UX Designer at Remedy Entertainment.',
-  ];
-
-  const dpr = Math.max(devicePixelRatio, 2);
-
-  function makeTextTex(cv) {
-    const tex = new THREE.CanvasTexture(cv);
-    tex.generateMipmaps = false;
-    tex.minFilter = THREE.LinearFilter;
-    tex.magFilter = THREE.LinearFilter;
-    return tex;
-  }
-
-
-  function buildTaglineMesh(W, H) {
-    const fontSize = heroTaglineSize();
-    const lineH    = Math.ceil(fontSize * 1.35);
-    const fontStr  = `400 ${fontSize}px "PP Neue Montreal", sans-serif`;
-
-    const mc = document.createElement('canvas');
-    const mx = mc.getContext('2d');
-    mx.font = fontStr;
-    const pad = Math.ceil(fontSize * 0.15);
-    const tw = Math.ceil(Math.max(...TAGLINE_LINES.map(l => mx.measureText(l).width))) + pad * 2;
-    const th = lineH * TAGLINE_LINES.length + Math.ceil(fontSize * 0.4) + pad * 2;
-
-    const cv = document.createElement('canvas');
-    cv.width  = tw * dpr;
-    cv.height = th * dpr;
-    const cx  = cv.getContext('2d');
-    cx.scale(dpr, dpr);
-    cx.font         = fontStr;
-    cx.fillStyle    = '#ffffff';
-    cx.textBaseline = 'top';
-    cx.textAlign    = 'left';
-    TAGLINE_LINES.forEach((line, i) => cx.fillText(line, pad, pad + i * lineH));
-
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(tw, th),
-      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
-    );
-
-    const leftX    = TEXT_LEFT * W - W / 2 + tw / 2;
-    const nameY    = -(NAME_TOP * H);
-    const nameSize = heroNameSize();
-    const gap      = W <= 768 ? 12 : 20;
-    const posY     = nameY - nameSize * 0.55 - gap - th / 2;
-    mesh.position.set(leftX, posY, 5);
-
-    return mesh;
-  }
-
-  function buildNameMesh(W, H) {
-    const fontSize = heroNameSize();
-    const text     = 'Mirko Aus';
-    const fontStr  = `italic 400 ${fontSize}px "Instrument Serif", serif`;
-
-    const mc  = document.createElement('canvas');
-    const mx  = mc.getContext('2d');
-    mx.font = fontStr;
-    const pad = Math.ceil(fontSize * 0.15);
-    const tw = Math.ceil(mx.measureText(text).width) + pad * 2;
-    const th = Math.ceil(fontSize * 1.3) + pad * 2;
-
-    const cv = document.createElement('canvas');
-    cv.width  = tw * dpr;
-    cv.height = th * dpr;
-    const cx  = cv.getContext('2d');
-    cx.scale(dpr, dpr);
-    cx.font          = fontStr;
-    cx.fillStyle     = '#ffffff';
-    cx.textBaseline  = 'middle';
-    cx.textAlign     = 'left';
-    cx.fillText(text, pad, th / 2);
-
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(tw, th),
-      new THREE.MeshBasicMaterial({ map: makeTextTex(cv), transparent: true })
-    );
-
-    const leftX = TEXT_LEFT * W - W / 2 + tw / 2 - fontSize * 0.06;
-    const posY  = -(NAME_TOP * H);
-    mesh.position.set(leftX, posY, 5);
-    return mesh;
-  }
-
-  // ── Build text meshes once fonts load ────────────────
-  document.fonts.ready.then(() => {
-    fontsReady  = true;
-    nameMesh    = buildNameMesh(W, H);
-    taglineMesh = buildTaglineMesh(W, H);
-    scene.add(nameMesh);
-    scene.add(taglineMesh);
-
-    // Name + tagline fade in a touch slower than the shader
-    if (typeof gsap !== 'undefined') {
-      nameMesh.material.opacity = 0;
-      taglineMesh.material.opacity = 0;
-      gsap.to([nameMesh.material, taglineMesh.material], {
-        opacity: 1,
-        duration: 1.2,
-        delay: 0.8,
-        ease: 'power2.out',
-      });
-    }
-  });
 
   const imgs = Array.from(document.querySelectorAll('.hero__card img'));
 
@@ -261,10 +138,9 @@ export function initHero(bg) {
   let hold = null;
   function noScroll(e) { e.preventDefault(); }
 
-  // One DOM img per scene element (cards + name + tagline), sat at the canvas
-  // layer (z-2). Clones are appended back-to-front so their natural paint order
-  // reproduces the WebGL depth — the held card keeps its distance instead of
-  // popping above the rest, and text layers stay correctly interleaved.
+  // One DOM img per card, sat at the canvas layer (z-2). Clones are appended
+  // back-to-front so their natural paint order reproduces the WebGL depth — the
+  // held card keeps its distance instead of popping above the rest.
   function makeCloneEl(src) {
     const im = document.createElement('img');
     im.src = src;
@@ -278,7 +154,6 @@ export function initHero(bg) {
   }
 
   const cloneCardImg = mesh => makeCloneEl(imgs[meshes.indexOf(mesh)]?.src || '');
-  const cloneTextImg = mesh => makeCloneEl(mesh.material.map.image.toDataURL());
 
   function positionClone(im, m) {
     const w = m.geometry.parameters.width;
@@ -296,23 +171,25 @@ export function initHero(bg) {
 
   function beginHoldBlur() {
     if (!hold) return;
-    // Shader + text stay in the canvas — blur it as the backdrop.
+    // Shader + cards live in the canvas — blur it as the backdrop. The DOM
+    // name/tagline blur alongside it (own transition) now that they're not meshes.
     if (!noMotion) {
       canvas.style.transition = 'filter 1.2s linear';
       canvas.style.filter = 'blur(24px)';
+      // DOM layers above the canvas (name/tagline + scroll cue) blur with it.
+      // Keep opacity in the transition so the cue's scroll fade-out survives.
+      [heroIntro, heroCue].forEach(el => {
+        if (el) { el.style.transition = 'filter 1.2s linear, opacity 0.4s var(--ease-out)'; el.style.filter = 'blur(24px)'; }
+      });
     }
-    const order = meshes.map((mesh, i) => ({ mesh, z: CARDS[i].z, kind: 'card' }));
-    if (nameMesh)    order.push({ mesh: nameMesh,    z: 5, kind: 'text' });
-    if (taglineMesh) order.push({ mesh: taglineMesh, z: 5, kind: 'text' });
+    const order = meshes.map((mesh, i) => ({ mesh, z: CARDS[i].z }));
     order.sort((a, b) => a.z - b.z);
-    hold.clones = order.map(({ mesh, kind }) => {
-      const im = kind === 'card' ? cloneCardImg(mesh) : cloneTextImg(mesh);
+    hold.clones = order.map(({ mesh }) => {
+      const im = cloneCardImg(mesh);
       positionClone(im, mesh);
       return { im, mesh, held: mesh === hold.mesh };
     });
     meshes.forEach(m => (m.visible = false));
-    if (nameMesh)    nameMesh.visible = false;
-    if (taglineMesh) taglineMesh.visible = false;
     // Next frame: ramp every clone except the held one to full blur.
     requestAnimationFrame(() => {
       if (!hold?.clones || noMotion) return;
@@ -323,10 +200,11 @@ export function initHero(bg) {
   function clearHoldVisuals() {
     canvas.style.transition = 'filter 0.3s ease';
     canvas.style.filter = '';
+    [heroIntro, heroCue].forEach(el => {
+      if (el) { el.style.transition = 'filter 0.3s ease, opacity 0.4s var(--ease-out)'; el.style.filter = ''; }
+    });
     if (hold?.clones) hold.clones.forEach(c => c.im.remove());
     meshes.forEach(m => (m.visible = true));
-    if (nameMesh)    nameMesh.visible = true;
-    if (taglineMesh) taglineMesh.visible = true;
   }
 
   function startHold(mesh, link, action = 'nav') {
@@ -483,16 +361,14 @@ export function initHero(bg) {
     const calm = 1 - motionSuppress;
 
     // Mobile: a fixed canvas can't track native scroll without 1-frame jitter.
-    // So pin the hero elements (no scroll offset) and drive them off by scroll
-    // instead of gliding up. Cards scatter off-screen; name+tagline blur away.
-    // Both reach their endpoint by 80% scroll-through. Desktop keeps the glide.
+    // So pin the cards (no scroll offset) and drive them off by scroll instead
+    // of gliding up — they scatter off-screen, done by 80% scroll-through. The
+    // DOM name+tagline scroll up naturally. Desktop keeps the glide.
     const heroOffset = isCoarse ? 0 : scrollY;
-    let heroScatter = 0;   // 0 = home, 1 = fully scattered/blurred (smoothstep, for text)
     let scatterProg = 0;   // linear 0–1 scroll-through, drives per-card staggered scatter
     if (isCoarse && heroRect) {
       const raw  = -heroRect.top / heroRect.height;   // 0 at top → 1 past hero
       scatterProg = Math.min(1, Math.max(0, raw / 0.8)); // done by 80%
-      heroScatter = scatterProg * scatterProg * (3 - 2 * scatterProg); // smoothstep
     }
 
     let kickDX = 0, kickDY = 0;
@@ -564,21 +440,6 @@ export function initHero(bg) {
 
     if (hold?.clones) updateHoldClones();
 
-    if (nameMesh) nameMesh.position.y = -(NAME_TOP * H) + heroOffset;
-    if (taglineMesh) {
-      const nameSize = heroNameSize();
-      const gap = W <= 768 ? 12 : 20;
-      const tagH = taglineMesh.geometry.parameters.height;
-      taglineMesh.position.y = -(NAME_TOP * H) - nameSize * 0.55 - gap - tagH / 2 + heroOffset;
-    }
-    // Fade name+tagline out as you scroll (mobile). heroScatter > 0 only once
-    // scrolled, so this never clobbers the entrance opacity tween at the top.
-    if (isCoarse && heroScatter > 0) {
-      const op = 1 - heroScatter;
-      if (nameMesh)    nameMesh.material.opacity    = op;
-      if (taglineMesh) taglineMesh.material.opacity = op;
-    }
-
     bg.render();
   }
 
@@ -607,8 +468,8 @@ export function initHero(bg) {
   // ── Resize ──────────────────────────────────────────
   let lastResizeW = W;
   window.addEventListener('resize', () => {
-    // Ignore iOS toolbar height jiggle (width unchanged) — rebuilding card +
-    // text geometry mid-scroll causes the cards to jump. Width change only.
+    // Ignore iOS toolbar height jiggle (width unchanged) — rebuilding card
+    // geometry mid-scroll causes the cards to jump. Width change only.
     if (isCoarse && window.innerWidth === lastResizeW) return;
     lastResizeW = window.innerWidth;
     ({ W, H, Hb } = bg.getSize());
@@ -622,20 +483,7 @@ export function initHero(bg) {
       mesh.userData.px = baseX(d);
       mesh.userData.py = baseY(d, h);
     });
-    if (fontsReady) {
-      for (const [get, build, set] of [
-        [() => nameMesh,    buildNameMesh,    m => { nameMesh    = m; }],
-        [() => taglineMesh, buildTaglineMesh, m => { taglineMesh = m; }],
-      ]) {
-        const old = get();
-        const wasVisible = old ? old.visible : true;
-        if (old) { scene.remove(old); old.geometry.dispose(); old.material.map.dispose(); old.material.dispose(); }
-        const m = build(W, H);
-        m.visible = wasVisible;
-        set(m);
-        scene.add(m);
-      }
-    }
+    // Name + tagline are CSS — they reflow on resize for free.
   });
 
   return {
@@ -646,14 +494,12 @@ export function initHero(bg) {
       if (hold) { clearHoldVisuals(); hold = null; }
       paused = true;
       meshes.forEach(m => m.visible = false);
-      if (nameMesh) nameMesh.visible = false;
-      if (taglineMesh) taglineMesh.visible = false;
+      if (heroIntro) heroIntro.style.display = 'none';
     },
     showCards() {
       paused = false;
       meshes.forEach(m => m.visible = true);
-      if (nameMesh) nameMesh.visible = true;
-      if (taglineMesh) taglineMesh.visible = true;
+      if (heroIntro) heroIntro.style.display = '';
     },
   };
 }

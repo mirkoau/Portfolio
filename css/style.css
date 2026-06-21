@@ -81,7 +81,7 @@
   --font-ui:       'PP Neue Montreal', sans-serif;
 
   --size-hero-name:    clamp(50px, 8.5vw, 180px);
-  --size-hero-tagline: clamp(18px, 1.9vw, 36px);
+  --size-hero-tagline: clamp(14px, 1.5vw, 28px);
   --size-heading-xl:   clamp(36px, 3.4vw + 8px, 72px);
   --size-heading-lg:   clamp(28px, 2.5vw + 6px, 54px);
   --size-heading-md:   clamp(22px, 1.2vw + 12px, 32px);
@@ -542,9 +542,10 @@ body {
   opacity: 0;
 }
 
-.hero__tagline {
+/* Name + tagline fade in together, a beat after the cards start */
+.hero__intro {
   opacity: 0;
-  animation: load-fade-up 0.7s 0.55s var(--ease-out) both;
+  animation: load-fade-up 0.9s 0.8s var(--ease-out) both;
 }
 
 .hero__card {
@@ -636,18 +637,38 @@ body.is-scrolled .hero__scroll-cue {
   .hero__scroll-cue { display: none; }
 }
 
-/* ── Hero tagline (base styles) ─────────────────────── */
+/* ── Hero intro — name + tagline (DOM text, sharp at any DPR) ──
+   Absolute inside .hero (position:relative) so it scrolls with the
+   section: desktop glide + mobile scroll-up both free, no JS. Left +
+   top match the old WebGL mesh coords (TEXT_LEFT 170/1920, NAME_TOP). */
+.hero__intro {
+  position: absolute;
+  left: 8.85%;
+  /* Anchor to the locked viewport (same var the canvas uses), NOT .hero's own
+     height — on mobile .hero is only 0.8·lvh, which would pull the name up. */
+  top: calc(0.42 * var(--hero-lock, 100lvh));
+  z-index: 1;
+}
+
+.hero__name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--size-hero-name);
+  line-height: 1;
+  color: #fff;
+  /* -0.5em lifts the glyph center to 42%; -0.06em optical left nudge */
+  margin: -0.5em 0 0 -0.06em;
+  user-select: none;
+}
 
 .hero__tagline {
   font-family: var(--font-body);
   font-size: var(--size-hero-tagline);
-  color: var(--color-orange);
+  color: #fff;
   line-height: var(--leading-normal);
-  margin-left: var(--col-offset);
-  margin-top: var(--space-lg);
+  margin-top: clamp(12px, 1.4vw, 20px);
   max-width: 860px;
-  position: relative;
-  z-index: 1;
 }
 
 /* Hero cards — placeholder positions until Three.js (Phase 7) */
