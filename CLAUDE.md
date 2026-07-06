@@ -109,7 +109,7 @@ content/{id}.json       — Per-project detail data (sections, tags, hero)
 ### Design Tokens
 Defined in `css/style.css :root`. LAB color space. Key tokens:
 - Colors: `--color-bg`, `--color-blue`, `--color-orange`, `--color-teal`
-- Typography: `--font-display` (Instrument Serif), `--font-body` (PP Neue Montreal)
+- Typography: `--font-display` (Archivo Narrow), `--font-body` (PP Neue Montreal)
 - Spacing: 8px base (`--space-xs` through `--space-2xl`)
 - Layout: `--gutter` (80/40/20px responsive), `--col-offset`, `--nav-height`
 - Animation: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`
