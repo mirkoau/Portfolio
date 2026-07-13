@@ -76,7 +76,11 @@
 
 .gallery-overlay__media {
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* minmax(0,…) not 1fr: default 1fr = minmax(auto,1fr), whose auto-min is the
+     image's intrinsic height — a tall portrait then grows the row past the
+     panel and .main's overflow:hidden clips its bottom. 0-min lets max-height
+     constrain it so contain fits the whole image. */
+  grid-template-rows: minmax(0, 1fr) auto;
   width: 100%;
   flex: 1;
   min-height: 0;
