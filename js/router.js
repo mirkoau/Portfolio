@@ -45,7 +45,12 @@ export function resetRoute() {
 
 export function initRouter(onRoute) {
   _onRoute = onRoute;
-  window.addEventListener('hashchange', handleRoute);
+  window.addEventListener('hashchange', () => {
+    handleRoute();
+    // Umami only hooks pushState/replaceState; hashchange fires only on
+    // browser back/forward here, so no double-count with programmatic navigate().
+    window.umami?.track();
+  });
   // Parse initial hash on load
   handleRoute();
 }
