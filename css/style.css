@@ -1199,8 +1199,10 @@ body.is-project-view .scroll-bg {
     flex-direction: column;
     align-items: flex-start;
   }
-  /* Same stadium-pill treatment as desktop, scaled down */
-  .about__cta {
+  /* Same stadium-pill treatment as desktop, scaled down. Mirrored onto the
+     flying button so its class values match the anchor it morphs into. */
+  .about__cta,
+  .btn-cta--about {
     font-size: clamp(28px, 8vw, 42px);
     line-height: 1;
     padding: 16px 30px;

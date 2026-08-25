@@ -52,18 +52,43 @@ export function initLetsTalk(lenis) {
   function computedPx(el, prop) {
     return parseFloat(getComputedStyle(el)[prop]);
   }
-  function navTarget() {
-    const r = navAnchor.getBoundingClientRect();
-    return { left: r.left, top: r.top, width: r.width, height: r.height, fontSize: computedPx(navAnchor, 'fontSize'), borderRadius: computedPx(navAnchor, 'borderRadius') };
+  // Every box metric that differs between the nav pill and the big about pill.
+  // Padding + gap are tweened inline like the rest: the .btn-cta--about class
+  // swap would otherwise snap them to final size on frame 1, so the label
+  // renders full-size inside a still-small box and clips (worst on mobile,
+  // where the class carries the un-overridden 42px/36px desktop values).
+  const SIZE_KEYS = ['width', 'height', 'fontSize', 'borderRadius',
+    'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'columnGap'];
+
+  function boxOf(el) {
+    const r = el.getBoundingClientRect();
+    const box = { left: r.left, top: r.top };
+    SIZE_KEYS.forEach(k => { box[k] = computedPx(el, k) || 0; });
+    box.width  = r.width;
+    box.height = r.height;
+    return box;
   }
-  function aboutTarget() {
-    const r = aboutAnchor.getBoundingClientRect();
-    return { left: r.left, top: r.top, width: r.width, height: r.height, fontSize: computedPx(aboutAnchor, 'fontSize'), borderRadius: computedPx(aboutAnchor, 'borderRadius') };
+  function sizeOf(box) {
+    const p = {};
+    SIZE_KEYS.forEach(k => { p[k] = box[k]; });
+    return p;
   }
+  function midSize(a, b) {
+    const p = {};
+    SIZE_KEYS.forEach(k => { p[k] = (a[k] + b[k]) / 2; });
+    return p;
+  }
+  function currentSize() {
+    const o = {};
+    SIZE_KEYS.forEach(k => { o[k] = parseFloat(gsap.getProperty(btn, k)) || 0; });
+    return o;
+  }
+  function navTarget()   { return boxOf(navAnchor); }
+  function aboutTarget() { return boxOf(aboutAnchor); }
 
   // Seed at nav position while invisible
   const n0 = navTarget();
-  gsap.set(btn, { left: n0.left, top: n0.top, width: n0.width, height: n0.height, fontSize: n0.fontSize, borderRadius: n0.borderRadius });
+  gsap.set(btn, { left: n0.left, top: n0.top, ...sizeOf(n0) });
 
   // ── State ─────────────────────────────────────────────
   let state = 'hidden';  // hidden | nav | about
@@ -92,7 +117,7 @@ export function initLetsTalk(lenis) {
     btn.classList.add('btn-cta--nav');
     // Re-sync to nav in case layout shifted since init
     const n = navTarget();
-    gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height });
+    gsap.set(btn, { left: n.left, top: n.top, ...sizeOf(n) });
     gsap.fromTo(btn,
       { opacity: 0, y: -10 },
       { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', clearProps: 'y' }
@@ -120,12 +145,9 @@ export function initLetsTalk(lenis) {
     if (tween) tween.kill();
     gsap.set(btn, { x: 0, y: 0 });
 
-    const fromL  = parseFloat(gsap.getProperty(btn, 'left'));
-    const fromT  = parseFloat(gsap.getProperty(btn, 'top'));
-    const fromW  = parseFloat(gsap.getProperty(btn, 'width'));
-    const fromH  = parseFloat(gsap.getProperty(btn, 'height'));
-    const fromFs = parseFloat(gsap.getProperty(btn, 'fontSize'));
-    const fromBr = parseFloat(gsap.getProperty(btn, 'borderRadius'));
+    const fromL = parseFloat(gsap.getProperty(btn, 'left'));
+    const fromT = parseFloat(gsap.getProperty(btn, 'top'));
+    const from  = currentSize();
 
     const dest = to === 'about' ? aboutTarget() : navTarget();
 
@@ -140,10 +162,7 @@ export function initLetsTalk(lenis) {
     // Phase 1: accelerate to arc nadir, interpolating size halfway
     tween.to(btn, {
       left: arcX, top: arcY,
-      width:        (fromW  + dest.width)        / 2,
-      height:       (fromH  + dest.height)       / 2,
-      fontSize:     (fromFs + dest.fontSize)     / 2,
-      borderRadius: (fromBr + dest.borderRadius) / 2,
+      ...midSize(from, dest),
       duration: 0.38,
       ease: 'power2.in',
     });
@@ -184,8 +203,7 @@ export function initLetsTalk(lenis) {
 
       // Size settles smoothly in parallel with phase 2
       tween.to(btn, {
-        width: dest.width, height: dest.height,
-        fontSize: dest.fontSize, borderRadius: dest.borderRadius,
+        ...sizeOf(dest),
         duration: 0.52,
         ease: 'power2.out',
       }, '<');
@@ -198,8 +216,7 @@ export function initLetsTalk(lenis) {
         ease: 'elastic.out(0.6, 0.75)',
       });
       tween.to(btn, {
-        width: dest.width, height: dest.height,
-        fontSize: dest.fontSize, borderRadius: dest.borderRadius,
+        ...sizeOf(dest),
         duration: 0.52,
         ease: 'power2.out',
       }, '<');
@@ -279,13 +296,8 @@ export function initLetsTalk(lenis) {
   }
   function restoreFlying() {
     handedOff = false;
-    const r = aboutAnchor.getBoundingClientRect();
-    gsap.set(btn, {
-      left: r.left, top: r.top, width: r.width, height: r.height,
-      fontSize: computedPx(aboutAnchor, 'fontSize'),
-      borderRadius: computedPx(aboutAnchor, 'borderRadius'),
-      opacity: 1, x: 0, y: 0,
-    });
+    const a = aboutTarget();
+    gsap.set(btn, { left: a.left, top: a.top, ...sizeOf(a), opacity: 1, x: 0, y: 0 });
     btn.style.pointerEvents = 'auto';
     gsap.set(aboutAnchor, { opacity: 0 });
     aboutAnchor.style.pointerEvents = 'none';
@@ -369,10 +381,10 @@ export function initLetsTalk(lenis) {
     if (collapse) {
       const left = parseFloat(gsap.getProperty(btn, 'left'));
       const w    = parseFloat(gsap.getProperty(btn, 'width'));
-      collapseTween = gsap.to(btn, { left: left + w - 54, width: 54, duration: 0.45, ease: 'power3.out' });
+      collapseTween = gsap.to(btn, { left: left + w - 54, width: 54, columnGap: 0, duration: 0.45, ease: 'power3.out' });
     } else {
       const n = navTarget();
-      collapseTween = gsap.to(btn, { left: n.left, width: n.width, duration: 0.45, ease: 'power3.out' });
+      collapseTween = gsap.to(btn, { left: n.left, width: n.width, columnGap: n.columnGap, duration: 0.45, ease: 'power3.out' });
     }
   };
 
@@ -392,7 +404,7 @@ export function initLetsTalk(lenis) {
       gsap.set(aboutAnchor, { opacity: 0 });        // drop the static duplicate
       aboutAnchor.style.pointerEvents = 'none';
       const n = navTarget();
-      gsap.set(btn, { left: n.left, top: n.top, width: n.width, height: n.height, x: 0, y: 0, opacity: 1 });
+      gsap.set(btn, { left: n.left, top: n.top, ...sizeOf(n), x: 0, y: 0, opacity: 1 });
       btn.style.pointerEvents = 'auto';
     }
     // nav state — already visible, nothing to do
