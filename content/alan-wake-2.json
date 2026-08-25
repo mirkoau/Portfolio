@@ -58,6 +58,12 @@
       "alt": "Alan Wake 2 photo mode"
     },
     {
+      "type": "text-only",
+      "content": [
+        "In 2024, it won Best Photo Mode and Photo Mode UX at The Virtual Photography Awards."
+      ]
+    },
+    {
       "type": "image-left",
       "content": [
         "In-game, a large part of my contribution was the whole setup for player inventory and storage. Items in Alan's and Saga's inventories take up physical space, and that one premise drove every interaction: drop a stack of bullets onto a matching stack and they combine, place a different item onto another and the grid rearranges itself. Tied to that, I designed the weapon quick-select, a highly customizable HUD element where players could arrange their weapons and tools however they liked. I also worked on the lore menus, including the lore text, audio clip, and video clip browsers."
@@ -68,8 +74,7 @@
     {
       "type": "image-only",
       "src": "assets/images/aw2-photomode-wide.jpg",
-      "alt": "Alan Wake 2 photo mode, full view",
-      "caption": "In 2024, Alan Wake 2 won Best Photo Mode at The Virtual Photography Awards, along with Photo Mode UX and Best Lighting."
+      "alt": "Alan Wake 2 photo mode, full view"
     }
   ]
 }
