@@ -3,7 +3,7 @@
 // Mobile:  organic float, device motion → chaotic card physics
 
 import { navigate } from './router.js';
-import { openGallery } from './gallery.js';
+import { openGallery, toGalleryList, isGalleryOpen, isGalleryCovering } from './gallery.js';
 import { data } from './content.js';
 
 export function initHero(bg) {
@@ -13,6 +13,14 @@ export function initHero(bg) {
   const { camera, scene, canvas } = bg;
 
   const isCoarse = matchMedia('(pointer: coarse)').matches;
+  const noMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const heroSection = document.getElementById('hero');
+
+  // Gallery open or hero scrolled ≥80% away → cards inert (no hover/kick/drag)
+  const heroInactive = (r = heroSection?.getBoundingClientRect()) =>
+    isGalleryOpen() || (!!r && r.bottom <= r.height * 0.2);
+  let frozen = false;   // last tick's heroInactive() — mousemove reuses it (no layout read)
 
   document.querySelectorAll('.hero__card').forEach(el => (el.style.display = 'none'));
 
@@ -92,12 +100,22 @@ export function initHero(bg) {
   let rawX = W / 2, rawY = H / 2;
   let accDX = 0, accDY = 0;
 
+  const ndc = new THREE.Vector2();
   function toNDC(cx, cy) {
     // y over Hb — the camera frustum spans the full buffer (lvh+overscan).
-    return new THREE.Vector2((cx / W) * 2 - 1, -((cy / Hb) * 2 - 1));
+    return ndc.set((cx / W) * 2 - 1, -((cy / Hb) * 2 - 1));
   }
   function toWorld(cx, cy) {
     return { x: cx - W / 2, y: -cy };   // top-anchored: y=0 at viewport top
+  }
+
+  // Pin a fixed DOM element over a mesh's current on-screen rect
+  function placeAtMesh(el, m) {
+    const { width: w, height: h } = m.geometry.parameters;
+    el.style.width  = w + 'px';
+    el.style.height = h + 'px';
+    el.style.left   = (m.position.x + W / 2 - w / 2) + 'px';
+    el.style.top    = (-m.position.y - h / 2) + 'px';
   }
 
   // ── Drag + kick (desktop only) ─────────────────────
@@ -117,16 +135,12 @@ export function initHero(bg) {
     if (!items?.length) return;
     const heroSrc = imgs[PORTRAIT_INDEX]?.getAttribute('src');
     const idx = Math.max(0, items.findIndex(it => it.src === heroSrc));
-    const list = items.map(it => ({ src: it.src, alt: it.alt, caption: it.caption }));
+    const list = toGalleryList(items);
 
     // FLIP trigger: a throwaway img sat at the mesh's current screen rect
-    const w = mesh.geometry.parameters.width;
-    const h = mesh.geometry.parameters.height;
     const trig = document.createElement('div');
-    trig.style.cssText =
-      `position:fixed;left:${mesh.position.x + W / 2 - w / 2}px;` +
-      `top:${-mesh.position.y - h / 2}px;width:${w}px;height:${h}px;` +
-      'pointer-events:none;opacity:0;';
+    trig.style.cssText = 'position:fixed;pointer-events:none;opacity:0;';
+    placeAtMesh(trig, mesh);
     const im = document.createElement('img');
     im.src = imgs[PORTRAIT_INDEX].src;
     im.style.cssText = 'width:100%;height:100%;object-fit:cover;';
@@ -155,18 +169,9 @@ export function initHero(bg) {
 
   const cloneCardImg = mesh => makeCloneEl(imgs[meshes.indexOf(mesh)]?.src || '');
 
-  function positionClone(im, m) {
-    const w = m.geometry.parameters.width;
-    const h = m.geometry.parameters.height;
-    im.style.width  = w + 'px';
-    im.style.height = h + 'px';
-    im.style.left   = (m.position.x + W / 2 - w / 2) + 'px';
-    im.style.top    = (-m.position.y - h / 2) + 'px';
-  }
-
   function updateHoldClones() {
     if (!hold?.clones) return;
-    hold.clones.forEach(c => positionClone(c.im, c.mesh));
+    hold.clones.forEach(c => placeAtMesh(c.im, c.mesh));
   }
 
   function beginHoldBlur() {
@@ -186,7 +191,7 @@ export function initHero(bg) {
     order.sort((a, b) => a.z - b.z);
     hold.clones = order.map(({ mesh }) => {
       const im = cloneCardImg(mesh);
-      positionClone(im, mesh);
+      placeAtMesh(im, mesh);
       return { im, mesh, held: mesh === hold.mesh };
     });
     meshes.forEach(m => (m.visible = false));
@@ -254,9 +259,7 @@ export function initHero(bg) {
       if (!drag) {
         // Cards hidden (project view) or hero scrolled away → no card cursor.
         // Raycaster hits invisible meshes too, so guard explicitly.
-        const ov = galleryOverlay && !galleryOverlay.hidden;
-        const hr = heroSection ? heroSection.getBoundingClientRect() : null;
-        if (paused || ov || (hr && hr.bottom <= hr.height * 0.2)) {
+        if (paused || frozen || isGalleryOpen()) {
           document.body.style.cursor = '';
           return;
         }
@@ -270,9 +273,7 @@ export function initHero(bg) {
     });
 
     window.addEventListener('mousedown', e => {
-      const ov = galleryOverlay && !galleryOverlay.hidden;
-      const hr = heroSection ? heroSection.getBoundingClientRect() : null;
-      if (ov || (hr && hr.bottom <= hr.height * 0.2)) return;
+      if (heroInactive()) return;
       ray.setFromCamera(toNDC(e.clientX, e.clientY), camera);
       const hits = ray.intersectObjects(meshes);
       if (!hits.length) return;
@@ -319,7 +320,6 @@ export function initHero(bg) {
   // translation. Suppress it when moving, restore gentle float at rest.
   let lastScrollY = 0;
   let motionSuppress = 0;       // 0 = full float, 1 = frozen (scrolling)
-  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── Constants ───────────────────────────────────────
   const DAMPING          = 0.92;
@@ -337,17 +337,12 @@ export function initHero(bg) {
   }
 
   // ── Render loop ─────────────────────────────────────
-  const galleryOverlay = document.getElementById('gallery-overlay');
-  const heroSection = document.getElementById('hero');
-
   function tick(time) {
-    bg.tick(time);
+    const heroRect = bg.tick(time);   // same #hero rect, read once per frame
 
     if (paused) { bg.render(); return; }
-    const overlayOpen = galleryOverlay && !galleryOverlay.hidden;
-    const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
-    const heroGone = heroRect && heroRect.bottom <= heroRect.height * 0.2;
-    const frozen = overlayOpen || heroGone;
+    frozen = heroInactive(heroRect);
+    if (isGalleryCovering()) return;   // opaque overlay on top — skip both passes
 
     // Offset cards + text so they scroll with the page (not fixed in viewport)
     const scrollY = heroRect ? -heroRect.top : 0;
@@ -487,8 +482,6 @@ export function initHero(bg) {
   });
 
   return {
-    pause()  { paused = true; canvas.style.display = 'none'; },
-    resume() { paused = false; canvas.style.display = ''; },
     hideCards() {
       // Tear down a held-card blur now that the curtain hides the swap
       if (hold) { clearHoldVisuals(); hold = null; }

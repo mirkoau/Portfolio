@@ -611,9 +611,6 @@ body.is-scrolled .hero__scroll-cue {
 
 .hero__scroll-cue:hover svg {
   color: var(--color-bg);
-}
-
-.hero__scroll-cue:hover svg {
   animation: cue-bob 0.9s var(--ease-out) infinite;
 }
 

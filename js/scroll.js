@@ -1,3 +1,5 @@
+import { isGalleryOpen } from './gallery.js';
+
 export function initScroll() {
   if (typeof Lenis === 'undefined' || typeof gsap === 'undefined') return null;
 
@@ -64,24 +66,26 @@ export function initScroll() {
 
     // Gallery overlay can open while still in the hero (portrait card). Its
     // own wheel/touch handlers must win — don't intercept or snap behind it.
-    const galleryOverlay = document.getElementById('gallery-overlay');
-    const overlayOpen = () => galleryOverlay && !galleryOverlay.hidden;
+
+    function snapToWork() {
+      snapping = true;
+      lenis.scrollTo(work, {
+        duration: 1.2,
+        easing: t => 1 - Math.pow(1 - t, 3),
+        onComplete: () => { inHero = false; snapping = false; },
+      });
+    }
 
     // stopImmediatePropagation prevents ALL other handlers on window
     // (stopPropagation only blocks child-element handlers, not same-element)
     window.addEventListener('wheel', e => {
-      if (overlayOpen()) return;
+      if (isGalleryOpen()) return;
       if (!inHero || hero.offsetParent === null) return;
       e.preventDefault();
       e.stopImmediatePropagation();
       if (snapping) return;
       if (e.deltaY > 0) {
-        snapping = true;
-        lenis.scrollTo(work, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 3),
-          onComplete: () => { inHero = false; snapping = false; },
-        });
+        snapToWork();
       }
     }, { passive: false, capture: true });
 
@@ -89,22 +93,17 @@ export function initScroll() {
     if (!matchMedia('(pointer: coarse)').matches) {
       let touchY0 = 0;
       window.addEventListener('touchstart', e => {
-        if (overlayOpen()) return;
+        if (isGalleryOpen()) return;
         if (inHero) touchY0 = e.touches[0].clientY;
       }, { passive: true, capture: true });
       window.addEventListener('touchmove', e => {
-        if (overlayOpen()) return;
+        if (isGalleryOpen()) return;
         if (!inHero || hero.offsetParent === null) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         if (snapping) return;
         if (touchY0 - e.touches[0].clientY > 20) {
-          snapping = true;
-          lenis.scrollTo(work, {
-            duration: 1.2,
-            easing: t => 1 - Math.pow(1 - t, 3),
-            onComplete: () => { inHero = false; snapping = false; },
-          });
+          snapToWork();
         }
       }, { passive: false, capture: true });
     }
@@ -113,13 +112,7 @@ export function initScroll() {
     const scrollCue = document.querySelector('.hero__scroll-cue');
     if (scrollCue) {
       scrollCue.addEventListener('click', () => {
-        if (snapping) return;
-        snapping = true;
-        lenis.scrollTo(work, {
-          duration: 1.2,
-          easing: t => 1 - Math.pow(1 - t, 3),
-          onComplete: () => { inHero = false; snapping = false; },
-        });
+        if (!snapping) snapToWork();
       });
     }
 
@@ -138,101 +131,53 @@ export function initScroll() {
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const START = isMobile ? '10% bottom' : '15% bottom';
 
+  // Hide on load, animate in once on first entry (batched → staggered)
+  function reveal(selector, from, to) {
+    gsap.set(selector, { opacity: 0, ...from });
+    ScrollTrigger.batch(selector, {
+      onEnter: batch => gsap.to(batch, { opacity: 1, ...to }),
+      start: START,
+      once: true,
+    });
+  }
+
   // ── Work entry headers — role + company anchors the section ─
-  gsap.set('.work__entry-header', { y: 8, opacity: 0 });
-  ScrollTrigger.batch('.work__entry-header', {
-    onEnter: batch => gsap.to(batch, {
-      y: 0, opacity: 1,
-      duration: 0.9,
-      ease: 'power3.out',
-      stagger: 0.1,
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.work__entry-header',
+    { y: 8 },
+    { y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1 });
 
   // ── Work projects — image scales in, text rises ──
   // Image and text reveal on their OWN entry, not the project container's.
   // The text sits far below a tall image; triggering it on the container
   // (whose top is the image) animated the text while still below the fold,
   // so its reveal was never seen. Separate batches fix the trigger position.
-  gsap.set('.work__project-text', { y: 10, opacity: 0 });
-  gsap.set('.work__project-image', { scale: 0.94, opacity: 0 });
-
-  ScrollTrigger.batch('.work__project-image', {
-    onEnter: batch => gsap.to(batch, {
-      scale: 1, opacity: 1,
-      duration: 1.0,
-      stagger: 0.15,
-      ease: 'power2.out',
-    }),
-    start: START,
-    once: true,
-  });
-
-  ScrollTrigger.batch('.work__project-text', {
-    onEnter: batch => gsap.to(batch, {
-      y: 0, opacity: 1,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: 'power3.out',
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.work__project-image',
+    { scale: 0.94 },
+    { scale: 1, duration: 1.0, stagger: 0.15, ease: 'power2.out' });
+  reveal('.work__project-text',
+    { y: 10 },
+    { y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out' });
 
   // ── Personal work grid ──────────────────────────────────
-  gsap.set('.personal-work__item', { y: 40, opacity: 0 });
-  ScrollTrigger.batch('.personal-work__item', {
-    onEnter: batch => gsap.to(batch, {
-      y: 0, opacity: 1,
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power3.out',
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.personal-work__item',
+    { y: 40 },
+    { y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' });
 
   // ── About paragraphs — gentle, reading-paced ──────────
-  gsap.set('.about__body', { y: 6, opacity: 0 });
-  ScrollTrigger.batch('.about__body', {
-    onEnter: batch => gsap.to(batch, {
-      y: 0, opacity: 1,
-      duration: 0.9,
-      stagger: 0.18,
-      ease: 'power2.out',
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.about__body',
+    { y: 6 },
+    { y: 0, duration: 0.9, stagger: 0.18, ease: 'power2.out' });
 
   // ── About portrait — personal, slightly more dramatic ──
-  gsap.set('.about__portrait', { scale: 0.9, opacity: 0 });
-  ScrollTrigger.batch('.about__portrait', {
-    onEnter: batch => gsap.to(batch, {
-      scale: 1, opacity: 1,
-      duration: 1.1,
-      ease: 'power2.out',
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.about__portrait',
+    { scale: 0.9 },
+    { scale: 1, duration: 1.1, ease: 'power2.out' });
 
   // About CTA is invisible — the flying "Lets Talk" button
   // bounces to its position from nav via lets-talk.js
 
   // ── Footer — fade only, no movement ────────────────────
-  gsap.set('.footer', { opacity: 0 });
-  ScrollTrigger.batch('.footer', {
-    onEnter: batch => gsap.to(batch, {
-      opacity: 1,
-      duration: 0.5,
-      ease: 'power1.out',
-    }),
-    start: START,
-    once: true,
-  });
+  reveal('.footer', {}, { duration: 0.5, ease: 'power1.out' });
 
   return lenis;
 }

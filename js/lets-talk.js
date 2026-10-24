@@ -14,6 +14,19 @@ export function decodeEmails(root = document) {
   });
 }
 
+// ── Pill hover/press tweens — shared with See More (content.js) ──
+// Nav-size pill: small + snappy. About pill: bigger, looser spring.
+export const HOVER = {
+  nav:   { scale: 1.05, duration: 0.35, ease: 'power2.out' },
+  about: { scale: 1.08, duration: 0.4,  ease: 'power2.out' },
+};
+export const LEAVE = {
+  nav:   { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' },
+  about: { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' },
+};
+export const PRESS   = { scale: 0.92, duration: 0.1, ease: 'power2.in' };
+export const RELEASE = { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' };
+
 let _showForProject = null;
 let _setContactCollapsed = null;
 
@@ -241,44 +254,27 @@ export function initLetsTalk(lenis) {
 
 
   // ── Hover & press feedback ────────────────────────────
-  let isNav = () => btn.classList.contains('btn-cta--nav');
+  const mode = () => (btn.classList.contains('btn-cta--nav') ? 'nav' : 'about');
 
   btn.addEventListener('mouseenter', () => {
     if (tween?.isActive() || prefersReduced) return;
-    if (isNav()) {
-      gsap.to(btn, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
-    } else {
-      gsap.to(btn, { scale: 1.08, duration: 0.4, ease: 'power2.out' });
-    }
+    gsap.to(btn, HOVER[mode()]);
   });
-
   btn.addEventListener('mouseleave', () => {
-    if (prefersReduced) return;
-    if (isNav()) {
-      gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
-    } else {
-      gsap.to(btn, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
-    }
+    if (!prefersReduced) gsap.to(btn, LEAVE[mode()]);
   });
-
   btn.addEventListener('mousedown', () => {
-    if (prefersReduced) return;
-    gsap.to(btn, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
+    if (!prefersReduced) gsap.to(btn, PRESS);
   });
-
   btn.addEventListener('mouseup', () => {
-    if (prefersReduced) return;
-    gsap.to(btn, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
+    if (!prefersReduced) gsap.to(btn, RELEASE);
   });
-
   btn.addEventListener('touchstart', () => {
     if (tween?.isActive() || prefersReduced) return;
-    gsap.to(btn, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
+    gsap.to(btn, PRESS);
   }, { passive: true });
-
   btn.addEventListener('touchend', () => {
-    if (prefersReduced) return;
-    gsap.to(btn, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+    if (!prefersReduced) gsap.to(btn, LEAVE.nav); // touch always uses the snappy settle
   }, { passive: true });
 
   // ── Static anchor handoff ─────────────────────────────
@@ -304,24 +300,15 @@ export function initLetsTalk(lenis) {
   }
 
   // Anchor mirrors the flying button's about-state hover/press feedback
-  aboutAnchor.addEventListener('mouseenter', () => {
-    if (prefersReduced) return;
-    gsap.to(aboutAnchor, { scale: 1.08, duration: 0.4, ease: 'power2.out' });
-  });
-  aboutAnchor.addEventListener('mouseleave', () => {
-    if (prefersReduced) return;
-    gsap.to(aboutAnchor, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
-  });
-  aboutAnchor.addEventListener('mousedown', () => {
-    if (prefersReduced) return;
-    gsap.to(aboutAnchor, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
-  });
-  aboutAnchor.addEventListener('mouseup', () => {
-    if (prefersReduced) return;
-    gsap.to(aboutAnchor, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
-  });
+  if (!prefersReduced) {
+    aboutAnchor.addEventListener('mouseenter', () => gsap.to(aboutAnchor, HOVER.about));
+    aboutAnchor.addEventListener('mouseleave', () => gsap.to(aboutAnchor, LEAVE.about));
+    aboutAnchor.addEventListener('mousedown',  () => gsap.to(aboutAnchor, PRESS));
+    aboutAnchor.addEventListener('mouseup',    () => gsap.to(aboutAnchor, RELEASE));
+  }
 
   // ── Appear trigger: scrolled 80% into Work section ─────
+  const H = window.innerHeight;
   function checkWorkProgress() {
     if (state !== 'hidden') return;
     const r = workSection.getBoundingClientRect();
@@ -332,7 +319,6 @@ export function initLetsTalk(lenis) {
       if (lenis) lenis.off('scroll', checkWorkProgress);
     }
   }
-  const H = window.innerHeight;
   window.addEventListener('scroll', checkWorkProgress, { passive: true });
   if (lenis) lenis.on('scroll', checkWorkProgress);
   checkWorkProgress();
@@ -343,13 +329,8 @@ export function initLetsTalk(lenis) {
   window.addEventListener('scroll', onScroll, { passive: true });
 
   // ── Flight trigger: about CTA enters / leaves viewport ─
-  const aboutObserver = new IntersectionObserver(entries => {
-    const e = entries[0];
-    if (e.isIntersecting) {
-      fly('about');
-    } else {
-      fly('nav');
-    }
+  const aboutObserver = new IntersectionObserver(([e]) => {
+    fly(e.isIntersecting ? 'about' : 'nav');
   }, { threshold: 0.05 });
   aboutObserver.observe(aboutAnchor);
 

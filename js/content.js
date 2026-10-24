@@ -1,4 +1,5 @@
 import { navigate } from './router.js';
+import { HOVER, LEAVE, PRESS, RELEASE } from './lets-talk.js';
 
 let data = null;
 const contentReady = _init();
@@ -52,57 +53,37 @@ function buildEntry(entry) {
 
 function renderWork(work) {
   const el = document.querySelector('#work .section-main');
-  if (el) el.innerHTML = work.map(buildEntry).join('');
+  if (!el) return;
+  el.innerHTML = work.map(buildEntry).join('');
   initSeeMoreInteractions();
-  initProjectLinks();
+  initProjectLinks(el);
 }
 
-function initProjectLinks() {
-  document.querySelectorAll('[data-project-link]').forEach(btn => {
-    const projectId = btn.dataset.projectLink;
-    btn.addEventListener('click', () => {
-      navigate(`#/work/${projectId}`);
-    });
-  });
-  document.querySelectorAll('.work__project').forEach(project => {
-    const seeMore = project.querySelector('.work__see-more');
+// Cover image + See More both open the project (Coming Soon has neither)
+function initProjectLinks(root) {
+  root.addEventListener('click', e => {
+    const project = e.target.closest('.work__project');
+    if (!project || !e.target.closest('[data-project-link], .work__see-more')) return;
     const btn = project.querySelector('[data-project-link]');
-    if (!seeMore || !btn) return;
-    seeMore.addEventListener('click', () => {
-      navigate(`#/work/${btn.dataset.projectLink}`);
-    });
+    if (btn) navigate(`#/work/${btn.dataset.projectLink}`);
   });
 }
 
 function initSeeMoreInteractions() {
   if (typeof gsap === 'undefined') return;
-  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReduced) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   document.querySelectorAll('.work__see-more').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      gsap.to(el, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
-    });
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
-    });
-    el.addEventListener('mousedown', () => {
-      gsap.to(el, { scale: 0.92, duration: 0.1, ease: 'power2.in' });
-    });
-    el.addEventListener('mouseup', () => {
-      gsap.to(el, { scale: 1.06, duration: 0.4, ease: 'elastic.out(1, 0.5)' });
-    });
-
+    el.addEventListener('mouseenter', () => gsap.to(el, HOVER.nav));
+    el.addEventListener('mouseleave', () => gsap.to(el, LEAVE.nav));
+    el.addEventListener('mousedown',  () => gsap.to(el, PRESS));
+    el.addEventListener('mouseup',    () => gsap.to(el, RELEASE));
   });
 
   // Coming Soon — size change on hover only (not clickable, no fill, no press)
   document.querySelectorAll('.work__coming-soon').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      gsap.to(el, { scale: 1.05, duration: 0.35, ease: 'power2.out' });
-    });
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
-    });
+    el.addEventListener('mouseenter', () => gsap.to(el, HOVER.nav));
+    el.addEventListener('mouseleave', () => gsap.to(el, LEAVE.nav));
   });
 }
 

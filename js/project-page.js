@@ -1,7 +1,30 @@
 import { showForProject, setContactCollapsed, decodeEmails } from './lets-talk.js';
 import { openGallery } from './gallery.js';
+import { contentReady, data } from './content.js';
 
 const container = document.getElementById('project-view');
+const noMotion  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Lenis when smooth scroll is on, native otherwise
+const scrollPos = lenis => (lenis ? lenis.scroll : window.scrollY);
+function onScrollOf(lenis, fn) {
+  if (lenis) { lenis.on('scroll', fn); return () => lenis.off('scroll', fn); }
+  window.addEventListener('scroll', fn, { passive: true });
+  return () => window.removeEventListener('scroll', fn);
+}
+
+// Per-project JSON, fetched once — shared by showProject + the footer/menu list
+const _projectJson = new Map();
+function fetchProject(id) {
+  if (!_projectJson.has(id)) {
+    _projectJson.set(id, fetch(`content/${id}.json`).then(r => {
+      if (!r.ok) throw new Error(`${r.status}`);
+      return r.json();
+    }));
+    _projectJson.get(id).catch(() => _projectJson.delete(id)); // allow retry
+  }
+  return _projectJson.get(id);
+}
 
 // Lock hero height to load-time viewport — frozen, ignores later resizes
 // (desktop window drag + mobile address-bar show/hide). Used by both the
@@ -21,13 +44,14 @@ let _currentId = null;
 let _cleanup = null;
 let _allProjects = null;
 
-// Flatten all projects from data.json into [{id, title, hero}]
+// Flatten all projects from data.json into [{id, title, comingSoon, hero, heroAlt, role, period}]
 async function getAllProjects() {
   if (_allProjects) return _allProjects;
-  const res = await fetch('content/data.json');
-  const data = await res.json();
+  // content.js already fetched data.json — refetch only if that failed
+  await contentReady;
+  const { work } = data ?? await fetch('content/data.json').then(r => r.json());
   const projects = [];
-  for (const company of data.work) {
+  for (const company of work) {
     for (const p of company.projects) {
       projects.push({ id: p.id, title: p.title || company.company, comingSoon: !!p.comingSoon });
     }
@@ -35,8 +59,7 @@ async function getAllProjects() {
   // Fetch hero images + role/period from per-project JSONs
   await Promise.all(projects.map(async (p) => {
     try {
-      const r = await fetch(`content/${p.id}.json`);
-      const d = await r.json();
+      const d = await fetchProject(p.id);
       p.hero = d.hero?.src || '';
       p.heroAlt = d.hero?.alt || '';
       p.role = d.role || '';
@@ -56,9 +79,7 @@ export async function showProject(projectId, lenis) {
   container.innerHTML = '<div class="project-page__loading"></div>';
 
   try {
-    const res = await fetch(`content/${projectId}.json`);
-    if (!res.ok) throw new Error(`${res.status}`);
-    const project = await res.json();
+    const project = await fetchProject(projectId);
     if (_currentId !== projectId) return;
     await render(project, lenis);
   } catch (err) {
@@ -170,29 +191,23 @@ async function render(project, lenis) {
   decodeEmails(container); // wire the menu's obfuscated contact mailto
 
   // Reveals + contact button + burger menu + image gallery
-  const cleanReveals = initProjectReveals();
-  const cleanFooterArrows = initFooterArrows();
-  const cleanBurgerMenu = initBurgerMenu(lenis);
-  const cleanGallery = initProjectGallery();
-  const cleanHeroParallax = initHeroParallax(lenis);
-  const cleanHeaderCollapse = initHeaderCollapse(lenis);
+  const cleanups = [
+    initProjectReveals(),
+    initFooterArrows(),
+    initBurgerMenu(lenis),
+    initProjectGallery(),
+    initHeroParallax(lenis),
+    initHeaderCollapse(lenis),
+  ];
   showForProject();
 
-  _cleanup = () => {
-    if (cleanReveals) cleanReveals();
-    if (cleanFooterArrows) cleanFooterArrows();
-    if (cleanBurgerMenu) cleanBurgerMenu();
-    if (cleanGallery) cleanGallery();
-    if (cleanHeroParallax) cleanHeroParallax();
-    if (cleanHeaderCollapse) cleanHeaderCollapse();
-  };
+  _cleanup = () => cleanups.forEach(fn => fn?.());
 }
 
 // ── Hero image parallax — drifts slower than content as it scrolls away ──
 // Mirrors the index hero feel: foreground leaves, background lags behind.
 
 function initHeroParallax(lenis) {
-  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (noMotion) return null;
 
   const hero = container.querySelector('.project-page__hero');
@@ -205,17 +220,15 @@ function initHeroParallax(lenis) {
   function onScroll() {
     // Only animate while hero still touches the viewport
     if (hero.getBoundingClientRect().bottom <= 0) return;
-    const y = (lenis ? lenis.scroll : window.scrollY) * FACTOR;
+    const y = scrollPos(lenis) * FACTOR;
     img.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
   }
 
-  if (lenis) lenis.on('scroll', onScroll);
-  else window.addEventListener('scroll', onScroll, { passive: true });
+  const off = onScrollOf(lenis, onScroll);
   onScroll();
 
   return () => {
-    if (lenis) lenis.off('scroll', onScroll);
-    else window.removeEventListener('scroll', onScroll);
+    off();
     img.style.willChange = '';
     img.style.transform = '';
   };
@@ -227,7 +240,6 @@ function initHeroParallax(lenis) {
 // button → labels reveal. Mobile shows Home only (Contact lives in the menu).
 
 function initHeaderCollapse(lenis) {
-  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (noMotion) return null;
 
   const navBack = document.querySelector('.nav__back');
@@ -242,7 +254,7 @@ function initHeaderCollapse(lenis) {
   }
 
   let collapsed = false;
-  let lastY = lenis ? lenis.scroll : window.scrollY;
+  let lastY = scrollPos(lenis);
   // Mistake space: need this much consistent-direction scroll before toggling,
   // applied symmetrically (collapse on down, reveal on up). Any reversal resets
   // the budget, so small jitters never flip it.
@@ -255,7 +267,7 @@ function initHeaderCollapse(lenis) {
   };
 
   const onScroll = () => {
-    const y = lenis ? lenis.scroll : window.scrollY;
+    const y = scrollPos(lenis);
     const dy = y - lastY;
     lastY = y;
     if (y <= 4) { collapsed = false; accum = 0; apply(); return; } // top → full
@@ -305,13 +317,11 @@ function initHeaderCollapse(lenis) {
     }
   };
 
-  if (lenis) lenis.on('scroll', onScroll);
-  else window.addEventListener('scroll', onScroll, { passive: true });
+  const off = onScrollOf(lenis, onScroll);
   document.addEventListener('pointerover', onOver);
 
   return () => {
-    if (lenis) lenis.off('scroll', onScroll);
-    else window.removeEventListener('scroll', onScroll);
+    off();
     document.removeEventListener('pointerover', onOver);
     navBack.classList.remove('nav__back--collapsed');
     setContactCollapsed(false);
@@ -390,87 +400,56 @@ function initFooterArrows() {
 
 // ── Section renderer ──────────────────────────────────
 
+const paras = content => content.map(p => `<p>${p}</p>`).join('');
+const img   = ({ src, alt }) => `<img src="${src}" alt="${alt}" loading="lazy" />`;
+
+// Grid of plain figures, optional per-image caption
+const figureRow = (images) => images.map(im => `
+  <figure>
+    ${img(im)}
+    ${im.caption ? `<figcaption>${im.caption}</figcaption>` : ''}
+  </figure>`).join('');
+
+const textOnly = s => `<div class="project-page__section project-page__section--text-only">
+  ${paras(s.content)}
+</div>`;
+
+const imageOnly = s => `<figure class="project-page__section project-page__section--image-only">
+  <div class="project-page__image-frame">${img(s)}</div>
+  ${s.caption ? `<figcaption>${s.caption}</figcaption>` : ''}
+</figure>`;
+
+// image-left / image-right share markup — only the layout modifier differs
+const imageText = (s, side) => `<div class="project-page__section project-page__section--img-text-${side}">
+  <div class="project-page__section-text">${paras(s.content)}</div>
+  <figure class="project-page__section-image">${img(s)}</figure>
+</div>`;
+
 function renderSection(section) {
   switch (section.type) {
-    case 'image-left':
-      return `<div class="project-page__section project-page__section--img-text-left">
-        <div class="project-page__section-text">
-          ${section.content.map(p => `<p>${p}</p>`).join('')}
-        </div>
-        <figure class="project-page__section-image">
-          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
-        </figure>
-      </div>`;
-
-    case 'image-right':
-      return `<div class="project-page__section project-page__section--img-text-right">
-        <div class="project-page__section-text">
-          ${section.content.map(p => `<p>${p}</p>`).join('')}
-        </div>
-        <figure class="project-page__section-image">
-          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
-        </figure>
-      </div>`;
-
+    case 'image-left':  return imageText(section, 'left');
+    case 'image-right': return imageText(section, 'right');
     case 'image-only':
-      return `<figure class="project-page__section project-page__section--image-only">
-        <div class="project-page__image-frame">
-          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
-        </div>
-        ${section.caption ? `<figcaption>${section.caption}</figcaption>` : ''}
-      </figure>`;
-
+    case 'image':       return imageOnly(section);   // 'image' = legacy
     case 'text-only':
-      return `<div class="project-page__section project-page__section--text-only">
-        ${section.content.map(p => `<p>${p}</p>`).join('')}
-      </div>`;
+    case 'text':        return textOnly(section);    // 'text' = legacy
 
     // Two images side-by-side, paragraph below the first (left) image
     case 'pair-text':
       return `<div class="project-page__section project-page__section--pair-text">
         <div class="project-page__pair-imgs">
-          ${section.images.map(img => `
-            <figure class="project-page__section-image">
-              <img src="${img.src}" alt="${img.alt}" loading="lazy" />
-            </figure>`).join('')}
+          ${section.images.map(im => `<figure class="project-page__section-image">${img(im)}</figure>`).join('')}
         </div>
-        <div class="project-page__pair-textblock">
-          ${section.content.map(p => `<p>${p}</p>`).join('')}
-        </div>
+        <div class="project-page__pair-textblock">${paras(section.content)}</div>
       </div>`;
 
     // Legacy compat
-    case 'text':
-      return `<div class="project-page__section project-page__section--text-only">
-        ${section.content.map(p => `<p>${p}</p>`).join('')}
-      </div>`;
-
-    case 'image':
-      return `<figure class="project-page__section project-page__section--image-only">
-        <div class="project-page__image-frame">
-          <img src="${section.src}" alt="${section.alt}" loading="lazy" />
-        </div>
-        ${section.caption ? `<figcaption>${section.caption}</figcaption>` : ''}
-      </figure>`;
-
     case 'image-pair':
-      return `<div class="project-page__section project-page__section--image-pair">
-        ${section.images.map(img => `
-          <figure>
-            <img src="${img.src}" alt="${img.alt}" loading="lazy" />
-            ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
-          </figure>`).join('')}
-      </div>`;
+      return `<div class="project-page__section project-page__section--image-pair">${figureRow(section.images)}</div>`;
 
     // Three images side-by-side, no text
     case 'image-trio':
-      return `<div class="project-page__section project-page__section--image-trio">
-        ${section.images.map(img => `
-          <figure>
-            <img src="${img.src}" alt="${img.alt}" loading="lazy" />
-            ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
-          </figure>`).join('')}
-      </div>`;
+      return `<div class="project-page__section project-page__section--image-trio">${figureRow(section.images)}</div>`;
 
     default:
       return '';
@@ -481,7 +460,6 @@ function renderSection(section) {
 
 function initProjectReveals() {
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return null;
-  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (noMotion) return null;
 
   const sections = container.querySelectorAll('.project-page__section');

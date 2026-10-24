@@ -15,11 +15,17 @@ const backdrop  = overlay.querySelector('.gallery-overlay__backdrop');
 const panel     = overlay.querySelector('.gallery-overlay__panel');
 const mqMobile  = window.matchMedia('(max-width: 768px)');
 
+// Backdrop is opaque black — once fully faded in, nothing behind it shows,
+// so the WebGL background can stop rendering (hero.js reads this).
+let covering = false;
+export const isGalleryOpen     = () => !overlay.hidden;
+export const isGalleryCovering = () => covering;
+
 export async function initGallery(lenisInstance) {
   lenis = lenisInstance ?? null;
   await contentReady;
 
-  const personalList = buildPersonalList();
+  const personalList = toGalleryList(data.personalWork.items);
 
   // Personal work triggers
   const personalTriggers = document.querySelectorAll('[data-personal-trigger]');
@@ -40,8 +46,7 @@ export async function initGallery(lenisInstance) {
 
   overlay.addEventListener('wheel', e => {
     e.preventDefault();
-    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
-    else              setActive(Math.max(flatIndex - 1, 0));
+    step(e.deltaY > 0 ? 1 : -1);
   }, { passive: false });
 
   filmstrip.addEventListener('click', e => {
@@ -51,8 +56,7 @@ export async function initGallery(lenisInstance) {
   filmstrip.addEventListener('wheel', e => {
     e.stopPropagation();
     e.preventDefault();
-    if (e.deltaY > 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
-    else              setActive(Math.max(flatIndex - 1, 0));
+    step(e.deltaY > 0 ? 1 : -1);
   }, { passive: false });
 
   // Touch swipe — scoped to the image panel so swiping the strip itself
@@ -66,10 +70,7 @@ export async function initGallery(lenisInstance) {
   swipeTarget.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - touchX0;
     const dy = e.changedTouches[0].clientY - touchY0;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-      if (dx < 0) setActive(Math.min(flatIndex + 1, activeList.length - 1));
-      else        setActive(Math.max(flatIndex - 1, 0));
-    }
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
   }, { passive: true });
 
   // Re-center on breakpoint cross — strip axis flips, clear stale transform
@@ -89,10 +90,8 @@ export function openGallery(list, idx, trigger) {
   openOverlay(idx);
 }
 
-function buildPersonalList() {
-  return data.personalWork.items.map(item => ({
-    src: item.src, alt: item.alt, caption: item.caption,
-  }));
+export function toGalleryList(items) {
+  return items.map(({ src, alt, caption }) => ({ src, alt, caption }));
 }
 
 function rebuildFilmstrip() {
@@ -102,6 +101,11 @@ function rebuildFilmstrip() {
     </button>`).join('');
   filmstrip.innerHTML = `<div class="gallery-overlay__filmstrip-track">${items}</div>`;
   filmstripTrack = filmstrip.querySelector('.gallery-overlay__filmstrip-track');
+}
+
+// Move ±1 through the active list, clamped at both ends
+function step(dir) {
+  setActive(Math.min(Math.max(flatIndex + dir, 0), activeList.length - 1));
 }
 
 function setActive(idx) {
@@ -152,7 +156,10 @@ function openOverlay(idx) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reducedMotion) {
     setActive(idx);
-    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+    gsap.fromTo(overlay, { opacity: 0 }, {
+      opacity: 1, duration: 0.3, ease: 'power2.out',
+      onComplete() { covering = !overlay.hidden; },
+    });
     return;
   }
 
@@ -164,7 +171,10 @@ function openOverlay(idx) {
   const toRect = mainImg.getBoundingClientRect();
   gsap.set(mainImg, { opacity: 0 });
   gsap.set([backdrop, sidebar, closeBtn], { opacity: 0 });
-  gsap.to(backdrop, { opacity: 1, duration: 0.35, ease: 'power2.out' });
+  gsap.to(backdrop, {
+    opacity: 1, duration: 0.35, ease: 'power2.out',
+    onComplete() { covering = !overlay.hidden; },
+  });
   gsap.to([sidebar, closeBtn], { opacity: 1, duration: 0.3, delay: 0.2, ease: 'power2.out' });
 
   const clone = _flyingClone(mainImg.src, fromRect);
@@ -180,6 +190,7 @@ function openOverlay(idx) {
 }
 
 function closeOverlay() {
+  covering = false;
   gsap.to(overlay, { opacity: 0, duration: 0.25, ease: 'power2.in', onComplete: _hide });
 }
 
@@ -199,6 +210,6 @@ function _hide() {
 function onKey(e) {
   if (overlay.hidden) return;
   if (e.key === 'Escape')     { closeOverlay(); return; }
-  if (e.key === 'ArrowRight') { setActive(Math.min(flatIndex + 1, activeList.length - 1)); }
-  if (e.key === 'ArrowLeft')  { setActive(Math.max(flatIndex - 1, 0)); }
+  if (e.key === 'ArrowRight') step(1);
+  if (e.key === 'ArrowLeft')  step(-1);
 }

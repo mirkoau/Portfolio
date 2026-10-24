@@ -26,17 +26,9 @@ function handleRoute() {
   if (_onRoute) _onRoute(route, prev);
 }
 
-export function navigate(hash, { replaceTrigger } = {}) {
-  if (replaceTrigger) {
-    history.replaceState(null, '', hash);
-  } else {
-    history.pushState(null, '', hash);
-  }
+export function navigate(hash) {
+  history.pushState(null, '', hash);
   handleRoute();
-}
-
-export function currentRoute() {
-  return _currentRoute || parseHash(location.hash);
 }
 
 export function resetRoute() {

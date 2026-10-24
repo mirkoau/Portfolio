@@ -12,11 +12,14 @@ export function initHeroBg() {
   // headless, --disable-gpu). Bail to null → CSS gradient on <html> shows.
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !coarse });
+    // No depth buffer: cards are transparent → three sorts them back-to-front,
+    // and flat planes facing an ortho camera never need depth testing.
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !coarse, depth: false });
   } catch (e) {
     return null;
   }
-  renderer.setPixelRatio(Math.min(devicePixelRatio, coarse ? 1.0 : 1.5));
+  const DPR = Math.min(devicePixelRatio, coarse ? 1.0 : 1.5);
+  renderer.setPixelRatio(DPR);
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.autoClear = false;            // two-pass render — clear manually
@@ -59,8 +62,24 @@ export function initHeroBg() {
   camera.position.z = 500;
   const scene = new THREE.Scene();
 
-  // ── Background scene — fullscreen shader quad, own pass ─
-  const bgScene = new THREE.Scene();
+  // ── Gradient pass — low-res offscreen target ─────────
+  // The liquid field is low-frequency and the costliest work on the page, so
+  // it renders at GRADIENT_SCALE × CSS px and bilinear-upscales invisibly.
+  // Grain is high-frequency → added in the full-res composite pass instead.
+  const GRADIENT_SCALE = 0.5;
+  const rt = new THREE.WebGLRenderTarget(1, 1, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    depthBuffer: false,
+  });
+  const sizeTarget = () =>
+    rt.setSize(Math.max(1, Math.round(W * GRADIENT_SCALE)), Math.max(1, Math.round(Hb * GRADIENT_SCALE)));
+  sizeTarget();
+
+  // Fullscreen quad scenes — one per pass
+  const gradScene = new THREE.Scene();
+  const compScene = new THREE.Scene();
+  const quadGeo = new THREE.PlaneGeometry(2, 2);
 
   // ── Liquid gradient background ────────────────────
   const liquidUniforms = {
@@ -69,9 +88,12 @@ export function initHeroBg() {
     uMouse:      { value: new THREE.Vector2(0.5, 0.5) }, // uv space, y-up
     uMouseStr:   { value: 0 },                            // 0..1 eased influence
     uHeroVis:    { value: 0 },                            // 1 in hero → 0 scrolled past
+    // Fold-edge highlight uses screen derivatives — a target texel spans more
+    // of the field than a full-res pixel did, so rescale to the old look.
+    uDerivScale: { value: GRADIENT_SCALE / DPR },
   };
 
-  const liquidVert = `
+  const quadVert = `
     varying vec2 vUv;
     void main() {
       vUv = uv;
@@ -89,6 +111,7 @@ export function initHeroBg() {
     uniform vec2 uMouse;
     uniform float uMouseStr;
     uniform float uHeroVis;
+    uniform float uDerivScale;
 
     // ── Simplex 3D noise (Ashima Arts) ──────────────
     vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
@@ -155,13 +178,6 @@ export function initHeroBg() {
     // doesn't need detail. Halves snoise calls per warp layer.
     float fbmWarp(vec3 p) {
       return 0.55 * snoise(p) + 0.2475 * snoise(p * 1.8);
-    }
-
-    // ── Film grain ──────────────────────────────────
-    float hash(vec2 p) {
-      vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-      p3 += dot(p3, p3.yzx + 33.33);
-      return fract((p3.x + p3.y) * p3.z);
     }
 
     void main() {
@@ -240,7 +256,7 @@ export function initHeroBg() {
       col = mix(col, col4, smoothstep(0.55, 0.9, pattern * flow) * 0.4);
 
       // Highlight along fold edges — catches light like liquid
-      float edge = abs(dFdx(pattern)) + abs(dFdy(pattern));
+      float edge = (abs(dFdx(pattern)) + abs(dFdy(pattern))) * uDerivScale;
       edge = smoothstep(0.0, 0.08, edge);
       col += edge * vec3(0.07, 0.06, 0.09) * 1.2;
 
@@ -266,10 +282,28 @@ export function initHeroBg() {
       float vig = 1.0 - smoothstep(0.35, 1.2, length(uv - 0.5) * 1.2);
       col *= mix(0.82, 1.0, vig);
 
-      // ── Film grain ────────────────────────────────
-      float grain = hash(uv * uResolution + fract(uTime * 100.0)) - 0.5;
-      col += grain * 0.12;
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
 
+  // ── Composite — upscaled gradient + full-res film grain ─
+  const compFrag = `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uGradient;
+    uniform float uTime;
+    uniform vec2 uResolution;
+
+    float hash(vec2 p) {
+      vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+      p3 += dot(p3, p3.yzx + 33.33);
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    void main() {
+      vec3 col = texture2D(uGradient, vUv).rgb;
+      float grain = hash(vUv * uResolution + fract(uTime * 100.0)) - 0.5;
+      col += grain * 0.12;
       gl_FragColor = vec4(col, 1.0);
     }
   `;
@@ -280,18 +314,29 @@ export function initHeroBg() {
 
   const liquidMat = new THREE.ShaderMaterial({
     uniforms: liquidUniforms,
-    vertexShader: liquidVert,
+    vertexShader: quadVert,
     fragmentShader: `#define OCTAVES ${octaves}\n` + liquidFrag,
     depthWrite: false,
     depthTest: false,
     extensions: { derivatives: true },
   });
 
-  const liquidPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), liquidMat);
-  bgScene.add(liquidPlane);
+  const compMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uGradient:   { value: rt.texture },
+      uTime:       liquidUniforms.uTime,        // shared refs — set once in tick
+      uResolution: liquidUniforms.uResolution,
+    },
+    vertexShader: quadVert,
+    fragmentShader: compFrag,
+    depthWrite: false,
+    depthTest: false,
+  });
+
+  gradScene.add(new THREE.Mesh(quadGeo, liquidMat));
+  compScene.add(new THREE.Mesh(quadGeo, compMat));
 
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
 
   // ── Pointer lens tracking (desktop only) ────────────
   // tgt = raw target, sm = smoothed (follows with lag), str eases by velocity
@@ -300,11 +345,12 @@ export function initHeroBg() {
   let mStr  = 0;            // eased influence sent to uMouseStr
   let mVel  = 0;            // recent pointer speed
   let hVis  = 0;            // eased hero visibility (1 in hero → 0 past)
+  let hVisTarget = 0;
   const heroEl = document.getElementById('hero');
-  if (!isCoarse && !noMotion) {
+  if (!coarse && !noMotion) {
     window.addEventListener('mousemove', e => {
       const nx = e.clientX / W;
-      const ny = 1 - e.clientY / H;            // flip → uv y-up
+      const ny = 1 - e.clientY / Hb;           // flip → uv y-up (uv spans the full box)
       mVel = Math.min(1, mVel + Math.hypot(nx - mTgtX, ny - mTgtY) * 6);
       mTgtX = nx; mTgtY = ny;
     });
@@ -326,13 +372,16 @@ export function initHeroBg() {
     camera.top  = 0;      camera.bottom = -Hb;
     camera.updateProjectionMatrix();
     liquidUniforms.uResolution.value.set(W, Hb);
+    sizeTarget();
+    gradValid = false;
   });
 
   let _skipCount = 0;
+  let gradValid = false;   // reduced motion: field is static once hVis settles
 
   return {
     renderer, camera, scene, canvas,
-    // Two passes, one buffer: shader fills the background, cards composite over.
+    // Gradient → low-res target; then on screen: upscale + grain, cards over.
     render() {
       // Hero offscreen: render every 4th frame (~15fps). Gradient moves at
       // t*0.04 so motion is imperceptible at reduced rate.
@@ -342,10 +391,16 @@ export function initHeroBg() {
       } else {
         _skipCount = 0;
       }
-      renderer.clear();                  // color + depth (autoClear off)
-      renderer.render(bgScene, camera);  // shader quad (depthTest off → always)
-      renderer.clearDepth();             // fresh depth for the card pass
-      renderer.render(scene, camera);
+      if (!gradValid) {
+        renderer.setRenderTarget(rt);
+        renderer.clear();                   // lets tilers skip reloading old contents
+        renderer.render(gradScene, camera);
+        renderer.setRenderTarget(null);
+        gradValid = noMotion && hVis === hVisTarget;
+      }
+      renderer.clear();                     // autoClear off
+      renderer.render(compScene, camera);   // upscaled gradient + grain
+      renderer.render(scene, camera);       // cards
     },
     tick(time) {
       if (!noMotion) liquidUniforms.uTime.value = time;
@@ -354,10 +409,15 @@ export function initHeroBg() {
       // brightness lift + lens gate. Eased so transitions are smooth.
       const r = heroEl ? heroEl.getBoundingClientRect() : null;
       const inHero = r ? r.bottom > r.height * 0.2 : true;
-      hVis += ((inHero ? 1 : 0) - hVis) * 0.08;
+      hVisTarget = inHero ? 1 : 0;
+      if (hVis !== hVisTarget) {
+        gradValid = false;
+        hVis += (hVisTarget - hVis) * 0.08;
+        if (Math.abs(hVisTarget - hVis) < 1e-3) hVis = hVisTarget; // settle exactly
+      }
       liquidUniforms.uHeroVis.value = hVis;
 
-      if (!isCoarse && !noMotion) {
+      if (!coarse && !noMotion) {
         // smoothed follow (lag = liquid feel)
         mSmX += (mTgtX - mSmX) * 0.08;
         mSmY += (mTgtY - mSmY) * 0.08;
@@ -369,6 +429,7 @@ export function initHeroBg() {
         mStr += (want - mStr) * 0.1;
         liquidUniforms.uMouseStr.value = mStr;
       }
+      return r; // hero.js reuses it — one layout read per frame
     },
     getSize() { return { W, H, Hb }; },
   };

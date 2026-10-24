@@ -5,7 +5,7 @@ import { initLetsTalk, decodeEmails } from './lets-talk.js';
 import { initHeroBg   } from './hero-bg.js';
 import { initHero     } from './hero.js';
 import { initGallery  } from './gallery.js';
-import { initRouter, currentRoute, resetRoute } from './router.js';
+import { initRouter, resetRoute } from './router.js';
 import { showProject, hideProject } from './project-page.js';
 import { curtainTransition } from './page-transition.js';
 
@@ -43,31 +43,38 @@ let _scrollY = 0;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 navBack.addEventListener('click', (e) => {
   e.preventDefault();
+  backToIndex(() => {
+    history.replaceState(null, '', location.pathname);
+    resetRoute();
+  });
+});
+
+// Reverse curtain → tear down project view, restore index (+ optional extra)
+function backToIndex(after) {
   curtainTransition(() => {
     hideProject();
     showIndex();
-    history.replaceState(null, '', location.pathname);
-    resetRoute();
+    after?.();
   }, { reverse: true });
-});
+}
 
 function hideIndex() {
   _scrollY = window.scrollY;
   document.body.classList.add('is-project-view');
   navBack.hidden = false;
   window.scrollTo(0, 0);
-  if (lenis) lenis.scrollTo(0, { immediate: true });
-  if (hero && hero.hideCards) hero.hideCards();
+  lenis?.scrollTo(0, { immediate: true });
+  hero?.hideCards();
 }
 
 function showIndex() {
   document.body.classList.remove('is-project-view');
   navBack.hidden = true;
   window.scrollTo(0, _scrollY);
-  if (lenis) lenis.scrollTo(_scrollY, { immediate: true });
-  if (hero && hero.showCards) hero.showCards();
+  lenis?.scrollTo(_scrollY, { immediate: true });
+  hero?.showCards();
   if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
-  if (lenis) lenis.start();
+  lenis?.start();
 }
 
 // ── Button cursor-fill ────────────────────────────────
@@ -159,16 +166,13 @@ initRouter((route, prev) => {
     curtainTransition(() => {
       if (fromProject) {
         window.scrollTo(0, 0);
-        if (lenis) lenis.scrollTo(0, { immediate: true });
+        lenis?.scrollTo(0, { immediate: true });
       } else {
         hideIndex();
       }
       showProject(route.projectId, lenis);
     });
   } else if (prev && prev.view === 'project') {
-    curtainTransition(() => {
-      hideProject();
-      showIndex();
-    }, { reverse: true });
+    backToIndex();
   }
 });
