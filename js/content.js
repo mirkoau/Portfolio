@@ -91,6 +91,7 @@ function renderPersonalWork(pw) {
   const el = document.querySelector('#personal-work .section-main');
   if (!el) return;
   el.innerHTML = `
+    ${pw.intro ? `<p class="personal-work__intro">${pw.intro}</p>` : ''}
     <div class="personal-work__grid">
       ${pw.items.map((item, i) => `
         <button class="personal-work__item" data-personal-trigger data-personal-idx="${i}" aria-label="View ${item.alt}">

@@ -116,6 +116,7 @@
     }
   ],
   "personalWork": {
+    "intro": "My freelance work is mostly graphic design, branding and marketing materials for up-and-coming music festivals in Estonia. Alongside that I dabble in digital painting and vector art, a habit left over from roughly eight years of art school as a kid.",
     "items": [
       { "id": "p10", "src": "assets/images/funkfest-1.png", "alt": "Funkfest", "caption": "Funkfest" },
       { "id": "p3", "src": "assets/images/personal-3.png", "alt": "Personal work", "caption": "Personal work" },

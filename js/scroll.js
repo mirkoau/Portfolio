@@ -158,7 +158,10 @@ export function initScroll() {
     { y: 10 },
     { y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out' });
 
-  // ── Personal work grid ──────────────────────────────────
+  // ── Personal work intro + grid ──────────────────────────
+  reveal('.personal-work__intro',
+    { y: 6 },
+    { y: 0, duration: 0.9, ease: 'power2.out' });
   reveal('.personal-work__item',
     { y: 40 },
     { y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' });

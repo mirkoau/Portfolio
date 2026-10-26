@@ -69,11 +69,19 @@
   --color-bg:        lab(2.1% 0.8 0.3);
   --color-orange:    lab(66% 36 68);
   --color-blue:      lab(68% 7 -55);
-  --color-blue-dim:  lab(68% 7 -55 / 0.8);
   --color-teal:      lab(78% -50 -15);
-  --color-yellow:    lab(84.1% 3.3 79.3);
   --color-white:     lab(100% 0 0);
   --color-black:     lab(0% 0 0);
+
+  /* Text — solid neutrals (no opacity: the shader behind would shift them).
+     Section hues above are accents only: labels, pull quote, hover states. */
+  --color-text:       lab(93% 0 2);
+  --color-text-muted: lab(68% 0 2);
+  --color-text-faint: lab(52% 0 2);
+  --color-rule:       color-mix(in lab, var(--color-blue) 25%, transparent);
+  /* Project-page content scrim; stacks on #project-view's 10% → ~20%,
+     matching index .scroll-bg */
+  --color-scrim:      color-mix(in lab, var(--color-bg) 11%, transparent);
 
   /* Typography */
   --font-display:  'Archivo Narrow', sans-serif;
@@ -82,20 +90,23 @@
 
   --size-hero-name:    clamp(50px, 8.5vw, 180px);
   --size-hero-tagline: clamp(14px, 1.5vw, 28px);
-  --size-heading-xl:   clamp(36px, 3.4vw + 8px, 72px);
+  --size-display-lg:   clamp(40px, 3.6vw + 12px, 88px);
   --size-heading-lg:   clamp(28px, 2.5vw + 6px, 54px);
   --size-heading-md:   clamp(22px, 1.2vw + 12px, 32px);
-  --size-body-lg:      clamp(22px, 1.5vw + 10px, 36px);
-  --size-body-base:    clamp(20px, 1vw + 10px, 27px);
-  --size-body-md:      clamp(18px, 0.5vw + 16px, 20px);
-  --size-body-sm:      clamp(13px, 0.3vw + 12px, 15px);
+  --size-lead:         clamp(20px, 1vw + 10px, 27px);
+  --size-body:         clamp(17px, 0.3vw + 15.5px, 19px);
+  --size-ui:           clamp(16px, 0.2vw + 15px, 18px);
+  --size-role:         clamp(18px, 0.5vw + 15px, 23px);
+  --size-meta:         clamp(13px, 0.2vw + 12.5px, 15px);
 
-  --leading-tight:  1.05;
-  --leading-normal: 1.35;
+  --leading-display: 1.05;
+  --leading-normal:  1.35;
+  --leading-body:    1.5;
+
+  --measure: 62ch;
 
   --tracking-tight:   -0.04em;
   --tracking-heading: -0.02em;
-  --tracking-body:    0.04px;
 
   /* Spacing */
   --space-xs:   8px;
@@ -205,18 +216,17 @@ html.lenis body {
 
 body {
   background-color: transparent;
-  color: var(--color-white);
+  color: var(--color-text);
   font-family: var(--font-body);
-  font-size: var(--size-body-md);
-  font-weight: 500;
-  line-height: var(--leading-normal);
-  letter-spacing: var(--tracking-body);
+  font-size: var(--size-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
   overflow-x: hidden;
 }
 
 ::-webkit-scrollbar        { width: 6px; }
 ::-webkit-scrollbar-track  { background: var(--color-bg); }
-::-webkit-scrollbar-thumb  { background: var(--color-blue-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb  { background: var(--color-text-faint); border-radius: 3px; }
 
 ::selection {
   background: var(--color-orange);
@@ -345,7 +355,7 @@ body {
   gap: 8px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: var(--size-body-md);
+  font-size: var(--size-ui);
   letter-spacing: -0.01em;
   color: #fff;
   background: transparent;
@@ -501,7 +511,7 @@ body {
 
 /* about section secondary overrides */
 .about .btn-secondary {
-  font-size: var(--size-body-base);
+  font-size: var(--size-lead);
   padding: 10px 20px 10px 28px;
   opacity: 0;
 }
@@ -662,6 +672,7 @@ body.is-scrolled .hero__scroll-cue {
 .hero__tagline {
   font-family: var(--font-body);
   font-size: var(--size-hero-tagline);
+  font-weight: 500;
   color: #fff;
   line-height: var(--leading-normal);
   margin-top: clamp(12px, 1.4vw, 20px);
@@ -725,7 +736,8 @@ body.is-project-view .scroll-bg {
   width: 100%;
   height: calc(100lvh + 220px);
   z-index: -1;
-  background: color-mix(in lab, var(--color-bg) 10%, transparent);
+  /* Quiets the shader behind content so the work, not the gradient, leads */
+  background: color-mix(in lab, var(--color-bg) 20%, transparent);
   opacity: 0;
   pointer-events: none;
 }
@@ -771,7 +783,7 @@ body.is-project-view .scroll-bg {
   font-style: italic;
   font-weight: 400;
   font-size: var(--size-heading-md);
-  line-height: var(--leading-tight);
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
   font-variation-settings: 'SOFT' 0, 'WONK' 1;
   width: 95px;
@@ -784,7 +796,7 @@ body.is-project-view .scroll-bg {
 /* ── Work ───────────────────────────────────────────── */
 
 .work__entry {
-  border: 0.5px solid color-mix(in lab, var(--color-blue) 30%, transparent);
+  border: 0.5px solid var(--color-rule);
   padding: var(--space-lg);
   margin-bottom: var(--space-2xl);
 }
@@ -805,16 +817,6 @@ body.is-project-view .scroll-bg {
 
 .work__entry:last-child {
   margin-bottom: 0;
-}
-
-
-.work__intro {
-  font-family: var(--font-body);
-  font-size: var(--size-body-lg);
-  color: var(--color-blue);
-  line-height: var(--leading-normal);
-  margin-top: var(--space-lg);
-  max-width: 700px;
 }
 
 .work__project {
@@ -839,36 +841,56 @@ body.is-project-view .scroll-bg {
   min-width: 0;
 }
 
+/* One display moment per block: the project title (or the company, for
+   single-project entries). Multi-project entries set the company one step
+   down, in the italic display voice of the section labels. */
 .work__meta,
 .work__project-title {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: var(--size-heading-lg);
+  font-size: var(--size-display-lg);
   color: var(--color-blue);
-  line-height: var(--leading-tight);
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
+  /* Optical left edge: large display glyphs carry side bearing that reads
+     as an indent against the UI text below */
+  margin-left: -0.04em;
+  /* Body copy is pulled left into this column by (2xl - xl); wrap before it */
+  max-width: calc(100% - var(--space-2xl) + var(--space-xl));
 }
 
+.work__entry-header .work__meta {
+  font-style: italic;
+  font-size: var(--size-heading-lg);
+  max-width: none;
+}
+
+.work__entry-header .work__role {
+  margin-top: var(--space-xs);
+}
+
+/* Role is the claim (what I did, not just that I was there) — reads as a
+   subtitle, not fine print */
 .work__role,
 .work__project-role {
   font-family: var(--font-ui);
   font-weight: 500;
-  font-size: var(--size-body-sm);
+  font-size: var(--size-role);
   color: var(--color-blue);
-  opacity: 0.5;
   line-height: var(--leading-normal);
 }
 
 .work__project-role {
-  margin-top: 6px;
+  margin-top: 12px;
   align-self: stretch;
 }
 
 .work__project-body {
   font-family: var(--font-ui);
-  font-size: var(--size-body-md);
-  color: var(--color-blue-dim);
-  line-height: var(--leading-normal);
+  font-size: var(--size-body);
+  color: var(--color-text);
+  line-height: var(--leading-body);
+  max-width: var(--measure);
   margin-left: calc(-1 * var(--space-2xl));
   margin-right: var(--space-2xl);
 }
@@ -958,13 +980,16 @@ body.is-project-view .scroll-bg {
 
 /* ── Personal Work ──────────────────────────────────── */
 
-.personal-work__meta {
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: var(--size-body-md);
+/* Spans exactly 2 of the 4 grid columns so the open right half reads as
+   intentional space */
+.personal-work__intro {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--size-lead);
   color: var(--color-teal);
   line-height: var(--leading-normal);
-  margin-bottom: var(--space-xl);
+  max-width: calc(50% - var(--space-md) / 2);
+  margin-bottom: var(--space-2xl);
 }
 
 .personal-work__grid {
@@ -1051,9 +1076,12 @@ body.is-project-view .scroll-bg {
   max-width: 720px;
 }
 
+/* Personal voice — exception to the neutral text rule: section hue, lead
+   size, medium weight */
 .about__body {
   font-family: var(--font-body);
-  font-size: var(--size-body-base);
+  font-size: var(--size-lead);
+  font-weight: 500;
   color: var(--color-orange);
   line-height: var(--leading-normal);
   margin-bottom: var(--space-lg);
@@ -1089,15 +1117,15 @@ body.is-project-view .scroll-bg {
 
 .footer__copy {
   font-family: var(--font-ui);
-  font-size: var(--size-body-md);
-  color: var(--color-blue);
-  opacity: 0.4;
+  font-size: var(--size-meta);
+  color: var(--color-text-faint);
 }
 
 /* ── Responsive: tablet ─────────────────────────────── */
 
 @media (max-width: 1024px) {
   .personal-work__grid { columns: 2; }
+  .personal-work__intro { max-width: var(--measure); }
 
   .about__portrait { width: 250px; }
   .about__content  { gap: var(--space-xl); }
@@ -1161,8 +1189,11 @@ body.is-project-view .scroll-bg {
     flex-direction: column;
     gap: var(--space-md);
   }
-  .work__entry { padding: var(--space-md); }
-  .work__intro { max-width: none; }
+  /* No stroke box on mobile — content runs full gutter width */
+  .work__entry {
+    border: none;
+    padding: 0;
+  }
   /* Bigger gap between stacked projects (multi-project entries like Remedy) */
   .work__project { margin-top: var(--space-2xl); }
   .work__project:first-child { margin-top: 0; }
@@ -1173,6 +1204,8 @@ body.is-project-view .scroll-bg {
     margin-left: 0;
     margin-right: 0;
   }
+  .work__meta,
+  .work__project-title { max-width: none; }
 
   /* Personal — two columns, reset staggered offsets */
   .personal-work__grid {

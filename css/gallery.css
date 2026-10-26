@@ -99,9 +99,8 @@
 
 .gallery-overlay__caption {
   font-family: var(--font-body);
-  font-size: var(--size-body-md);
-  color: var(--color-blue);
-  opacity: 0.5;
+  font-size: var(--size-body);
+  color: var(--color-text-muted);
   padding-top: var(--space-sm);
   max-width: 860px;
   text-align: left;

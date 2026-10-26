@@ -63,26 +63,33 @@
   text-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
 }
 
+/* Title + role mirror the index Work entry (.work__project-title/-role) */
 .project-page__info-title {
   font-family: var(--font-display);
-  font-size: 32px;
+  font-size: var(--size-display-lg);
   color: var(--color-blue);
-  line-height: var(--leading-normal);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: 12px;
 }
 
 .project-page__info-role,
 .project-footer__role {
   font-family: var(--font-ui);
   font-weight: 500;
-  font-size: var(--size-body-sm);
+  line-height: var(--leading-normal);
+}
+
+.project-page__info-role {
+  font-size: var(--size-role);
   color: var(--color-blue);
-  opacity: 0.5;
 }
 
 /* ── Content zone ────────────────────────────────────── */
 
+/* Quiets the shader behind content; fades in so the hero edge stays soft */
 .project-page__content {
-  background: transparent;
+  background: linear-gradient(to bottom, transparent, var(--color-scrim) 240px);
   position: relative;
   z-index: 2;
   padding: var(--space-2xl) 0 calc(var(--space-2xl) * 2);
@@ -119,14 +126,17 @@
   order: -1;
 }
 
-.project-page__section-text p {
+.project-page__section-text p,
+.project-page__pair-textblock p {
   font-family: var(--font-ui);
-  font-size: var(--size-body-md);
-  color: var(--color-blue-dim);
-  line-height: var(--leading-normal);
+  font-size: var(--size-body);
+  color: var(--color-text);
+  line-height: var(--leading-body);
+  max-width: var(--measure);
 }
 
-.project-page__section-text p + p {
+.project-page__section-text p + p,
+.project-page__pair-textblock p + p {
   margin-top: var(--space-sm);
 }
 
@@ -185,27 +195,29 @@
 .project-page__section--image-only figcaption {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: var(--size-body-md);
-  color: var(--color-blue);
-  opacity: 1;
+  font-size: var(--size-body);
+  color: var(--color-text-muted);
   padding-top: var(--space-sm);
-  max-width: 860px;
+  max-width: var(--measure);
   text-align: left;
 }
 
 /* ── Section: text only ──────────────────────────────── */
 
+/* Pull quote — the one place a full sentence carries the section hue */
 .project-page__section--text-only {
-  max-width: 680px;
+  max-width: 960px;
   margin: 0 auto;
   text-align: center;
 }
 
 .project-page__section--text-only p {
   font-family: var(--font-display);
-  font-size: var(--size-heading-lg);
+  font-size: var(--size-display-lg);
   color: var(--color-blue);
-  line-height: var(--leading-normal);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
 }
 
 .project-page__section--text-only p + p {
@@ -234,9 +246,8 @@
 .project-page__section--image-pair figcaption {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: var(--size-body-md);
-  color: var(--color-blue);
-  opacity: 1;
+  font-size: var(--size-body);
+  color: var(--color-text-muted);
   padding-top: var(--space-sm);
 }
 
@@ -290,16 +301,6 @@
   padding-top: var(--space-sm);
 }
 
-.project-page__pair-textblock p {
-  font-family: var(--font-ui);
-  font-size: var(--size-body-md);
-  color: var(--color-blue-dim);
-  line-height: var(--leading-normal);
-}
-
-.project-page__pair-textblock p + p {
-  margin-top: var(--space-sm);
-}
 
 /* ── Subpage footer ─────────────────────────────────── */
 
@@ -310,6 +311,7 @@
   display: flex;
   flex-direction: column;
   min-height: 50lvh;
+  background: var(--color-scrim);
 }
 
 /* Rows divide the footer's height evenly (50lvh total) */
@@ -326,7 +328,7 @@
   font-style: italic;
   font-weight: 400;
   font-size: var(--size-heading-md);
-  line-height: var(--leading-tight);
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
   font-variation-settings: 'SOFT' 0, 'WONK' 1;
   color: var(--color-orange);
@@ -339,7 +341,7 @@
   gap: var(--space-sm);
   padding: 0 var(--gutter);
   height: 131px;
-  border-top: 0.5px solid var(--color-blue);
+  border-top: 0.5px solid var(--color-rule);
   cursor: pointer;
   text-decoration: none;
   overflow: hidden;
@@ -347,7 +349,7 @@
 }
 
 .project-footer__row:last-child {
-  border-bottom: 0.5px solid var(--color-blue);
+  border-bottom: 0.5px solid var(--color-rule);
 }
 
 .project-footer__row-bg {
@@ -379,30 +381,25 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
 }
 
+/* List scale — a step below the page/Work titles so rows keep their air */
 .project-footer__title {
   font-family: var(--font-display);
-  font-size: clamp(36px, 3.3vw, 64px);
-  color: var(--color-blue);
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-size: var(--size-heading-lg);
+  color: var(--color-text);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  margin-left: -0.04em; /* optical left edge, matches .work__project-title */
   transition: color 0.3s var(--ease-out);
 }
 
-.project-footer__row:hover .project-footer__title {
-  color: var(--color-white);
-}
-
 .project-footer__role {
-  transition: color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
-}
-
-.project-footer__row:hover .project-footer__role {
-  color: var(--color-white);
-  opacity: 0.7;
+  font-size: var(--size-body);
+  color: var(--color-text);
+  transition: color 0.3s var(--ease-out);
 }
 
 .project-footer__arrow {
@@ -411,10 +408,13 @@
   width: 36px;
   height: 36px;
   flex-shrink: 0;
-  color: var(--color-blue);
+  color: var(--color-text);
   transition: color 0.3s var(--ease-out);
 }
 
+/* Arrow slide on hover: see initFooterArrows */
+.project-footer__row:hover .project-footer__title,
+.project-footer__row:hover .project-footer__role,
 .project-footer__row:hover .project-footer__arrow {
   color: var(--color-white);
 }
@@ -424,11 +424,8 @@
   cursor: default;
 }
 .project-footer__row--soon:hover .project-footer__row-bg { opacity: 0; }
-.project-footer__row--soon:hover .project-footer__title { color: var(--color-blue); }
-.project-footer__row--soon:hover .project-footer__role {
-  color: var(--color-blue);
-  opacity: 0.5;
-}
+.project-footer__row--soon:hover .project-footer__title,
+.project-footer__row--soon:hover .project-footer__role { color: var(--color-text); }
 
 .project-footer__soon {
   position: relative;
@@ -436,10 +433,8 @@
   flex-shrink: 0;
   font-family: var(--font-ui);
   font-weight: 500;
-  font-size: var(--size-body-sm);
-  letter-spacing: -0.01em;
-  color: var(--color-blue);
-  opacity: 0.6;
+  font-size: var(--size-body);
+  color: var(--color-text-muted);
 }
 
 /* ── Header burger (project subpage) ────────────────── */
@@ -595,7 +590,7 @@
   z-index: 1;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: var(--size-body-md);
+  font-size: var(--size-ui);
   letter-spacing: -0.01em;
   color: #fff;
 }
@@ -630,8 +625,7 @@
 
 .project-page__error {
   font-family: var(--font-body);
-  color: var(--color-blue);
-  opacity: 0.5;
+  color: var(--color-text-muted);
   text-align: center;
   padding: calc(var(--space-2xl) * 2) var(--gutter);
 }
