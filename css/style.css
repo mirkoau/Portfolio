@@ -480,12 +480,6 @@ a.project-card:focus-visible { outline: none; }
   font-weight: 500;
 }
 
-/* Hovering a project dims the rest of the list (titles stay still and unchanged) */
-.project-card__text { transition: color var(--duration-base) ease; }
-@media (hover: hover) {
-  .work__companies:has(a.project-card:hover) .project-card:not(:hover) :is(.project-card__summary, .project-card__scope, .project-card__cta) { color: var(--ink-3); }
-  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .frame__media img { opacity: 0.55; }
-}
 .frame__media img { transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-base) ease; }
 .project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
 
