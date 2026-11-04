@@ -52,7 +52,7 @@
           "comingSoon": true,
           "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
           "did": ["Interaction design", "UI design", "Game design"],
-          "cover": { "src": "assets/images/control-resonant_cover.png", "alt": "Control Resonant key art" }
+          "cover": { "src": "assets/images/control-resonant_cover.webp", "alt": "Control Resonant key art" }
         },
         {
           "id": "fbc-firebreak",
@@ -70,7 +70,7 @@
           "period": "2022–2023",
           "summary": "Designed core systems for a narrative survival-horror game: maps, case board, inventory, weapon quick-select and an award-winning photo mode.",
           "did": ["Interaction design", "UI design", "Usability research"],
-          "cover": { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 case board" }
+          "cover": { "src": "assets/images/alanwake-cover.webp", "alt": "Alan Wake 2 case board" }
         }
       ]
     },
@@ -88,7 +88,7 @@
           "period": "2020–2022",
           "summary": "Designed across the whole parcel journey, built the team's first Figma component library, and redesigned back-office software that used to need a 40-page manual.",
           "did": ["Product design", "Design system", "Enterprise UX"],
-          "cover": { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron parcel locker interfaces" }
+          "cover": { "src": "assets/images/cleveron-cover.webp", "alt": "Cleveron parcel locker interfaces" }
         }
       ]
     },
@@ -106,7 +106,7 @@
           "period": "2019–2020",
           "summary": "Turned factory data into clear answers for managers, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
           "did": ["Data UX", "UI design", "Brand and motion"],
-          "cover": { "src": "assets/images/evocon-cover.png", "alt": "Evocon production dashboard" }
+          "cover": { "src": "assets/images/evocon-cover.webp", "alt": "Evocon production dashboard" }
         }
       ]
     }
@@ -130,16 +130,16 @@
   "freelance": {
     "intro": "Branding and marketing for up-and-coming Estonian music festivals, plus digital painting and vector art from roughly eight years of art school.",
     "items": [
-      { "src": "assets/images/funkfest-1.png", "alt": "Funkfest festival poster", "caption": "Funkfest" },
+      { "src": "assets/images/funkfest-1.webp", "alt": "Funkfest festival poster", "caption": "Funkfest" },
       { "src": "assets/images/indiefest-2.png", "alt": "Indiefest festival artwork", "caption": "Indiefest" },
-      { "src": "assets/images/personal-3.png", "alt": "Digital painting", "caption": "Personal work" },
-      { "src": "assets/images/funkfest-2.png", "alt": "Funkfest festival artwork", "caption": "Funkfest" },
+      { "src": "assets/images/personal-3.webp", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/funkfest-2.webp", "alt": "Funkfest festival artwork", "caption": "Funkfest" },
       { "src": "assets/images/iwe.gif", "alt": "Indiefest animated artwork", "caption": "Indiefest" },
-      { "src": "assets/images/personal-1.png", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/personal-1.webp", "alt": "Digital painting", "caption": "Personal work" },
       { "src": "assets/images/delfi_illustration.webp", "alt": "Editorial illustration for Delfi", "caption": "Delfi illustration" },
-      { "src": "assets/images/personal-5.png", "alt": "Vector artwork", "caption": "Personal work" },
-      { "src": "assets/images/personal-2.png", "alt": "Digital painting", "caption": "Personal work" },
-      { "src": "assets/images/personal-4.png", "alt": "Digital painting", "caption": "Personal work" }
+      { "src": "assets/images/personal-5.webp", "alt": "Vector artwork", "caption": "Personal work" },
+      { "src": "assets/images/personal-2.webp", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/personal-4.webp", "alt": "Digital painting", "caption": "Personal work" }
     ]
   },
 
@@ -149,6 +149,6 @@
       "I work across UX, UI, interaction and visual design, and I like understanding the full stack, from wireframes to motion to front-end, so my designs hold up against real constraints.",
       "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making games, museums, travel and cooking."
     ],
-    "portrait": { "src": "assets/images/mirko_profile.jpg", "alt": "Portrait of Mirko Aus" }
+    "portrait": { "src": "assets/images/mirko_profile.webp", "alt": "Portrait of Mirko Aus" }
   }
 }

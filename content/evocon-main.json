@@ -10,7 +10,7 @@
     { "label": "Platforms", "value": "Web on desktop and mobile, shop-floor tablet" },
     { "label": "Scope", "value": "Product UX and UI, rebrand, illustration, motion" }
   ],
-  "hero": { "src": "assets/images/evocon-cover.png", "alt": "Evocon production dashboard" },
+  "hero": { "src": "assets/images/evocon-cover.webp", "alt": "Evocon production dashboard" },
   "sections": [
     {
       "stage": "Context",
@@ -19,7 +19,7 @@
         "Evocon is a startup that helps manufacturers improve production performance and waste less time and material. I designed for both sides of the product: office software for managers, and tablet software for operators on the line."
       ],
       "media": [
-        { "src": "assets/images/evocon-6.png", "alt": "Office dashboard with OEE, scrap, quantity and downtime charts", "caption": "Office dashboard" }
+        { "src": "assets/images/evocon-6.webp", "alt": "Office dashboard with OEE, scrap, quantity and downtime charts", "caption": "Office dashboard" }
       ]
     },
     {
@@ -37,7 +37,7 @@
         "For managers, the aim was to make the data easy to act on: pinpoint the exact problem holding production back, see whether things are improving over time, and read the real-time state of every line."
       ],
       "media": [
-        { "src": "assets/images/evocon-4.png", "alt": "Improvement view for reducing machine reset time", "caption": "Improvement tracking" }
+        { "src": "assets/images/evocon-4.webp", "alt": "Improvement view for reducing machine reset time", "caption": "Improvement tracking" }
       ]
     },
     {
@@ -47,7 +47,7 @@
         "For operators, I kept the tablet app minimal, with as few presses as possible to get information from the floor to management. Slowdowns had to be impossible to miss, so speed states are animated and color-coded."
       ],
       "media": [
-        { "src": "assets/images/evocon-5.png", "alt": "Shop-floor tablet factory view with live station status", "caption": "Operator tablet" },
+        { "src": "assets/images/evocon-5.webp", "alt": "Shop-floor tablet factory view with live station status", "caption": "Operator tablet" },
         { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Speed indicator, good", "caption": "Good speed" },
         { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Speed indicator, slow", "caption": "Slow speed" },
         { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Speed indicator, microstop", "caption": "Microstop" }
@@ -60,8 +60,8 @@
         "I led Evocon's rebrand. Part of Evocon's mission is teaching users about efficient production, so the brand needed to feel more contemporary and approachable. Drag the slider to compare the old and new site."
       ],
       "compare": {
-        "before": { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon website before the rebrand" },
-        "after": { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon website after the rebrand" }
+        "before": { "src": "assets/images/evocon-kodukas-vana.webp", "alt": "Evocon website before the rebrand" },
+        "after": { "src": "assets/images/evocon-kodukas-uus.webp", "alt": "Evocon website after the rebrand" }
       }
     },
     {
@@ -71,9 +71,9 @@
         "A friendly character, simple illustrations and animated icons explain production concepts at a glance. Icons animate on hover, or on press on tablets, and were exported with Lottie so they could be reused across the product."
       ],
       "media": [
-        { "src": "assets/images/evocon-article_image_2.png", "alt": "Brand illustration of a character on the factory floor", "caption": "Brand illustration" },
-        { "src": "assets/images/evocon_iconset-1.gif", "alt": "Animated icon set", "caption": "Animated icons" },
-        { "src": "assets/images/evocon_iconset-2.gif", "alt": "Animated icon set", "caption": "Animated icons" }
+        { "src": "assets/images/evocon-article_image_2.webp", "alt": "Brand illustration of a character on the factory floor", "caption": "Brand illustration" },
+        { "src": "assets/images/evocon_iconset-1.webp", "alt": "Animated icon set", "caption": "Animated icons" },
+        { "src": "assets/images/evocon_iconset-2.webp", "alt": "Animated icon set", "caption": "Animated icons" }
       ]
     },
     {

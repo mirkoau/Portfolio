@@ -20,7 +20,7 @@
         "Beyond the interface, I worked with art direction, the game director, game design, audio and VFX, and helped shape mission design and the core gameplay loop."
       ],
       "media": [
-        { "src": "assets/images/fbc-character-select.png", "alt": "Character select screen", "caption": "Character select" }
+        { "src": "assets/images/fbc-character-select.webp", "alt": "Character select screen", "caption": "Character select" }
       ]
     },
     {
@@ -30,7 +30,7 @@
         "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking, parties and a HUD that reads under pressure. All of it had to ship together, on a schedule that left little room for rework."
       ],
       "media": [
-        { "src": "assets/images/fbc-anomaly-interaction.png", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
+        { "src": "assets/images/fbc-anomaly-interaction.webp", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
       ]
     },
     {
@@ -40,7 +40,7 @@
         "I owned the UI end to end: structure, flows, HUD, menus and overall visual style. I also ran the production side, breaking the work into tasks for design and programming and keeping both the short- and long-term timeline realistic."
       ],
       "media": [
-        { "src": "assets/images/fbc-customization.png", "alt": "Customization screen", "caption": "Customization" }
+        { "src": "assets/images/fbc-customization.webp", "alt": "Customization screen", "caption": "Customization" }
       ]
     },
     {
@@ -51,8 +51,8 @@
       ],
       "pull": "Remedy's first menu that lives inside a 3D world.",
       "media": [
-        { "src": "assets/images/fbc-loadout.png", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
-        { "src": "assets/images/fbc-crisis-select.png", "alt": "Crisis select menu", "caption": "Crisis select" }
+        { "src": "assets/images/fbc-loadout.webp", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
+        { "src": "assets/images/fbc-crisis-select.webp", "alt": "Crisis select menu", "caption": "Crisis select" }
       ]
     },
     {
@@ -62,8 +62,8 @@
         "I designed onboarding for the metagame and made matchmaking and the into-game flow fully modular. Players can sit in a queue while still browsing and swapping equipment and cosmetics, instead of staring at a spinner."
       ],
       "media": [
-        { "src": "assets/images/fbc-party.png", "alt": "Party and matchmaking flow", "caption": "Party and matchmaking" },
-        { "src": "assets/images/fbc-containment-board.png", "alt": "Containment mission board", "caption": "Mission board" }
+        { "src": "assets/images/fbc-party.webp", "alt": "Party and matchmaking flow", "caption": "Party and matchmaking" },
+        { "src": "assets/images/fbc-containment-board.webp", "alt": "Containment mission board", "caption": "Mission board" }
       ]
     },
     {
@@ -73,7 +73,7 @@
         "The game didn't find the commercial success we hoped for, and we didn't hit every goal we set for the craft team. But on a very tight schedule, the team shipped a complete, polished and functional UI, and I'm proud of what we built together."
       ],
       "media": [
-        { "src": "assets/images/fbc-frost-anomalies.png", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
+        { "src": "assets/images/fbc-frost-anomalies.webp", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
       ]
     }
   ],

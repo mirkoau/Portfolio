@@ -10,7 +10,7 @@
     { "label": "Platforms", "value": "Kiosk touchscreens, mobile app, web back office, AR tooling" },
     { "label": "Scope", "value": "UX, UI, design system, enterprise software redesign" }
   ],
-  "hero": { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron parcel locker interfaces" },
+  "hero": { "src": "assets/images/cleveron-cover.webp", "alt": "Cleveron parcel locker interfaces" },
   "sections": [
     {
       "stage": "Context",
@@ -19,7 +19,7 @@
         "Cleveron builds robotic parcel lockers that carry packages from the warehouse to the customer's hands. My work covered that whole journey: the touchscreens people use to send and receive parcels, the mobile app for home-locker owners, the office software companies use to manage parcels, lockers, invoices and allocations, and internal AR tooling that showed assembly workers which parts to pick next."
       ],
       "media": [
-        { "src": "assets/images/cleveron_home-locker-flow.png", "alt": "Home locker app user flow", "caption": "Home locker app flow. Scroll sideways to follow it.", "wide": true }
+        { "src": "assets/images/cleveron_home-locker-flow.webp", "alt": "Home locker app user flow", "caption": "Home locker app flow. Scroll sideways to follow it.", "wide": true }
       ]
     },
     {
@@ -30,7 +30,7 @@
       ],
       "pull": "The goal: an interface that explains itself, so the manual stops being a prerequisite.",
       "media": [
-        { "src": "assets/images/cleveron_home-locker_wireframes.png", "alt": "Home locker app wireframes", "caption": "Early wireframes" }
+        { "src": "assets/images/cleveron_home-locker_wireframes.webp", "alt": "Home locker app wireframes", "caption": "Early wireframes" }
       ]
     },
     {
@@ -40,7 +40,7 @@
         "One of my first moves was getting the team onto Figma and building a component library from scratch: hundreds of components and thousands of variants. It became the foundation for nearly every design effort that followed."
       ],
       "media": [
-        { "src": "assets/images/cleveron_component-library.png", "alt": "Figma component library", "caption": "Component library" }
+        { "src": "assets/images/cleveron_component-library.webp", "alt": "Figma component library", "caption": "Component library" }
       ]
     },
     {
@@ -50,7 +50,7 @@
         "I then redesigned the office software to be clearer and more contemporary, with structure and labels that guide people through tasks like slot allocation instead of sending them to the manual."
       ],
       "media": [
-        { "src": "assets/images/cleveron_office-software.png", "alt": "Office software with slot layout and allocation management", "caption": "Office software, slot allocation" }
+        { "src": "assets/images/cleveron_office-software.webp", "alt": "Office software with slot layout and allocation management", "caption": "Office software, slot allocation" }
       ]
     },
     {

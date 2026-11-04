@@ -10,7 +10,7 @@
     { "label": "Timeline", "value": "2022–2023, shipped October 2023" },
     { "label": "Scope", "value": "Maps, menus, case board, inventory, weapon quick-select, photo mode, lore browsers" }
   ],
-  "hero": { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 case board" },
+  "hero": { "src": "assets/images/alanwake-cover.webp", "alt": "Alan Wake 2 case board" },
   "sections": [
     {
       "stage": "Context",
@@ -19,7 +19,7 @@
         "I supported the game and narrative design teams and worked closely with UI and game programmers. The direction was diegetic and minimal: interfaces should feel like part of the world, not a layer on top of it."
       ],
       "media": [
-        { "src": "assets/images/aw2-intro.jpg", "alt": "Alan Wake 2 in-game UI", "caption": "In-game UI" }
+        { "src": "assets/images/aw2-intro.webp", "alt": "Alan Wake 2 in-game UI", "caption": "In-game UI" }
       ]
     },
     {
@@ -30,7 +30,7 @@
       ],
       "pull": "The case board lives inside the fiction, so almost everything about it had to be discovered by hand.",
       "media": [
-        { "src": "assets/images/aw2-caseboard.jpg", "alt": "Case board", "caption": "Case board" }
+        { "src": "assets/images/aw2-caseboard.webp", "alt": "Case board", "caption": "Case board" }
       ]
     },
     {
@@ -40,7 +40,7 @@
         "I tried many setups and interactions, testing how players laid out, connected and read their evidence, until the board felt like a real space for thinking rather than a menu pretending to be one."
       ],
       "media": [
-        { "src": "assets/images/aw2-caseboard-wide.jpg", "alt": "Case board, full view", "caption": "Every feature here was built in close collaboration, inside the craft team and across the project." }
+        { "src": "assets/images/aw2-caseboard-wide.webp", "alt": "Case board, full view", "caption": "Every feature here was built in close collaboration, inside the craft team and across the project." }
       ]
     },
     {
@@ -50,7 +50,7 @@
         "A forest and a single house need to communicate equally clearly. I designed map navigation and camera controls, and worked through everything the map shows, from item pickups to mission markers."
       ],
       "media": [
-        { "src": "assets/images/aw2-maps.jpg", "alt": "Map screen", "caption": "Map" }
+        { "src": "assets/images/aw2-maps.webp", "alt": "Map screen", "caption": "Map" }
       ]
     },
     {
@@ -61,7 +61,7 @@
         "I also designed the weapon quick-select, a customizable HUD element where players arrange weapons and tools however they like, and the lore browsers for text, audio and video."
       ],
       "media": [
-        { "src": "assets/images/aw2-inventory.jpg", "alt": "Inventory and weapon quick-select", "caption": "Inventory and quick-select" }
+        { "src": "assets/images/aw2-inventory.webp", "alt": "Inventory and weapon quick-select", "caption": "Inventory and quick-select" }
       ]
     },
     {
@@ -72,8 +72,8 @@
         "The goal was twofold: a proper instrument for virtual photographers, and images that would carry the game across social media."
       ],
       "media": [
-        { "src": "assets/images/aw2-photomode.jpg", "alt": "Photo mode controls", "caption": "Photo mode" },
-        { "src": "assets/images/aw2-photomode-wide.jpg", "alt": "Photo mode, full view", "caption": "Photo mode, full view" }
+        { "src": "assets/images/aw2-photomode.webp", "alt": "Photo mode controls", "caption": "Photo mode" },
+        { "src": "assets/images/aw2-photomode-wide.webp", "alt": "Photo mode, full view", "caption": "Photo mode, full view" }
       ]
     },
     {
