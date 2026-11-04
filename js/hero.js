@@ -147,21 +147,29 @@ function startMesh(hero, title) {
 }
 
 // ── Headline reveal (GSAP SplitText) ──────────────────
-// One fixed, scripted sequence (no randomness). Everything else stays put:
-//   "ex" (of "complex") slides in from the right, "products" slides in from the left,
-//   "design" drops in from far above and lands last. No fades: all text is visible throughout.
+// One fixed, hand-set sequence (no randomness). Every piece except "I" starts nudged off
+// its spot and travels home in two steps: first it resolves one axis, then the other.
+// Each piece has its own start time and durations, so nothing moves in sync. Bigger
+// entrances: "ex" from the right, "products" from the left, "design" from far above.
+// No fades: all text is visible throughout.
 //
 // No end jitter: splitting into letters drops the font's kerning, so the split text sits a
 // few px off the real text. We measure every glyph in the real text first and make the
 // split letters land exactly there, so reverting to plain text changes nothing visible.
 const MESH = false; // ember mesh fill (startMesh): parked for now, flip to bring it back
 
-// word: which word; from: [startChar, endChar) slice of it (omit = whole word)
-// x in em, y in line heights, at = start time (s), dur (s)
+// word: which word; from: first char of a slice (omit = whole word)
+// x in em, y in line heights; first: axis resolved in step 1 ('x' | 'y')
+// at: start (s); d1/d2: step durations; gap: pause between steps
 const SCRIPT = [
-  { word: 'complex', from: 5, x: 1.4, at: 0, dur: 0.8, ease: 'expo.out' },
-  { word: 'products', x: -1.2, at: 0.1, dur: 0.85, ease: 'expo.out' },
-  { word: 'design', y: -2.4, at: 0.2, dur: 1.05, ease: 'power4.inOut' },
+  { word: 'complex', to: 5, x: 0.1, y: -0.2, first: 'y', at: 0.0, d1: 0.42, d2: 0.5, gap: 0.04 },        // "compl"
+  { word: 'complex', from: 5, x: 1.4, y: 0.18, first: 'y', at: 0.06, d1: 0.38, d2: 0.62, gap: 0.06 },    // "ex"
+  { word: 'products', x: -1.2, y: 0.16, first: 'y', at: 0.11, d1: 0.44, d2: 0.6, gap: 0.03 },
+  { word: 'so', x: -0.16, y: 0.24, first: 'y', at: 0.17, d1: 0.36, d2: 0.48, gap: 0.08 },
+  { word: 'they', x: 0.2, y: -0.2, first: 'x', at: 0.22, d1: 0.4, d2: 0.52, gap: 0.05 },
+  { word: 'design', x: 0.18, y: -2.4, first: 'y', at: 0.26, d1: 0.6, d2: 0.5, gap: 0.02 },
+  { word: 'explain', x: -0.24, y: 0.2, first: 'x', at: 0.31, d1: 0.38, d2: 0.5, gap: 0.07 },
+  { word: 'themselves.', x: 0.3, y: -0.16, first: 'x', at: 0.37, d1: 0.42, d2: 0.56, gap: 0.04 },
 ];
 
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
@@ -207,25 +215,27 @@ async function revealHeadline(title) {
   const steps = SCRIPT.map((step) => {
     const word = words.find((w) => w.textContent.trim() === step.word);
     if (!word) return null;
-    const letters = [...word.querySelectorAll('.hero__char')].slice(step.from ?? 0);
+    const letters = [...word.querySelectorAll('.hero__char')].slice(step.from ?? 0, step.to);
     const r = word.getBoundingClientRect();
-    let x = (step.x || 0) * em;
+    let x = step.x * em;
     if (x < 0) x = -Math.min(-x, r.left - sheet.left - em * 0.3);
     if (x > 0) x = Math.min(x, sheet.right - r.right - em * 0.3);
-    return { ...step, letters, x, y: (step.y || 0) * lineH };
+    return { ...step, letters, x, y: step.y * lineH };
   }).filter(Boolean);
 
-  steps.forEach((st) => gsap.set(st.letters, {
-    x: (k, c) => rest.get(c) + st.x,
-    y: st.y,
-  }));
+  steps.forEach((st) => gsap.set(st.letters, { x: (k, c) => rest.get(c) + st.x, y: st.y }));
   title.classList.add('is-ready');
   if (MESH) startMesh(title.closest('.hero'), title);
 
+  // Step 1 resolves one axis (decisive), step 2 the other (soft landing)
   const tl = gsap.timeline({ delay: 0.35, onComplete: () => split.revert() });
-  steps.forEach((st) => tl.to(st.letters, {
-    x: (k, c) => rest.get(c), y: 0, duration: st.dur, ease: st.ease,
-  }, st.at));
+  steps.forEach((st) => {
+    const home = { x: (k, c) => rest.get(c), y: 0 };
+    const axis1 = st.first === 'x' ? { x: home.x } : { y: 0 };
+    const axis2 = st.first === 'x' ? { y: 0 } : { x: home.x };
+    tl.to(st.letters, { ...axis1, duration: st.d1, ease: 'power3.out' }, st.at)
+      .to(st.letters, { ...axis2, duration: st.d2, ease: 'power3.inOut' }, st.at + st.d1 + st.gap);
+  });
 }
 
 export function initHero() {
