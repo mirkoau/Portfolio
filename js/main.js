@@ -3,6 +3,7 @@ import { initHero } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
+import { initMotion, reveal, refresh, prune, getScrollY, scrollToY, scrollToEl } from './motion.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const NAV_SCROLLED_AT = 8;
@@ -11,6 +12,7 @@ const NAV_SCROLLED_AT = 8;
 const initial = parseHash(location.hash);
 if (initial.view === 'project') loadProject(initial.projectId).catch(() => {});
 
+initMotion(); // before content renders, so reveals register against the smoother
 initHero();
 initGallery();
 decodeEmails();
@@ -27,9 +29,11 @@ try {
 if (data) {
   initFreelance(data.freelance.items);
   initNavSpy();
+  reveal();
+  refresh();
   // Browser tried to jump to #about etc. before sections above it were rendered
   if (initial.view === 'index' && location.hash.length > 1) {
-    document.getElementById(location.hash.slice(1))?.scrollIntoView();
+    scrollToEl(document.getElementById(location.hash.slice(1)), { smooth: false });
   }
 }
 
@@ -65,7 +69,7 @@ function initCopyEmail() {
 // ── Nav ─────────────────────────────────────────────────
 function initNavState() {
   const nav = document.querySelector('[data-nav]');
-  const onScroll = () => nav.classList.toggle('is-scrolled', scrollY > NAV_SCROLLED_AT);
+  const onScroll = () => nav.classList.toggle('is-scrolled', getScrollY() > NAV_SCROLLED_AT);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
@@ -155,13 +159,24 @@ function initStripBar(strip, bar) {
 document.querySelector('[data-home]').addEventListener('click', (e) => {
   if (document.body.classList.contains('is-project')) return;
   e.preventDefault();
-  window.scrollTo({ top: 0 });
+  scrollToY(0, true);
+});
+
+// In-page anchors (#work, #about, skip link) scroll through the eased scroller.
+// Route links (#/work/…) are left to the router.
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]:not([href^="#/"])');
+  if (!a || a.matches('[data-to-contact]')) return;
+  const target = document.getElementById(a.getAttribute('href').slice(1));
+  if (!target) return;
+  e.preventDefault();
+  scrollToEl(target);
 });
 
 // #contact would be parsed as a route change; scroll instead, from any view
 document.querySelector('[data-to-contact]').addEventListener('click', (e) => {
   e.preventDefault();
-  document.getElementById('contact').scrollIntoView();
+  scrollToEl(document.getElementById('contact'));
   document.querySelector('[data-copy-email]').focus({ preventScroll: true });
 });
 
@@ -176,7 +191,8 @@ let indexScroll = 0;
 let morphEl = null;
 let pendingSource = null;
 
-const jump = (y) => window.scrollTo({ top: y, behavior: 'instant' });
+// Views swap synchronously: re-measure before jumping so the smoother knows the new height
+const jump = (y) => { refresh(); scrollToY(y); };
 
 const cardMedia = (id) =>
   document.querySelector(`#index-view [data-project="${id}"] [data-vt="media"]`);
@@ -202,10 +218,12 @@ function toProject(id, sourceEl) {
   setMorph(sourceEl);
   return transition(async () => {
     if (!(await showProject(id))) return; // route changed mid-fetch
-    if (!fromProject) indexScroll = scrollY;
+    if (!fromProject) indexScroll = getScrollY();
     document.body.classList.add('is-project');
+    prune();
     setMorph(heroEl());
     jump(0);
+    reveal(document.getElementById('project-view'));
   });
 }
 
@@ -214,12 +232,13 @@ function toIndex(fromId) {
   return transition(() => {
     hideProject();
     document.body.classList.remove('is-project');
+    prune();
     jump(indexScroll);
     // After "next case study" hops, the card for fromId may be far from indexScroll
     const card = fromId && cardMedia(fromId);
     if (!card) return setMorph(null);
     const r = card.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) card.scrollIntoView({ block: 'center', behavior: 'instant' });
+    if (r.bottom < 0 || r.top > innerHeight) scrollToEl(card, { smooth: false, center: true });
     setMorph(card);
   });
 }

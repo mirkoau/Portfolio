@@ -2,6 +2,7 @@
 
 import { caseStudies, todoNote, arrow, frameMedia, img, media, observeVideos, unobserveVideos } from './content.js';
 import { openLightbox } from './gallery.js';
+import { scrollToEl, pin } from './motion.js';
 
 const view = document.getElementById('project-view');
 const baseTitle = document.title;
@@ -169,8 +170,10 @@ function wire(zoomables) {
     const a = e.target.closest('[data-toc]');
     if (!a) return;
     e.preventDefault();
-    document.getElementById(a.dataset.toc).scrollIntoView({ block: 'start' });
+    scrollToEl(document.getElementById(a.dataset.toc));
   });
+
+  cleanup.push(pin(toc, view.querySelector('.case__content')));
 
   const links = new Map([...toc.querySelectorAll('[data-toc]')].map(a => [a.dataset.toc, a]));
   const io = new IntersectionObserver((entries) => {

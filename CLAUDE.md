@@ -23,11 +23,11 @@ npx serve .
 ```
 **Caching gotcha:** `python -m http.server` sends no Cache-Control, so browsers heuristically cache ES modules and can mix a new `main.js` with a stale `router.js` etc. → import error → nothing JS-rendered (work, matrix, about, images). After JS edits, hard-reload (Ctrl+Shift+R), or use a server that sends `Cache-Control: no-cache`. Same risk for ~10 min after a GitHub Pages deploy (max-age=600) when module exports change.
 
-No runtime deps (Three.js/GSAP/Lenis from v1 removed). Font: Geist (Vercel, OFL; variable 100–900 + italic) self-hosted as WOFF2 in `assets/fonts/geist/` with OFL.txt. Headlines use a licensed serif (`'Serif'` family, variable 100–900, upright only, WOFF in `assets/fonts/serif/`) via `--font-display` on hero/section/case titles, case headings, pull quotes, card titles, results, approach titles, footer email; Geist stays for body/UI. Old PP Neue Montreal OTFs remain in `assets/fonts/pp-neue-montreal/` unused. TODO notes in content JSON (`todo` fields) render only on localhost.
+Runtime dep: GSAP 3.15.1 (core + ScrollTrigger + ScrollSmoother, GreenSock standard no-charge license), self-hosted in `js/vendor/` as classic `defer` scripts loaded before `main.js` (no CDN, no CSP change). Font: Geist (Vercel, OFL; variable 100–900 + italic) self-hosted as WOFF2 in `assets/fonts/geist/` with OFL.txt. Headlines use a licensed serif (`'Serif'` family, variable 100–900, upright only, WOFF in `assets/fonts/serif/`) via `--font-display` on hero/section/case titles, case headings, pull quotes, card titles, results, approach titles, footer email; Geist stays for body/UI. Old PP Neue Montreal OTFs remain in `assets/fonts/pp-neue-montreal/` unused. TODO notes in content JSON (`todo` fields) render only on localhost.
 
 ## Stack
 - Pure HTML5 + CSS3 + Vanilla JS (ES modules)
-- Native APIs: View Transitions, IntersectionObserver, ResizeObserver, `<dialog>`
+- GSAP (self-hosted) for scroll easing + reveals; native View Transitions, IntersectionObserver, ResizeObserver, `<dialog>`
 - No framework, no bundler required
 
 ## Code Conventions
@@ -87,6 +87,8 @@ css/style.css           — Tokens, base, nav, hero, overview, work, approach, f
 css/project-page.css    — Case study page
 js/main.js              — Orchestrator: init, email decode/copy, nav state, view transitions, routing
 js/router.js            — Hash routing (#/work/{id}); everything else = index
+js/motion.js            — GSAP layer: ScrollSmoother, scroll in/out reveals, scroll helpers, TOC pin
+js/vendor/              — gsap.min.js, ScrollTrigger.min.js, ScrollSmoother.min.js
 js/content.js           — Fetches data.json, renders index sections; shared helpers (isDev, todoNote, frameMedia)
 js/hero.js              — Hero headline line-mask reveal (keeps footnote markup)
 js/project-page.js      — Case study: fetch/cache content/{id}.json, render, TOC spy, compare slider, pan, zoom
@@ -96,10 +98,12 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 ```
 
 ### Key Patterns
+- **Scroll (js/motion.js):** ScrollSmoother on `#smooth-wrapper > #smooth-content` (smooth 0.8s, wheel only, touch native). Nav, lightbox stay outside (nav is `position: fixed`). Always scroll via `getScrollY / scrollToY / scrollToEl` (handles smoother or native); in-page `#anchor` clicks are intercepted and eased; route swaps call `refresh()` before jumping. `position: sticky` can't work inside the smoother, so the case TOC uses `pin()` (`html.has-smoother .case__toc` drops sticky). Reveals: `reveal(root)` registers ScrollTrigger.batch on REVEAL selectors (rise/fade 12px in, ease out past the top, reverse on the way back); `prune()` kills triggers of removed nodes. Reduced motion or missing GSAP → native scroll, no reveals.
+- **Layout:** the whole folio is one `.sheet` (max content + gutters, hairline side borders) on a darker `--canvas` surround; footer is a dark block inside it. Project cards are real cards: hairline frame on `--surface`, metadata strip (role / years), body = image + text; hover darkens the frame, dims other cards, nudges the title.
 - **Hero:** dateline ('Folio 2026' / 'Updated <month>': keep current) + headline only, whitespace-led, flex column space-between. Rejected and removed (don't reintroduce): Figma bounding box, dot grid, game input prompts, rotating hero images, per-letter animation, 4-col facts grid, byline + 'Selected work' index block, footnote markers/notes, Work year timeline.
 - **Index sections:** Work = company groups with project cards; hovering a card dims the others (text + images) and nudges its title (CSS `:has`). Dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
-- **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
+- **Case study structure:** stages Context → Challenge → Approach → Outcome, pinned TOC grouped by stage, Results block, next-project link.
 - **Hero gradient:** a true mesh gradient (WebGL2, hero.js `startMesh`): 4×4 ember colour vertices, Catmull-Rom interpolated, vertices drifting via a smooth warp field. Canvas sits over the headline with `mix-blend-mode: lighten` inside an isolated `.hero` (paper bg), so colour only shows on the dark letters; all channels capped ≤0.95 so paper never tints. After ~1.7s the shader sweeps ink in (soft front, top line first, sine ease, 2.6s), then the canvas removes itself. No WebGL2 / reduced motion → plain ink. Parked idea: mesh bloom *behind* the hero.
 - **Nav:** transparent + backdrop blur only (no fill); `.is-on-dark` flips to light text when the footer is under it (IO band at top).
 - **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.

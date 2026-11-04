@@ -40,6 +40,7 @@
   --ink-3: #6b7180;
   --line: #dfe2e7;
   --line-strong: #c9cdd5;
+  --canvas: #e6e7eb; /* around the sheet */
   /* Ember: accent for fills/rules/large text; accent-ink for small text (AA on paper) */
   --accent: #e2452b;
   --accent-ink: #b8321c;
@@ -97,7 +98,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: var(--sticky-top);
   -webkit-text-size-adjust: 100%;
 }
@@ -107,7 +107,7 @@ body {
   font-size: var(--text-base);
   line-height: 1.6;
   color: var(--ink);
-  background: var(--paper);
+  background: var(--canvas);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -187,8 +187,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ── Nav ───────────────────────────────────────────── */
 .nav {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -259,6 +261,16 @@ body.is-project .nav__links { visibility: hidden; }
 }
 
 /* ── Layout helpers ────────────────────────────────── */
+/* The folio: one sheet, hairline edges, on a slightly darker surround */
+.sheet {
+  max-width: calc(var(--max) + var(--gutter) * 2);
+  min-height: 100vh;
+  margin-inline: auto;
+  padding-top: var(--nav-height); /* nav is fixed above it */
+  background: var(--paper);
+  border-inline: 1px solid var(--line-strong);
+}
+@media (max-width: 1023px) { .sheet { border-inline: 0; } }
 #index-view { overflow-x: clip; } /* full-bleed strip uses 100vw, which includes the scrollbar */
 
 .hero, .work, .approach, .freelance, .about, .footer__inner {
@@ -287,20 +299,6 @@ body.is-project .nav__links { visibility: hidden; }
   letter-spacing: -0.04em;
 }
 
-/* Scroll-driven title reveal (progressive: browsers without view timelines just show it) */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .section-title {
-      animation: title-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 70%;
-    }
-  }
-}
-@keyframes title-in {
-  from { opacity: 0; transform: translateY(0.35em); clip-path: inset(0 0 100% 0); }
-  to { opacity: 1; transform: none; clip-path: inset(0 0 -0.3em 0); }
-}
 .section-sub {
   margin-top: var(--space-xs);
   max-width: 60ch;
@@ -381,14 +379,36 @@ body.is-project .nav__links { visibility: hidden; }
 .work__company-name { font-size: var(--text-lg); font-weight: 500; line-height: 1.25; }
 .work__company-meta { font-size: var(--text-sm); color: var(--ink-3); }
 
-.work__projects { display: grid; gap: var(--space-xl); }
+.work__projects { display: grid; gap: var(--space-md); }
 
 .project-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  transition: border-color var(--duration-base) ease;
+}
+a.project-card:hover,
+a.project-card:focus-visible { border-color: var(--ink); }
+.project-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 12px var(--space-md);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.project-card__body {
   display: grid;
   grid-template-columns: 7fr 5fr;
   gap: var(--space-lg);
   align-items: start;
-  text-decoration: none;
+  padding: var(--space-md);
+}
+@media (max-width: 720px) {
+  .project-card__body { grid-template-columns: 1fr; gap: var(--space-md); }
 }
 
 /* Figma-style frame: name label above, selection outline on hover */
@@ -441,7 +461,6 @@ a.project-card:focus-visible { outline: none; }
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
-.project-card__role { margin-top: 4px; font-size: var(--text-sm); color: var(--ink-2); }
 .project-card__summary { margin-top: var(--space-sm); color: var(--ink-2); max-width: 46ch; }
 
 .project-card__scope { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--ink-3); }
@@ -472,9 +491,6 @@ a.project-card:hover .project-card__cta svg { transform: translateX(4px); }
 /* Coming-soon cards aren't links; muted cover signals that */
 div.project-card .frame__media img { filter: saturate(0.85); }
 
-@media (max-width: 720px) {
-  .project-card { grid-template-columns: 1fr; gap: var(--space-sm); }
-}
 
 /* ── Approach: principle → how → where it shows up ── */
 .approach__rows { margin-top: var(--space-lg); border-top: 1px solid var(--ink); }
@@ -512,12 +528,11 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 }
 
 /* ── Freelance: natural aspect ratios, one height ─── */
-/* Bleeds past the content column to the window's right edge, so cut-off items signal more.
-   (100% - 100vw) / 2 = distance from column edge to viewport edge, negated. */
+/* Bleeds past the content column to the sheet's edge, so cut-off items signal more */
 .freelance__strip {
   display: flex;
   gap: var(--space-sm);
-  margin-right: calc((100% - 100vw) / 2);
+  margin-right: calc(var(--gutter) * -1);
   padding: 6px var(--gutter) 0 0; /* top: room for hover lift; right: end breathing room */
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -726,6 +741,9 @@ body.is-project #index-view { display: none; }
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: 320ms; }
 ::view-transition-group(project-media) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+
+/* Smoother active (js/motion.js): GSAP pins replace sticky */
+html.has-smoother .case__toc { position: static; top: auto; }
 
 /* ── Reduced motion ────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
