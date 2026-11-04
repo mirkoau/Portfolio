@@ -89,9 +89,65 @@ function initNavSpy() {
 }
 
 function initFreelance(items) {
-  document.querySelector('[data-freelance]').addEventListener('click', (e) => {
+  const strip = document.querySelector('[data-freelance]');
+  strip.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-freelance-idx]');
     if (btn) openLightbox(items, Number(btn.dataset.freelanceIdx));
+  });
+  initStripBar(strip, document.querySelector('[data-freelance-bar]'));
+}
+
+// Custom scrollbar for the strip: the strip bleeds to the screen edge, the bar only
+// spans the content column. Thumb drag and track click both scroll the strip.
+function initStripBar(strip, bar) {
+  const thumb = bar.firstElementChild;
+  let raf = 0;
+  let thumbW = 0;
+  let travel = 0; // px the thumb can move
+
+  const maxScroll = () => strip.scrollWidth - strip.clientWidth;
+  const sync = () => {
+    raf = 0;
+    const max = maxScroll();
+    bar.hidden = max <= 1;
+    if (bar.hidden) return;
+    thumbW = Math.max(bar.clientWidth * (strip.clientWidth / strip.scrollWidth), 48);
+    travel = bar.clientWidth - thumbW;
+    bar.style.setProperty('--thumb-w', `${thumbW}px`);
+    bar.style.setProperty('--thumb-x', `${(strip.scrollLeft / max) * travel}px`);
+  };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(sync); };
+
+  strip.addEventListener('scroll', queue, { passive: true });
+  new ResizeObserver(queue).observe(strip);
+  strip.addEventListener('load', queue, true); // images/videos change scrollWidth as they load
+  strip.addEventListener('loadedmetadata', queue, true);
+  sync();
+
+  const scrollToThumbX = (x) => {
+    strip.scrollLeft = (Math.min(Math.max(x, 0), travel) / travel) * maxScroll();
+  };
+
+  bar.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    const r = bar.getBoundingClientRect();
+    const onThumb = e.target === thumb;
+    // Track click: centre the thumb under the pointer, then keep dragging from there
+    const grab = onThumb ? e.clientX - thumb.getBoundingClientRect().left : thumbW / 2;
+    if (!onThumb) scrollToThumbX(e.clientX - r.left - grab);
+
+    bar.setPointerCapture(e.pointerId);
+    bar.classList.add('is-dragging');
+    strip.style.scrollSnapType = 'none'; // snapping fights a drag
+    const drag = new AbortController();
+    const end = () => {
+      bar.classList.remove('is-dragging');
+      strip.style.removeProperty('scroll-snap-type');
+      drag.abort();
+    };
+    bar.addEventListener('pointermove', (ev) => scrollToThumbX(ev.clientX - r.left - grab), { signal: drag.signal });
+    bar.addEventListener('pointerup', end, { signal: drag.signal });
+    bar.addEventListener('pointercancel', end, { signal: drag.signal });
   });
 }
 

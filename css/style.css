@@ -609,16 +609,36 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   display: flex;
   gap: var(--space-sm);
   margin-right: calc((100% - 100vw) / 2);
-  padding: 6px var(--gutter) var(--space-md) 0; /* top: room for hover lift; right: end breathing room */
+  padding: 6px var(--gutter) 0 0; /* top: room for hover lift; right: end breathing room */
   overflow-x: auto;
   scroll-snap-type: x proximity;
-  /* Visible scrollbar: Chrome/Firefox use these; Safari falls back to ::-webkit-scrollbar below */
-  scrollbar-width: auto;
-  scrollbar-color: var(--ink) var(--line);
+  /* Native bar would span the bleed to the screen edge; a custom bar spans the column instead */
+  scrollbar-width: none;
 }
-.freelance__strip::-webkit-scrollbar { height: 8px; }
-.freelance__strip::-webkit-scrollbar-track { background: var(--line); }
-.freelance__strip::-webkit-scrollbar-thumb { background: var(--ink); }
+.freelance__strip::-webkit-scrollbar { display: none; }
+.freelance__strip:focus-visible { outline-offset: 4px; }
+
+/* Custom scrollbar, content-column width. Thumb size/offset set by main.js */
+.freelance__bar {
+  position: relative;
+  height: 8px;
+  margin-top: var(--space-md);
+  background: var(--line);
+  cursor: pointer;
+  touch-action: none;
+}
+.freelance__thumb {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--thumb-w, 30%);
+  background: var(--ink);
+  transform: translateX(var(--thumb-x, 0px));
+  cursor: grab;
+  transition: background-color var(--duration-fast) ease;
+}
+.freelance__bar:hover .freelance__thumb,
+.freelance__bar.is-dragging .freelance__thumb { background: var(--accent); }
+.freelance__bar.is-dragging .freelance__thumb { cursor: grabbing; }
 .freelance__item {
   flex: none;
   height: clamp(220px, 24vw, 320px);
