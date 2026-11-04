@@ -307,33 +307,30 @@ body.is-project .nav__links { visibility: hidden; }
   color: var(--ink-2);
 }
 
-/* ── Hero: type, whitespace, footnotes ───────────── */
-/* Fills the first screen; content sits low so the space above does the work */
-/* One screen: dateline on top, headline + notes in the open middle, byline + index below.
-   Notes sit in the empty column right of the headline instead of a row of their own. */
+/* ── Hero: dateline + headline, whitespace does the rest ── */
 .hero {
   position: relative;
   isolation: isolate; /* blend group for the mesh canvas: opaque paper behind it */
   background: var(--paper);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 19rem);
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    'date  date'
-    'title notes'
-    'base  base';
-  column-gap: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   min-height: calc(100svh - var(--nav-height));
-  padding-bottom: var(--space-lg);
+  padding-bottom: var(--space-xl);
 }
-.hero__dateline { grid-area: date; }
-.hero__title { grid-area: title; align-self: end; }
-.hero__notes { grid-area: notes; align-self: end; }
-.hero__base { grid-area: base; }
+
+.hero__dateline {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
 
 .hero__title {
   max-width: 13.5ch;
-  font-size: clamp(3rem, 0.9rem + 6vw, 7rem);
+  font-size: clamp(3rem, 0.9rem + 6.6vw, 7.75rem);
   font-weight: 500;
   line-height: 0.98;
   letter-spacing: -0.045em;
@@ -348,190 +345,20 @@ body.is-project .nav__links { visibility: hidden; }
   mix-blend-mode: lighten;
 }
 
-/* Footnote markers: small, raised, quiet until hovered.
-   Lifted with position (not vertical-align) so line boxes keep their height. */
-.nowrap { white-space: nowrap; }
-.fn-ref {
-  position: relative;
-  top: -2.55em;
-  margin-left: 0.2em;
-  font-size: 0.24em;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1;
-  vertical-align: baseline;
-}
-.fn-ref a {
-  padding: 0.5em;
-  margin: -0.5em;
-  color: var(--ink-3);
-  text-decoration: none;
-  font-variant-numeric: tabular-nums;
-  transition: color var(--duration-fast) ease;
-}
-
-.hero__notes {
-  display: grid;
-  gap: var(--space-md);
-  padding-bottom: 0.6em; /* sit on the headline's last baseline, roughly */
-  list-style: none;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-.hero__note { position: relative; display: flex; gap: 10px; padding-bottom: 10px; }
-.hero__note-num { color: var(--ink-3); font-variant-numeric: tabular-nums; transition: color var(--duration-fast) ease; }
-/* Hairline drawn under the note while its marker (or the note) is hovered */
-.hero__note::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 1px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-
-.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) :is(#fnref-1, #fn-1 .hero__note-num),
-.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) :is(#fnref-2, #fn-2 .hero__note-num) { color: var(--accent-ink); }
-.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) #fn-1,
-.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) #fn-2 { color: var(--ink); }
-.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) #fn-1::after,
-.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) #fn-2::after { transform: scaleX(1); }
-
-/* Dateline: pinned to the top of the hero; the flex column pushes the rest down */
-.hero__dateline {
-  display: flex;
-  justify-content: space-between;
-  padding-top: var(--space-md);
-  font-size: var(--text-sm);
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Byline (left) + contents index (right) */
-.hero__base {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  column-gap: var(--space-xl);
-  align-items: start;
-  margin-top: var(--space-xl);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--ink);
-}
-.hero__byline { max-width: 30ch; font-size: var(--text-lg); line-height: 1.45; }
-.hero__status {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: var(--space-md);
-  font-size: var(--text-sm);
-  color: var(--ink-2);
-}
-.hero__status::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex: none;
-}
-
-.hero__index-title { font-size: var(--text-sm); font-weight: 400; color: var(--ink-3); }
-.index { list-style: none; margin-top: var(--space-xs); }
-.index__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
-  gap: var(--space-md);
-  align-items: baseline;
-  padding-block: 11px;
-  border-bottom: 1px solid var(--line);
-  font-size: var(--text-sm);
-  text-decoration: none;
-  transition: color var(--duration-base) ease;
-}
-.index li:first-child .index__row { border-top: 1px solid var(--line); }
-.index__title {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  line-height: 1.2;
-  transition: transform var(--duration-base) var(--ease-out);
-}
-.index__role { color: var(--ink-2); }
-.index__years { color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.index__row.is-soon { color: var(--ink-3); }
-.index__row.is-soon .index__role { font-style: italic; color: inherit; }
-
-/* Hovering the list dims the other rows; the hovered one steps forward */
-@media (hover: hover) {
-  .index:hover .index__row { color: var(--ink-3); }
-  .index:hover .index__row :is(.index__role, .index__years) { color: inherit; }
-  .index .index__row:hover { color: var(--ink); }
-  a.index__row:hover .index__title { transform: translateX(6px); }
-}
-
-/* Cover preview that trails the pointer (content.js) */
-.index-preview {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 40;
-  width: clamp(200px, 18vw, 280px);
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  pointer-events: none;
-  background: var(--line);
-  opacity: 0;
-  transition: opacity var(--duration-base) ease;
-}
-.index-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.08);
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-.index-preview.is-on { opacity: 1; }
-.index-preview.is-on img { transform: none; }
-body.is-project .index-preview { display: none; }
-
-@media (max-width: 900px) {
-  .hero__base { grid-template-columns: 1fr; row-gap: var(--space-xl); }
-}
-@media (max-width: 560px) {
-  .index__row { grid-template-columns: minmax(0, 1fr) auto; }
-  .index__role { display: none; }
-}
-
 @media (max-width: 1023px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto;
-    grid-template-areas: 'date' 'title' 'notes' 'base';
-    min-height: auto;
-    row-gap: var(--space-lg);
-  }
-  .hero__title { margin-top: clamp(48px, 10vh, 120px); }
-  .hero__notes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); padding-bottom: 0; }
-}
-@media (max-width: 560px) {
-  .hero__notes { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .hero { min-height: auto; gap: clamp(96px, 18vh, 200px); }
 }
 
-/* Load: lines rise from masks (hero.js), then notes and facts settle in */
+/* Load: lines rise from masks (hero.js); dateline settles in */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__dateline, .hero__notes, .hero__base { animation: rise 800ms var(--ease-out) both; }
-  .hero__dateline { animation-delay: 200ms; }
-  .hero__notes { animation-delay: 650ms; }
-  .hero__base { animation-delay: 780ms; }
+  .hero__dateline { animation: rise 800ms var(--ease-out) both 200ms; }
 
   /* Hidden until lines are measured; 1.5s fallback if JS fails */
   .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
   .hero__title.is-ready { opacity: 1; animation: none; }
   /* Flex column while revealing: block margins would collapse and shift line spacing */
   .hero__title:has(.line) { display: flex; flex-direction: column; }
-  .hero__title .line { display: block; overflow: hidden; padding: 0.2em 0 0.22em; margin: -0.2em 0 -0.22em; } /* room for raised markers + descenders */
+  .hero__title .line { display: block; overflow: hidden; padding: 0.2em 0 0.22em; margin: -0.2em 0 -0.22em; } /* room for descenders */
   .hero__title .line__inner {
     display: block;
     animation: line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms);
@@ -542,38 +369,7 @@ body.is-project .index-preview { display: none; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
-/* ── Work: sticky year timeline + company groups ───── */
-.work__layout {
-  display: grid;
-  grid-template-columns: 1fr 11fr;
-  gap: var(--space-lg);
-}
-
-.timeline {
-  position: sticky;
-  top: var(--sticky-top);
-  align-self: start;
-  list-style: none;
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
-}
-.timeline li {
-  position: relative;
-  padding: 7px 0 7px 14px;
-  color: var(--ink-3);
-  transition: color var(--duration-base) ease;
-}
-.timeline li::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--line);
-  transition: background-color var(--duration-base) ease;
-}
-.timeline li.is-on { color: var(--ink); }
-.timeline li.is-on::before { background: var(--accent); }
-
+/* ── Work: company groups ──────────────────────────── */
 .work__company { padding-block: var(--space-md) var(--space-xl); border-top: 1px solid var(--ink); }
 .work__company-head {
   display: flex;
@@ -660,15 +456,22 @@ a.project-card:focus-visible { outline: none; }
 }
 .project-card__cta svg { transition: transform var(--duration-base) var(--ease-out); }
 a.project-card:hover .project-card__cta svg { transform: translateX(4px); }
+
+/* Hovering a project dims the rest of the list; the hovered title steps forward */
+.project-card__title { transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) ease; }
+.project-card__text { transition: color var(--duration-base) ease; }
+@media (hover: hover) {
+  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .project-card__text,
+  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .project-card__title { color: var(--ink-3); }
+  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .frame__media img { opacity: 0.55; }
+  a.project-card:hover .project-card__title { transform: translateX(6px); }
+}
+.frame__media img { transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-base) ease; }
 .project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
 
 /* Coming-soon cards aren't links; muted cover signals that */
 div.project-card .frame__media img { filter: saturate(0.85); }
 
-@media (max-width: 1024px) {
-  .work__layout { grid-template-columns: 1fr; }
-  .timeline { display: none; }
-}
 @media (max-width: 720px) {
   .project-card { grid-template-columns: 1fr; gap: var(--space-sm); }
 }
