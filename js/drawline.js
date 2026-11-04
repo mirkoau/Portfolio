@@ -11,6 +11,10 @@ const PATHS = [
   'M2 13C80 13 160 11 228 8C258 7 284 8 298 6',               // rising swoosh
   'M3 10C90 7 198 12 296 9C222 12 124 15 42 13',              // stroke + return flick
   'M2 11Q40 6 76 11T150 11T224 11T298 10',                    // light wobble
+  'M2 9C50 14 110 6 170 11C215 15 260 7 298 10',              // s-curve
+  'M2 12C70 10 140 12 210 10C245 9 272 11 298 7',             // near-straight, tail lift
+  'M3 13C40 7 90 6 150 9S250 15 297 8',                       // dip and rise
+  'M2 10C100 12 200 12 298 10M40 15C120 14 200 14 262 13',    // double stroke
 ];
 
 // Draw at the box's real pixel size (scale the 300×20 path), so the stroke stays even and
@@ -51,14 +55,14 @@ export function initDrawLines(root = document) {
       box.innerHTML = svg(nextPath(), box.offsetWidth, box.offsetHeight);
       const path = box.firstChild.firstChild;
       gsap.set(path, { drawSVG: '0%' });
-      tween = gsap.to(path, { drawSVG: '100%', duration: 0.5, ease: 'power2.inOut' });
+      tween = gsap.to(path, { drawSVG: '100%', duration: 0.3, ease: 'power2.out' });
     };
     const leave = () => {
       const path = box.firstChild?.firstChild;
       if (!path) return;
       tween?.kill();
       tween = gsap.to(path, {
-        drawSVG: '100% 100%', duration: 0.45, ease: 'power2.inOut',
+        drawSVG: '100% 100%', duration: 0.28, ease: 'power2.in',
         onComplete: () => { box.innerHTML = ''; },
       });
     };

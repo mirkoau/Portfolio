@@ -87,7 +87,7 @@ css/style.css           — Tokens, base, nav, hero, overview, work, approach, f
 css/project-page.css    — Case study page
 js/main.js              — Orchestrator: init, email decode/copy, nav state, view transitions, routing
 js/router.js            — Hash routing (#/work/{id}); everything else = index
-js/drawline.js          — Hand-drawn hover underline ([data-draw-line], trigger [data-draw-trigger]); 4 original paths, DrawSVG
+js/drawline.js          — Hand-drawn hover underline ([data-draw-line], trigger [data-draw-trigger]); 8 original paths, DrawSVG
 js/motion.js            — GSAP layer: ScrollSmoother, scroll in/out reveals, scroll helpers, TOC pin
 js/vendor/              — gsap.min.js, ScrollTrigger.min.js, ScrollSmoother.min.js, SplitText.min.js, DrawSVGPlugin.min.js
 js/content.js           — Fetches data.json, renders index sections; shared helpers (isDev, todoNote, frameMedia)
@@ -100,7 +100,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 
 ### Key Patterns
 - **Scroll (js/motion.js):** ScrollSmoother on `#smooth-wrapper > #smooth-content` (smooth 0.8s, wheel only, touch native). Nav, lightbox stay outside (nav is `position: fixed`). Always scroll via `getScrollY / scrollToY / scrollToEl` (handles smoother or native); in-page `#anchor` clicks are intercepted and eased; route swaps call `refresh()` before jumping. `position: sticky` can't work inside the smoother, so the case TOC uses `pin()` (`html.has-smoother .case__toc` drops sticky). Reveals: `reveal(root)` registers ScrollTrigger.batch on REVEAL selectors (rise/fade 6px in 0.5s, ease out past the top in 0.35s, reverse on the way back); `prune()` kills triggers of removed nodes. Reduced motion or missing GSAP → native scroll, no reveals.
-- **Hover underline:** no CSS underlines on nav/CTA/email; `drawline.js` draws a random one of 4 hand-drawn ember strokes (never the same twice in a row) left→right on hover/focus, erasing forward on leave. Used on nav links + Contact, card 'Read case study' (card is the trigger, arrow static), footer email (with Lucide copy icon + 'Copy' label on hover).
+- **Hover underline:** no CSS underlines on nav/CTA/email; `drawline.js` draws a random one of 8 hand-drawn ember strokes (0.3s in, 0.28s out) (never the same twice in a row) left→right on hover/focus, erasing forward on leave. Used on nav links + Contact, card 'Read case study' (card is the trigger, arrow static), footer email (with Lucide copy icon + 'Copy' label on hover).
 - **Layout:** the whole folio is one `.sheet` (max content + gutters, hairline side borders) on a darker `--canvas` surround; footer is a dark block inside it. Project cards are real cards: hairline frame on `--surface`, metadata strip (role / years), body = image + text; hover darkens the frame, dims other cards, nudges the title.
 - **Hero:** dateline ('Folio 2026' / 'Updated <month>': keep current) + headline only, whitespace-led, flex column space-between. Rejected and removed (don't reintroduce): Figma bounding box, dot grid, game input prompts, rotating hero images, per-letter animation, 4-col facts grid, byline + 'Selected work' index block, footnote markers/notes, Work year timeline.
 - **Index sections:** Work = company groups with project cards; hovering a card dims the others (text + images) and nudges its title (CSS `:has`). Dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
@@ -118,7 +118,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Email:** base64 `data-c`/`data-d` decoded at runtime; copy button with confirmation + live region.
 
 ### Design Tokens (`css/style.css :root`)
-- Color: `--paper`, `--surface`, `--ink`, `--ink-2/-3`, `--line`. Accent = Ember: `--accent #e2452b` (fills, rules, large text), `--accent-ink #b8321c` (small text, AA). Gradient palette `--ember-oxblood/-amber/-blush`. No blue (user: "feels Facebook").
+- Color: `--paper` (white), `--canvas` (surround), `--surface`, `--ink`, `--ink-2/-3`, `--line`. Accent = Ember: `--accent #e2452b` (fills, rules, large text), `--accent-ink #b8321c` (small text, AA). Gradient palette `--ember-oxblood/-amber/-blush`. No blue (user: "feels Facebook").
 - Type: `--font` Geist (body/UI), `--font-display` 'Serif' (headlines); scale `--text-sm` … `--text-display`
 - Space: 8px base `--space-2xs` … `--space-2xl`; layout `--max 1280px`, `--gutter`, `--nav-height`
 - Motion: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`

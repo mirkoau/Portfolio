@@ -33,7 +33,7 @@
 /* ── Tokens ────────────────────────────────────────── */
 :root {
   /* Color */
-  --paper: #f4f5f7;
+  --paper: #ffffff;
   --surface: #ffffff;
   --ink: #16181d;
   --ink-2: #4a505c;
@@ -50,7 +50,7 @@
   --ink-hover: #2b2f38;
   --on-ink-2: #a9afba;
   --on-ink-3: #8a909c;
-  --paper-veil: rgba(244, 245, 247, 0.97);
+  --paper-veil: rgba(255, 255, 255, 0.97);
 
   /* Type */
   --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -358,7 +358,6 @@ body.is-project .nav__links { visibility: hidden; }
 }
 
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* ── Work: company groups ──────────────────────────── */
 .work__company { padding-block: var(--space-md) var(--space-xl); border-top: 1px solid var(--ink); }

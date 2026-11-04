@@ -11,7 +11,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const HOLD_MS = 1700;  // full colour before the ink sweep starts
 const WAVE_MS = 2600;  // ink sweep duration (top line leads)
 
-// Channels capped ≤ 0.95 so lighten never tints the paper background (#f4f5f7 ≈ 0.957)
+// Channels capped ≤ 0.95 so lighten never tints the paper background (white)
 const C = {
   blush: [0.93, 0.68, 0.6],
   amber: [0.95, 0.65, 0.26],
