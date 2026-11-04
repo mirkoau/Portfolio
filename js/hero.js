@@ -4,36 +4,37 @@
 
 const KEY_STEP = 16;
 
-const rand = (max) => (Math.random() * 2 - 1) * max;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-// Split into word (nowrap) + char spans; each char gets a random scatter offset.
-// The visible text is aria-hidden; the heading keeps its plain text as its label.
-export function splitChars(el, scatter = false) {
-  const text = el.textContent.trim();
-  let i = 0;
-  const char = (ch) => {
-    const vars = scatter
-      ? `--i:${i};--x:${rand(0.12).toFixed(2)}em;--y:${(0.25 + Math.random() * 0.3).toFixed(2)}em;--r:${Math.round(rand(8))}deg`
-      : `--i:${i}`;
-    i++;
-    return `<span class="char" style="${vars}">${ch}</span>`;
-  };
-  el.setAttribute('aria-label', text);
-  el.innerHTML = text.split(' ')
-    .map(w => `<span class="word" aria-hidden="true">${[...w].map(char).join('')}</span>`)
+// Each rendered line slides up from behind a mask. Lines are measured after fonts
+// load, then the markup is restored to plain text so the frame can reflow it freely.
+async function revealLines(title) {
+  if (reduceMotion.matches) return title.classList.add('is-ready');
+  await document.fonts.ready;
+  const text = title.textContent.trim();
+  title.innerHTML = text.split(' ').map(w => `<span class="word">${w}</span>`).join(' ');
+
+  const lines = [];
+  let top = null;
+  title.querySelectorAll('.word').forEach(w => {
+    if (w.offsetTop !== top) { lines.push([]); top = w.offsetTop; }
+    lines.at(-1).push(w.textContent);
+  });
+
+  title.innerHTML = lines
+    .map((ws, i) => `<span class="line"><span class="line__inner" style="--i:${i}">${ws.join(' ')}</span></span>`)
     .join(' ');
+  title.classList.add('is-ready');
+
+  const last = title.querySelectorAll('.line__inner')[lines.length - 1];
+  last.addEventListener('animationend', () => { title.textContent = text; }, { once: true });
 }
 
 export function initHero() {
   const frame = document.querySelector('[data-frame]');
   if (!frame) return;
   const sizeTag = frame.querySelector('[data-frame-size]');
-  const title = frame.querySelector('.hero__title');
-
-  // Complex → simple: scattered letters settle into the headline
-  splitChars(title, true);
-  title.classList.add('is-split');
-  requestAnimationFrame(() => requestAnimationFrame(() => title.classList.add('is-settled')));
+  revealLines(frame.querySelector('.hero__title'));
   const slider = frame.querySelector('[role="slider"]');
 
   const setW = (w) => frame.style.setProperty('--frame-w', `${Math.round(w)}px`);

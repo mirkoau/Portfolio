@@ -308,8 +308,6 @@ body.is-project .nav__links { visibility: hidden; }
   font-size: var(--text-display);
 }
 
-.hero__title .word { display: inline-block; white-space: nowrap; }
-.hero__title .char { display: inline-block; }
 .hero__title {
   font-size: 1em;
   font-weight: 500;
@@ -365,24 +363,21 @@ body.is-project .nav__links { visibility: hidden; }
   .hero__lede { animation-delay: 800ms; }
   .hero__facts { animation-delay: 900ms; }
 
-  /* Kinetic headline: letters start as a scattered pile ("complex") and settle into
-     clean lines. Split + .is-settled happen in hero.js; fallback reveals after 2s. */
-  .hero__title { opacity: 0; animation: fade-in 1ms linear 2s forwards; }
-  .hero__title.is-split { opacity: 1; animation: none; }
-  .hero__title .char {
-    transform: translate(var(--x), var(--y)) rotate(var(--r));
-    opacity: 0;
-    transition:
-      transform 900ms cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 11ms + 60ms),
-      opacity 400ms ease calc(var(--i) * 11ms + 60ms);
+  /* Line mask reveal (hero.js). Hidden until lines are measured; 1.5s fallback. */
+  .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
+  .hero__title.is-ready { opacity: 1; animation: none; }
+  .hero__title .line { display: block; overflow: hidden; padding-bottom: 0.22em; margin-bottom: -0.22em; } /* room for descenders */
+  .hero__title .line__inner {
+    display: block;
+    animation: line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms);
   }
-  .hero__title.is-settled .char { transform: none; opacity: 1; }
 }
 
 @keyframes frame-draw {
   from { outline-color: transparent; }
   to { outline-color: var(--select); }
 }
+@keyframes line-up { from { transform: translateY(105%); } }
 @keyframes handle-pop { from { transform: scale(0); } to { transform: scale(1); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -738,14 +733,7 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 .footer__email:focus-visible,
 .footer__email.is-copied { outline-color: var(--select); }
 
-.footer__email .char { display: inline-block; }
-@media (prefers-reduced-motion: no-preference) {
-  .footer__email:hover .char,
-  .footer__email.is-copied .char { animation: ripple 560ms var(--ease-out) calc(var(--i) * 22ms); }
-}
-@keyframes ripple {
-  40% { transform: translateY(-0.08em); color: var(--select); }
-}
+
 
 .footer__corner {
   position: absolute;

@@ -98,7 +98,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Selection frame (legacy note):** Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
-- **Motion:** hero letters drift + settle (hero.js `splitChars`, CSS `.char` vars) then frame draws; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive); footer email letters ripple on hover. All off under reduced motion.
+- **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, restored to plain text after) then frame draws; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
 - **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.
 - **Fonts:** WOFF (book, medium, italic) built from the OTFs with fontTools. WOFF2 needs `brotli` (not installed).
 - **Media:** `media` array renders count-aware grid (n1–n4). `wide: true` = horizontal pan strip. `compare: {before, after}` = range-driven slider.
