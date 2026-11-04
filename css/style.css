@@ -398,41 +398,29 @@ body.is-project .nav__links { visibility: hidden; }
     animation: line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms);
   }
 
-  /* Ember mesh fills the letters as lines rise, drifts, then a solid ink layer fades
-     over it. hero.js restores plain markup after ink-settle ends. */
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
-    .hero__title .line__inner {
-      --fill: transparent;
-      color: transparent;
-      background:
-        linear-gradient(var(--fill), var(--fill)),
-        radial-gradient(45% 140% at 20% 40%, var(--accent) 0%, transparent 70%),
-        radial-gradient(40% 130% at 80% 60%, var(--ember-amber) 0%, transparent 70%),
-        radial-gradient(55% 160% at 50% 110%, var(--ember-blush) 0%, transparent 75%),
-        var(--ember-oxblood);
-      background-size: 100% 100%, 180% 180%, 180% 180%, 200% 200%, 100% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation:
-        line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms),
-        ember-drift 2600ms ease-in-out both,
-        ink-settle 900ms ease-in both 1700ms;
-    }
+  /* Silk fill (texture painted by hero.js) drifts through the letters as lines rise;
+     then a soft-edged ink wave sweeps each line left to right, cascading down.
+     hero.js restores plain markup when the last line's ink-wave ends. */
+  .hero__title.has-silk .line__inner {
+    color: transparent;
+    background:
+      linear-gradient(100deg, var(--ink) 30%, transparent 70%) var(--wave) 0 / 360% 100% no-repeat,
+      var(--silk) var(--drift) var(--ty) / var(--silk-w) var(--silk-h) no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation:
+      line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms),
+      silk-drift 5000ms cubic-bezier(0.37, 0, 0.3, 1) both,
+      ink-wave 2400ms cubic-bezier(0.45, 0, 0.3, 1) both calc(1700ms + var(--i) * 240ms);
   }
 }
 
-/* Registered so the solid top layer can animate from transparent to ink */
-@property --fill {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: transparent;
-}
+/* Registered so they can be animated inside background shorthands */
+@property --wave { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@property --drift { syntax: '<length>'; inherits: false; initial-value: 0px; }
 @keyframes line-up { from { transform: translateY(105%); } }
-@keyframes ember-drift {
-  0% { background-position: 0 0, 0% 30%, 100% 70%, 50% 100%, 0 0; }
-  100% { background-position: 0 0, 60% 0%, 30% 100%, 0% 40%, 0 0; }
-}
-@keyframes ink-settle { to { --fill: var(--ink); } }
+@keyframes silk-drift { to { --drift: var(--silk-travel); } }
+@keyframes ink-wave { to { --wave: 0%; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
