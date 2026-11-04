@@ -274,137 +274,122 @@ body.is-project .nav__links { visibility: hidden; }
   color: var(--ink-2);
 }
 
-/* ── Hero ──────────────────────────────────────────── */
-/* Canvas dot grid behind the hero, fading out: the page reads as a design file */
-#index-view { position: relative; isolation: isolate; }
-#index-view::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 115vh;
-  z-index: -1;
-  background-image: radial-gradient(circle at 1px 1px, rgba(22, 24, 29, 0.14) 1px, transparent 0);
-  background-size: 24px 24px;
-  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent);
-  mask-image: linear-gradient(to bottom, #000 35%, transparent);
-  pointer-events: none;
-}
-
+/* ── Hero: type, whitespace, footnotes ───────────── */
+/* Fills the first screen; content sits low so the space above does the work */
 .hero {
-  padding-top: clamp(64px, 12vh, 140px);
-  overflow-x: clip; /* scattered letters must not cause sideways scroll mid-animation */
-  overflow-clip-margin: var(--gutter);
-}
-
-/* Selection frame: the one bold thing. Width is user-resizable. */
-.hero__frame {
-  --frame-w: 15ch;
-  position: relative;
-  width: clamp(220px, var(--frame-w), 100%);
-  padding: 6px 10px 10px;
-  margin-left: -11px; /* text optically aligns with gutter */
-  outline: 1px solid var(--select);
-  outline-offset: 0;
-  font-size: var(--text-display);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: calc(100svh - var(--nav-height));
+  padding-block: var(--space-xl) var(--space-lg);
 }
 
 .hero__title {
-  font-size: 1em;
+  max-width: 13.5ch;
+  font-size: clamp(3rem, 0.9rem + 6.6vw, 7.75rem);
   font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
   text-wrap: balance;
 }
 
-.hero__frame-name,
-.hero__size {
-  position: absolute;
-  font-size: var(--text-2xs);
-  line-height: 1;
+/* Footnote markers: small, raised, quiet until hovered.
+   Lifted with position (not vertical-align) so line boxes keep their height. */
+.nowrap { white-space: nowrap; }
+.fn-ref {
+  position: relative;
+  top: -2.55em;
+  margin-left: 0.2em;
+  font-size: 0.24em;
+  font-weight: 400;
   letter-spacing: 0;
-  white-space: nowrap;
+  line-height: 1;
+  vertical-align: baseline;
+}
+.fn-ref a {
+  padding: 0.5em;
+  margin: -0.5em;
+  color: var(--ink-3);
+  text-decoration: none;
   font-variant-numeric: tabular-nums;
-}
-.hero__frame-name { left: -1px; bottom: calc(100% + 8px); color: var(--select); }
-.hero__size {
-  left: 50%;
-  top: calc(100% + 8px);
-  padding: 4px 6px;
-  color: var(--surface);
-  background: var(--select);
-  border-radius: var(--radius-tag);
-  transform: translateX(-50%);
+  transition: color var(--duration-fast) ease;
 }
 
-.hero__handle {
+.hero__notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-lg);
+  width: 50%;
+  margin: var(--space-xl) 0 0 auto;
+  list-style: none;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.hero__note { position: relative; display: flex; gap: 10px; padding-bottom: 10px; }
+.hero__note-num { color: var(--ink-3); font-variant-numeric: tabular-nums; transition: color var(--duration-fast) ease; }
+/* Hairline drawn under the note while its marker (or the note) is hovered */
+.hero__note::after {
+  content: '';
   position: absolute;
-  width: 9px; height: 9px;
-  background: var(--surface);
-  border: 1px solid var(--select);
-  cursor: ew-resize;
-  touch-action: none;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--select);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-slow) var(--ease-out);
 }
-.hero__handle::before { content: ''; position: absolute; inset: -12px; } /* bigger hit area */
-.hero__handle:focus-visible { outline-offset: 2px; background: var(--select); }
-.hero__handle--nw { left: -5px; top: -5px; }
-.hero__handle--ne { right: -5px; top: -5px; }
-.hero__handle--sw { left: -5px; bottom: -5px; }
-.hero__handle--se { right: -5px; bottom: -5px; }
 
-.hero__frame.is-resizing { user-select: none; }
-.hero__frame.is-resizing .hero__handle { background: var(--select); }
+.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) :is(#fnref-1, #fn-1 .hero__note-num),
+.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) :is(#fnref-2, #fn-2 .hero__note-num) { color: var(--select); }
+.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) #fn-1,
+.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) #fn-2 { color: var(--ink); }
+.hero:has(#fnref-1:hover, #fnref-1:focus-visible, #fn-1:hover) #fn-1::after,
+.hero:has(#fnref-2:hover, #fnref-2:focus-visible, #fn-2:hover) #fn-2::after { transform: scaleX(1); }
 
-/* Load sequence: frame draws, then details fade in */
+/* Label/value grid: hero facts */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line);
+}
+.facts dt { font-size: var(--text-sm); color: var(--ink-3); }
+.facts dd { margin-top: 2px; font-size: var(--text-sm); font-weight: 500; line-height: 1.45; }
+@media (max-width: 900px) { .facts { grid-template-columns: repeat(2, 1fr); } }
+
+.hero__facts { margin-top: var(--space-xl); }
+
+@media (max-width: 1023px) {
+  .hero { min-height: auto; padding-top: clamp(64px, 14vh, 140px); }
+  .hero__notes { width: auto; margin-left: 0; }
+}
+@media (max-width: 560px) {
+  .hero__notes { grid-template-columns: 1fr; gap: var(--space-sm); }
+}
+
+/* Load: lines rise from masks (hero.js), then notes and facts settle in */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__frame { animation: frame-draw 500ms ease both 950ms; }
-  .hero__handle { animation: handle-pop 380ms var(--ease-spring) both 1150ms; }
-  .hero__frame-name, .hero__size { animation: fade-in 400ms ease both 1250ms; }
-  .hero__lede, .hero__facts { animation: rise 700ms var(--ease-out) both; }
-  .hero__lede { animation-delay: 800ms; }
-  .hero__facts { animation-delay: 900ms; }
+  .hero__notes, .hero__facts { animation: rise 800ms var(--ease-out) both; }
+  .hero__notes { animation-delay: 650ms; }
+  .hero__facts { animation-delay: 780ms; }
 
-  /* Line mask reveal (hero.js). Hidden until lines are measured; 1.5s fallback. */
+  /* Hidden until lines are measured; 1.5s fallback if JS fails */
   .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
   .hero__title.is-ready { opacity: 1; animation: none; }
-  .hero__title .line { display: block; overflow: hidden; padding-bottom: 0.22em; margin-bottom: -0.22em; } /* room for descenders */
+  /* Flex column while revealing: block margins would collapse and shift line spacing */
+  .hero__title:has(.line) { display: flex; flex-direction: column; }
+  .hero__title .line { display: block; overflow: hidden; padding: 0.2em 0 0.22em; margin: -0.2em 0 -0.22em; } /* room for raised markers + descenders */
   .hero__title .line__inner {
     display: block;
     animation: line-up 1000ms cubic-bezier(0.2, 0.7, 0, 1) both calc(var(--i) * 90ms + 80ms);
   }
 }
 
-@keyframes frame-draw {
-  from { outline-color: transparent; }
-  to { outline-color: var(--select); }
-}
 @keyframes line-up { from { transform: translateY(105%); } }
-@keyframes handle-pop { from { transform: scale(0); } to { transform: scale(1); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-
-.hero__lede {
-  max-width: 46ch;
-  margin-top: var(--space-xl);
-  font-size: var(--text-lg);
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-
-/* Label/value grid: hero facts + case study meta */
-.facts {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
-  margin-top: var(--space-xl);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--line);
-}
-.facts dt { font-size: var(--text-sm); color: var(--ink-3); }
-.facts dd { margin-top: 2px; font-size: var(--text-sm); font-weight: 500; line-height: 1.45; }
-
-@media (min-width: 1024px) { .hero__lede { margin-left: 50%; } }
-
-@media (max-width: 900px) { .facts { grid-template-columns: repeat(2, 1fr); } }
 
 /* ── Overview: capability matrix ───────────────────── */
 .matrix__scroll {
@@ -556,29 +541,10 @@ body.is-project .nav__links { visibility: hidden; }
   box-shadow: inset 0 0 0 1px rgba(22, 24, 29, 0.06);
   transition: box-shadow var(--duration-fast) ease;
 }
-.frame__corner {
-  position: absolute;
-  width: 8px; height: 8px;
-  background: var(--surface);
-  border: 1px solid var(--select);
-  opacity: 0;
-  transform: scale(0.4);
-  transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-spring);
-  pointer-events: none;
-}
-.frame__corner:nth-last-child(4) { left: -4px; top: 18px; }
-.frame__corner:nth-last-child(3) { right: -4px; top: 18px; }
-.frame__corner:nth-last-child(2) { left: -4px; bottom: -4px; }
-.frame__corner:nth-last-child(1) { right: -4px; bottom: -4px; }
 
 a.project-card:hover .frame__label,
 a.project-card:focus-visible .frame__label { color: var(--select); }
-a.project-card:hover .frame__media::after,
-a.project-card:focus-visible .frame__media::after,
-.case__next:hover .frame__media::after,
-.case__zoom:hover::after { box-shadow: inset 0 0 0 1.5px var(--select); }
-a.project-card:hover .frame__corner,
-a.project-card:focus-visible .frame__corner { opacity: 1; transform: none; }
+a.project-card:focus-visible .frame__media::after { box-shadow: inset 0 0 0 2px var(--select); }
 a.project-card:hover .frame__media img { transform: scale(1.025); }
 a.project-card:focus-visible { outline: none; }
 
@@ -725,52 +691,39 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   text-align: left;
   overflow-wrap: anywhere;
   color: var(--paper);
-  outline: 1px solid transparent;
-  outline-offset: 0;
-  transition: outline-color var(--duration-fast) ease;
+}
+.footer__email {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+  transition: text-decoration-color var(--duration-base) ease;
 }
 .footer__email:hover,
 .footer__email:focus-visible,
-.footer__email.is-copied { outline-color: var(--select); }
-
-
-
-.footer__corner {
-  position: absolute;
-  width: 9px; height: 9px;
-  background: var(--ink);
-  border: 1px solid var(--select);
-  opacity: 0;
-  transform: scale(0.4);
-  transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-spring);
-}
-.footer__corner:nth-of-type(2) { left: -5px; top: -5px; }
-.footer__corner:nth-of-type(3) { right: -5px; top: -5px; }
-.footer__corner:nth-of-type(4) { left: -5px; bottom: -5px; }
-.footer__corner:nth-of-type(5) { right: -5px; bottom: -5px; }
-.footer__email:hover .footer__corner,
-.footer__email:focus-visible .footer__corner,
-.footer__email.is-copied .footer__corner { opacity: 1; transform: none; }
+.footer__email.is-copied { text-decoration-color: var(--select); }
+.footer__email:focus-visible { outline: none; }
 
 .footer__tag {
   position: absolute;
-  left: 50%;
-  top: calc(100% + 10px);
-  padding: 4px 8px;
-  font-size: var(--text-2xs);
+  left: 12px;
+  top: calc(100% + 12px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1;
-  color: var(--surface);
-  background: var(--select);
-  border-radius: var(--radius-tag);
+  color: var(--on-ink-2);
   opacity: 0;
-  transform: translate(-50%, -4px);
+  transform: translateY(-4px);
   transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-out);
 }
+.footer__email.is-copied .copy__done { color: var(--paper); }
 .footer__email:hover .footer__tag,
 .footer__email:focus-visible .footer__tag,
-.footer__email.is-copied .footer__tag { opacity: 1; transform: translate(-50%, 0); }
+.footer__email.is-copied .footer__tag { opacity: 1; transform: none; }
 
 .footer__links { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xl); }
 .footer__link {

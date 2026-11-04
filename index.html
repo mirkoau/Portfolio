@@ -41,21 +41,13 @@
   <main id="main">
     <div id="index-view">
 
-      <!-- Hero: headline in a resizable selection frame (see js/hero.js) -->
+      <!-- Hero: type-led; line reveal in js/hero.js -->
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__frame" data-frame>
-          <span class="hero__frame-name" aria-hidden="true">Intro</span>
-          <h1 class="hero__title" id="hero-title">I design complex products so they explain themselves.</h1>
-          <span class="hero__size" aria-hidden="true" data-frame-size></span>
-          <span class="hero__handle hero__handle--nw" aria-hidden="true" data-handle="-1"></span>
-          <span class="hero__handle hero__handle--ne" role="slider" tabindex="0" aria-label="Headline frame width" aria-valuemin="220" aria-valuemax="1200" aria-valuenow="0" data-handle="1"></span>
-          <span class="hero__handle hero__handle--sw" aria-hidden="true" data-handle="-1"></span>
-          <span class="hero__handle hero__handle--se" aria-hidden="true" data-handle="1"></span>
-        </div>
-        <p class="hero__lede">
-          Product-minded UX designer with seven years across manufacturing SaaS,
-          robotic logistics and AAA games. Currently Senior UX Designer at Remedy Entertainment.
-        </p>
+        <h1 class="hero__title" id="hero-title">I design <span class="nowrap">complex<sup class="fn-ref"><a href="#fn-1" id="fnref-1" aria-label="Note 1">1</a></sup></span> products so they explain <span class="nowrap">themselves.<sup class="fn-ref"><a href="#fn-2" id="fnref-2" aria-label="Note 2">2</a></sup></span></h1>
+        <ol class="hero__notes">
+          <li class="hero__note" id="fn-1"><span class="hero__note-num" aria-hidden="true">1</span><span>Manufacturing analytics, robotic parcel lockers and AAA game UI. Seven years, three companies.</span></li>
+          <li class="hero__note" id="fn-2"><span class="hero__note-num" aria-hidden="true">2</span><span>Cleveron&rsquo;s back office used to need a 40-page manual. The redesign was built to work without it.</span></li>
+        </ol>
         <dl class="facts hero__facts">
           <div><dt>Currently</dt><dd>Senior UX Designer, Remedy Entertainment</dd></div>
           <div><dt>Previously</dt><dd>Cleveron, Evocon</dd></div>
@@ -115,13 +107,11 @@
       <p class="footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
       <button class="footer__email" type="button" data-copy-email aria-describedby="email-hint">
         <span class="footer__email-text" data-email-text>Email</span>
-        <span class="footer__corner" aria-hidden="true"></span>
-        <span class="footer__corner" aria-hidden="true"></span>
-        <span class="footer__corner" aria-hidden="true"></span>
-        <span class="footer__corner" aria-hidden="true"></span>
-        <span class="footer__tag copy-swap" id="email-hint">
-          <span class="copy__label">Click to copy</span>
-          <span class="copy__done" aria-hidden="true">Copied</span>
+        <span class="footer__tag" id="email-hint">
+          <span class="copy-swap">
+            <span class="copy__label">Click to copy</span>
+            <span class="copy__done" aria-hidden="true">Copied</span>
+          </span>
         </span>
       </button>
       <div class="footer__links">

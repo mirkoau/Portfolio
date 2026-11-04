@@ -98,8 +98,6 @@ function renderOverview({ skills, rows, tools, todo }) {
 
 export const frameMedia = (m) => `<span class="frame__media" data-vt="media">${img(m)}</span>`;
 
-const corners = '<span class="frame__corner"></span>'.repeat(4);
-
 function projectCard(p) {
   const tag = p.comingSoon ? 'div' : 'a';
   const href = p.comingSoon ? '' : ` href="#/work/${p.id}" data-project="${p.id}" aria-label="${p.title} case study"`;
@@ -111,7 +109,6 @@ function projectCard(p) {
       <div class="frame">
         <span class="frame__label" aria-hidden="true"><span>${p.title}</span><span>${p.period}</span></span>
         ${frameMedia(p.cover)}
-        ${corners}
       </div>
       <div class="project-card__text">
         <h4 class="project-card__title">${p.title}</h4>

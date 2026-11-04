@@ -86,7 +86,7 @@ css/project-page.css    — Case study page
 js/main.js              — Orchestrator: init, email decode/copy, nav state, view transitions, routing
 js/router.js            — Hash routing (#/work/{id}); everything else = index
 js/content.js           — Fetches data.json, renders index sections; shared helpers (isDev, todoNote, frameMedia)
-js/hero.js              — Resizable headline selection frame (drag/arrow keys, live W × H tag)
+js/hero.js              — Hero headline line-mask reveal (keeps footnote markup)
 js/project-page.js      — Case study: fetch/cache content/{id}.json, render, TOC spy, compare slider, pan, zoom
 js/gallery.js           — <dialog> lightbox (freelance strip + case study images)
 content/data.json       — overview, work (companies → projects), approach, freelance, about
@@ -94,11 +94,11 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 ```
 
 ### Key Patterns
-- **Design motif:** the page is a design file. Faint canvas dot grid behind hero; Figma selection frame (hero headline resizable, footer email, card hovers); handle squares as matrix marks.
-- **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
-- **Selection frame (legacy note):** Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
+- **Hero:** type-led. Big headline sits low in a full-screen hero (whitespace above), two editorial footnote markers (¹ ²) whose notes sit right-aligned below; hovering a marker or note highlights the pair and draws a hairline (pure CSS `:has`). Facts row anchors the bottom. Rejected and removed (don't reintroduce): Figma bounding box/selection frame, canvas dot grid, game input prompts / hold-to-confirm, rotating hero images, per-letter animation.
+- **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button (underline + 'Click to copy' on hover). Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
+- **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
-- **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, restored to plain text after) then frame draws; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
+- **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
 - **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.
 - **Fonts:** WOFF (book, medium, italic) built from the OTFs with fontTools. WOFF2 needs `brotli` (not installed).
 - **Media:** `media` array renders count-aware grid (n1–n4). `wide: true` = horizontal pan strip. `compare: {before, after}` = range-driven slider.
