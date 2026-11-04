@@ -21,3 +21,7 @@ desktop.ini
 
 # Claude Code — personal/local only (shared config: CLAUDE.md, .claude/settings.json)
 .claude/settings.local.json
+
+# Loose font files dropped in the project root
+/*.woff
+/*.woff2

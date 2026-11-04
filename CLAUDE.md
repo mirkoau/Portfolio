@@ -23,7 +23,7 @@ npx serve .
 ```
 **Caching gotcha:** `python -m http.server` sends no Cache-Control, so browsers heuristically cache ES modules and can mix a new `main.js` with a stale `router.js` etc. → import error → nothing JS-rendered (work, matrix, about, images). After JS edits, hard-reload (Ctrl+Shift+R), or use a server that sends `Cache-Control: no-cache`. Same risk for ~10 min after a GitHub Pages deploy (max-age=600) when module exports change.
 
-No runtime deps (Three.js/GSAP/Lenis from v1 removed). Font: Geist (Vercel, OFL; variable 100–900 + italic) self-hosted as WOFF2 in `assets/fonts/geist/` with OFL.txt. Old PP Neue Montreal OTFs remain in `assets/fonts/pp-neue-montreal/` unused. TODO notes in content JSON (`todo` fields) render only on localhost.
+No runtime deps (Three.js/GSAP/Lenis from v1 removed). Font: Geist (Vercel, OFL; variable 100–900 + italic) self-hosted as WOFF2 in `assets/fonts/geist/` with OFL.txt. Headlines use a licensed serif (`'Serif'` family, variable 100–900 + italic, WOFF in `assets/fonts/serif/`) via `--font-display` on hero/section/case titles, case headings, pull quotes, card titles, results, approach titles, footer email; Geist stays for body/UI. Old PP Neue Montreal OTFs remain in `assets/fonts/pp-neue-montreal/` unused. TODO notes in content JSON (`todo` fields) render only on localhost.
 
 ## Stack
 - Pure HTML5 + CSS3 + Vanilla JS (ES modules)
@@ -112,7 +112,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 
 ### Design Tokens (`css/style.css :root`)
 - Color: `--paper`, `--surface`, `--ink`, `--ink-2/-3`, `--line`. Accent = Ember: `--accent #e2452b` (fills, rules, large text), `--accent-ink #b8321c` (small text, AA). Gradient palette `--ember-oxblood/-amber/-blush`. No blue (user: "feels Facebook").
-- Type: `--font` Geist only; scale `--text-sm` … `--text-display`
+- Type: `--font` Geist (body/UI), `--font-display` 'Serif' (headlines); scale `--text-sm` … `--text-display`
 - Space: 8px base `--space-2xs` … `--space-2xl`; layout `--max 1280px`, `--gutter`, `--nav-height`
 - Motion: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`
 

@@ -21,6 +21,22 @@
   font-family: var(--font-display);
 }
 
+/* Headline serif (licensed), variable weight */
+@font-face {
+  font-family: 'Serif';
+  src: url('../assets/fonts/serif/serif-variable.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Serif';
+  src: url('../assets/fonts/serif/serif-italic-variable.woff') format('woff');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* ── Tokens ────────────────────────────────────────── */
 :root {
   /* Color */
@@ -44,9 +60,8 @@
 
   /* Type */
   --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  /* Headline serif slot: add an @font-face named 'Display Serif' (see Fonts) to switch
-     headlines over; until then this falls back to Geist */
-  --font-display: 'Display Serif', var(--font);
+  /* Headline serif (quoted name, not the generic keyword); body stays Geist */
+  --font-display: 'Serif', var(--font);
   --text-2xs: 0.75rem;   /* 12, frame labels */
   --text-xs: 0.8125rem;  /* 13 */
   --text-sm: 0.875rem;   /* 14 */
