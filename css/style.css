@@ -394,15 +394,13 @@ body.is-project .nav__links { visibility: hidden; }
 .work__company-name { font-size: var(--text-lg); font-weight: 500; line-height: 1.25; }
 .work__company-meta { font-size: var(--text-sm); color: var(--ink-3); }
 
-.work__projects { display: grid; gap: var(--space-lg); }
+.work__projects { display: grid; gap: var(--space-md); }
 
-/* Card: hairline frame, generous air; image left, text vertically centred beside it */
+/* Card: hairline frame. Image runs edge to edge on the left; the text is a compact panel
+   the height of the image: meta + title anchor the top, the CTA sits on the bottom edge. */
 .project-card {
   display: grid;
-  grid-template-columns: 7fr 5fr;
-  gap: var(--space-xl);
-  align-items: center;
-  padding: var(--space-lg);
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); /* minmax: images can't widen a column */
   background: var(--surface);
   border: 1px solid var(--line);
   text-decoration: none;
@@ -410,10 +408,17 @@ body.is-project .nav__links { visibility: hidden; }
 }
 a.project-card:hover,
 a.project-card:focus-visible { border-color: var(--ink); }
-.project-card__text { padding-right: var(--space-md); }
+.project-card .frame__media { border-radius: 0; } /* sets the card height; the text panel stretches to match */
+.project-card__text {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md) var(--space-lg) var(--space-md) var(--space-md);
+  border-left: 1px solid var(--line);
+}
+.project-card__text .project-card__cta { margin-top: auto; padding-top: var(--space-md); align-self: flex-start; }
 @media (max-width: 900px) {
-  .project-card { grid-template-columns: 1fr; gap: var(--space-lg); padding: var(--space-md); }
-  .project-card__text { padding-right: 0; }
+  .project-card { grid-template-columns: 1fr; }
+  .project-card__text { padding: var(--space-md); border-left: 0; border-top: 1px solid var(--line); }
 }
 
 /* Figma-style frame: name label above, selection outline on hover */
@@ -466,8 +471,8 @@ a.project-card:focus-visible { outline: none; }
   line-height: 1.1;
   letter-spacing: -0.025em;
 }
-.project-card__meta { margin-bottom: var(--space-sm); font-size: var(--text-sm); color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.project-card__summary { margin-top: var(--space-md); color: var(--ink-2); max-width: 42ch; }
+.project-card__meta { margin-bottom: var(--space-xs); font-size: var(--text-sm); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.project-card__summary { margin-top: var(--space-sm); color: var(--ink-2); max-width: 44ch; }
 
 .project-card__cta {
   display: inline-flex;
