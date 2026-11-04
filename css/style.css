@@ -1,13 +1,4 @@
-/* ── PP Neue Montreal ───────────────────────────────── */
-
-@font-face {
-  font-family: 'PP Neue Montreal';
-  src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-thin.otf') format('opentype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* ── Fonts ─────────────────────────────────────────── */
 @font-face {
   font-family: 'PP Neue Montreal';
   src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-book.otf') format('opentype');
@@ -15,7 +6,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'PP Neue Montreal';
   src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-italic.otf') format('opentype');
@@ -23,7 +13,6 @@
   font-style: italic;
   font-display: swap;
 }
-
 @font-face {
   font-family: 'PP Neue Montreal';
   src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-medium.otf') format('opentype');
@@ -32,1218 +21,638 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'PP Neue Montreal';
-  src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-semibolditalic.otf') format('opentype');
-  font-weight: 500 600;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PP Neue Montreal';
-  src: url('../assets/fonts/pp-neue-montreal/ppneuemontreal-bold.otf') format('opentype');
-  font-weight: 700 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* ── Utility ────────────────────────────────────────── */
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ── Tokens ─────────────────────────────────────────── */
-
+/* ── Tokens ────────────────────────────────────────── */
 :root {
-  /* Colors */
-  --color-bg:        lab(2.1% 0.8 0.3);
-  --color-orange:    lab(66% 36 68);
-  --color-blue:      lab(68% 7 -55);
-  --color-teal:      lab(78% -50 -15);
-  --color-white:     lab(100% 0 0);
-  --color-black:     lab(0% 0 0);
+  /* Color */
+  --paper: #f4f5f7;
+  --surface: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4a505c;
+  --ink-3: #6b7180;
+  --line: #dfe2e7;
+  --line-strong: #c9cdd5;
+  --select: #1a6bff;
+  --select-soft: rgba(26, 107, 255, 0.08);
 
-  /* Text — solid neutrals (no opacity: the shader behind would shift them).
-     Section hues above are accents only: labels, pull quote, hover states. */
-  --color-text:       lab(93% 0 2);
-  --color-text-muted: lab(68% 0 2);
-  --color-text-faint: lab(52% 0 2);
-  --color-rule:       color-mix(in lab, var(--color-blue) 25%, transparent);
-  /* Project-page content scrim; stacks on #project-view's 10% → ~20%,
-     matching index .scroll-bg */
-  --color-scrim:      color-mix(in lab, var(--color-bg) 11%, transparent);
+  /* Type */
+  --font: 'PP Neue Montreal', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-sm: 0.875rem;   /* 14 */
+  --text-base: 1.0625rem; /* 17 */
+  --text-lg: 1.25rem;    /* 20 */
+  --text-xl: 1.625rem;   /* 26 */
+  --text-2xl: clamp(2rem, 1.4rem + 2vw, 2.75rem);
+  --text-display: clamp(2.75rem, 1.2rem + 5.6vw, 6.25rem);
 
-  /* Typography */
-  --font-display:  'Archivo Narrow', sans-serif;
-  --font-body:     'PP Neue Montreal', sans-serif;
-  --font-ui:       'PP Neue Montreal', sans-serif;
-
-  --size-hero-name:    clamp(50px, 8.5vw, 180px);
-  --size-hero-tagline: clamp(14px, 1.5vw, 28px);
-  --size-display-lg:   clamp(40px, 3.6vw + 12px, 88px);
-  --size-heading-lg:   clamp(28px, 2.5vw + 6px, 54px);
-  --size-heading-md:   clamp(22px, 1.2vw + 12px, 32px);
-  --size-lead:         clamp(20px, 1vw + 10px, 27px);
-  --size-body:         clamp(17px, 0.3vw + 15.5px, 19px);
-  --size-ui:           clamp(16px, 0.2vw + 15px, 18px);
-  --size-role:         clamp(18px, 0.5vw + 15px, 23px);
-  --size-meta:         clamp(13px, 0.2vw + 12.5px, 15px);
-
-  --leading-display: 1.05;
-  --leading-normal:  1.35;
-  --leading-body:    1.5;
-
-  --measure: 62ch;
-
-  --tracking-tight:   -0.04em;
-  --tracking-heading: -0.02em;
-
-  /* Spacing */
-  --space-xs:   8px;
-  --space-sm:   16px;
-  --space-md:   25px;
-  --space-lg:   clamp(32px,  28px + 1.16vw, 45px);
-  --space-xl:   clamp(40px,  24px + 5vw,    95px);
-  --space-2xl:  clamp(60px,  39px + 6.7vw,  135px);
-  --space-3xl:  clamp(80px,  46px + 10.7vw, 200px);
+  /* Space (8px base) */
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 120px;
 
   /* Layout */
-  --nav-height: clamp(60px,  54px + 1.79vw, 80px);
-  --gutter:     clamp(20px,  3px + 5.36vw,  80px);
-  --col-offset:  calc(8.33% + var(--gutter));
+  --max: 1280px;
+  --gutter: 40px;
+  --nav-height: 64px;
+  --radius-sm: 6px;
+  --radius: 10px;
 
-  /* Radius */
-  --radius-sm:  8px;
-  --radius-md:  12px;
-
-  /* Transitions */
-  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --duration-fast:  200ms;
-  --duration-base:  400ms;
-  --duration-slow:  700ms;
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 600ms;
 }
 
-/* ── Reset ──────────────────────────────────────────── */
+@media (max-width: 900px) { :root { --gutter: 24px; --space-2xl: 88px; } }
+@media (max-width: 560px) { :root { --gutter: 20px; --space-2xl: 72px; } }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ── Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + var(--space-md));
   -webkit-text-size-adjust: 100%;
-  tab-size: 2;
-  /* Static gradient fallback — frozen snapshot of the shader palette (indigo
-     top-right, teal bottom-left, plum bottom-mid over a purple-black floor).
-     Paints at the very back; the WebGL canvas (z-index:-2) covers it when GL
-     works. Shows through automatically when Three.js/WebGL is absent, the
-     renderer throws, or the GPU context is lost. */
-  background-color: var(--color-bg);
-  background-image:
-    radial-gradient(ellipse 80% 65% at 78% 22%, rgba(40, 46, 120, 0.55), transparent 70%),
-    radial-gradient(ellipse 75% 60% at 18% 72%, rgba(18, 56, 76, 0.45), transparent 70%),
-    radial-gradient(ellipse 65% 55% at 48% 98%, rgba(64, 26, 48, 0.40), transparent 70%);
-  background-attachment: fixed;
-}
-
-/* Black load overlay — painted first paint, fades out via JS to reveal shader.
-   Covers the CSS hero-text load animation (orange FOUC) until Three.js owns it. */
-.load-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: var(--color-bg);
-  z-index: 9999;
-  pointer-events: none;
 }
 
 body {
-  min-height: 100dvh;
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'tnum' 0;
 }
 
-img, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 
-input, button, textarea, select {
-  font: inherit;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
-  overflow-wrap: break-word;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  border: none;
-  background: none;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-/* ── Lenis ──────────────────────────────────────────── */
-
-html.lenis,
-html.lenis body {
-  height: auto; /* prevent Lenis from capping scroll height, preserves sticky */
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important; /* disable native smooth-scroll conflict */
-}
-
-/* ── Base ───────────────────────────────────────────── */
-
-body {
-  background-color: transparent;
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: var(--size-body);
-  font-weight: 400;
-  line-height: var(--leading-body);
-  overflow-x: hidden;
-}
-
-::-webkit-scrollbar        { width: 6px; }
-::-webkit-scrollbar-track  { background: var(--color-bg); }
-::-webkit-scrollbar-thumb  { background: var(--color-text-faint); border-radius: 3px; }
-
-::selection {
-  background: var(--color-orange);
-  color: var(--color-bg);
-}
-
-/* Custom cursor complements the native cursor (fine pointer only) */
-@media (pointer: coarse) {
-  .cursor { display: none; }
-}
-
-/* ── Custom cursor ──────────────────────────────────── */
-
-.cursor {
-  display: none; /* white dot cursor hidden */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-white);
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: exclusion;
-  transform-origin: center center;
-  overflow: visible;
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ── Scroll background ──────────────────────────────── */
-/* Sits between Three.js canvas (z:-2) and page content (z:auto).
-   Fades in as hero scrolls away to keep sections readable. */
-
-
-
-/* ── Navigation ─────────────────────────────────────── */
-
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  height: var(--nav-height);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 60px;
-  pointer-events: none;
-}
-
-.nav__back,
-.nav__cta {
-  pointer-events: all;
-}
-
-.nav__cta {
-  margin-left: auto;
-}
-
-.nav__back {
-  flex-direction: row;
-}
-
-/* higher specificity than shared .btn-cta padding (later in source).
-   mirror see-more: arrow side 15px, text side 20px */
-.nav__back.btn-cta {
-  padding: 15px 20px 15px 15px;
-  transition:
-    width 0.45s var(--ease-out),
-    padding 0.45s var(--ease-out),
-    gap 0.45s var(--ease-out),
-    --btn-r 0.55s var(--ease-out),
-    transform 0.25s var(--ease-spring),
-    box-shadow var(--duration-base) var(--ease-out);
-}
-
-.nav__back-arrow {
-  display: block;
-  flex-shrink: 0;
-  order: -1;
-}
-
-.nav__back[hidden] {
-  display: none;
-}
-
-
-.btn-emoji {
-  font-size: 0.9em;
-  line-height: 1;
-  display: inline-block;
-}
-
-/* ── Buttons ────────────────────────────────────────── */
-
-/* Animatable radius for the cursor-fill ball (clip-path can't tween
-   on its own; a registered custom prop can). See button-fill in main.js. */
-@property --btn-r {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
-/* Flat pill — white outline, transparent fill. On hover a white ball
-   grows from the cursor and masks text/icon to black (see main.js). */
-.btn-cta,
-.btn-secondary,
-.work__see-more,
-.work__coming-soon,
-.nav__burger {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--size-ui);
-  letter-spacing: -0.01em;
-  color: #fff;
-  background: transparent;
-  border: 1px solid #fff;
-  border-radius: 100px;
-  height: 54px;
-  padding: 15px 15px 15px 20px;
-  white-space: nowrap;
-  cursor: pointer;
-  text-decoration: none;
-  overflow: hidden;
-  --btn-mx: 50%;
-  --btn-my: 50%;
-  --btn-r: 0px;
-  transition:
-    --btn-r 0.55s var(--ease-out),
-    transform 0.25s var(--ease-spring),
-    box-shadow var(--duration-base) var(--ease-out);
-  transform: scale(1);
-}
-
-/* Fixed-width text pills (Figma) */
-.nav__cta,
-.nav__back,
-.work__see-more,
-.work__coming-soon {
-  width: 200px;
-}
-
-/* White ball that grows from the cursor, carrying a black copy of the
-   label so text/icons invert as it sweeps over them. Single layer above
-   the base content; the clone's colors are forced black inline in JS, so
-   no component rule (e.g. .project-menu__label) can override them. */
-.btn-fill {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: inherit;
-  justify-content: inherit;
-  gap: inherit;
-  padding: inherit;
-  background: #fff;
-  color: #000;
-  clip-path: circle(var(--btn-r, 0px) at var(--btn-mx, 50%) var(--btn-my, 50%));
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Hover: slight scale (fill driven by JS) */
-.btn-cta:hover,
-.btn-secondary:hover,
-.work__see-more:hover,
-.nav__burger:hover {
-  transform: scale(1.04);
-}
-
-/* Pressed */
-.btn-cta:active,
-.btn-secondary:active,
-.work__see-more:active,
-.nav__burger:active {
-  transform: scale(0.96);
-}
-
-.btn-cta:focus-visible,
-.btn-secondary:focus-visible,
-.work__see-more:focus-visible,
-.nav__burger:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.6);
+:focus-visible {
+  outline: 2px solid var(--select);
   outline-offset: 3px;
+  border-radius: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .btn-cta, .btn-secondary, .work__see-more, .nav__burger {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
 }
 
-/* ── Header pill collapse (project subpage) ───────────── */
-/* Scroll-down retracts Home + the flying Contact to icon-only circles; the
-   label is masked (max-width → 0) while the icon re-centers. Reveal on
-   scroll-up, at the top, or hovering any header button (JS toggles classes). */
-.nav__back-label,
-.btn-label {
-  display: inline-block;
-  max-width: 240px;
-  overflow: hidden;
+.skip-link {
+  position: fixed; top: var(--space-xs); left: var(--space-xs); z-index: 100;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--ink); color: var(--surface);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.skip-link:focus { transform: none; }
+
+/* Dev-only TODO notes (rendered on localhost only, see content.js) */
+.todo {
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+  color: #6a4b00;
+  background: #fff6d6;
+  border: 1px dashed #e0b000;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Buttons ───────────────────────────────────────── */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 40px;
+  padding: 0 18px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
   white-space: nowrap;
-  opacity: 1;
+  border-radius: 999px;
+  border: 1px solid transparent;
   transition:
-    max-width 0.45s var(--ease-out),
-    opacity 0.28s var(--ease-out);
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-out);
 }
+.btn:active { transform: scale(0.97); }
 
-.nav__back--collapsed {
-  width: 54px;
+.btn--primary { background: var(--ink); color: var(--surface); }
+.btn--primary:hover { background: #2b2f38; }
+
+.btn--ghost { border-color: var(--line-strong); background: var(--surface); }
+.btn--ghost:hover { border-color: var(--ink); }
+
+/* Copy button: label swaps to confirmation, width held by grid stack */
+[data-copy-email] { display: inline-grid; }
+[data-copy-email] > span {
+  grid-area: 1 / 1;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
 }
+.copy__done { opacity: 0; transform: translateY(6px); color: var(--select); }
+[data-copy-email].is-copied .copy__label { opacity: 0; transform: translateY(-6px); }
+[data-copy-email].is-copied .copy__done { opacity: 1; transform: none; }
 
-/* Drop the inter-item gap once collapsed: the lone icon then fits the narrow
-   box, so flex `space-between` keeps it flush (no overflow → flex-start jump).
-   The icon stays put through the contract; only a small ease to centre remains. */
-.nav__back--collapsed,
-.btn-cta--collapsed {
-  gap: 0;
-}
-
-.nav__back--collapsed .nav__back-label,
-.btn-cta--collapsed .btn-label {
-  max-width: 0;
-  opacity: 0;
-}
-
-/* Icon holds its flex position as the pill contracts (no jitter), then eases
-   the small remaining distance to the circle's centre. --icon-shift is the
-   per-button offset, measured in JS (depends on icon width + padding). */
-.nav__back-arrow,
-.btn-emoji {
-  transition: transform 0.45s var(--ease-out);
-}
-
-.nav__back--collapsed .nav__back-arrow,
-.btn-cta--collapsed .btn-emoji {
-  transform: translateX(var(--icon-shift, 0px));
-}
-
-.about .section-main {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.about__actions {
+/* ── Nav ───────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
+  gap: var(--space-lg);
+  height: var(--nav-height);
+  /* align with the centered content column */
+  padding-inline: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+  background: rgba(244, 245, 247, 0.82);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration-base) ease;
+}
+.nav.is-scrolled { border-bottom-color: var(--line); }
+
+.nav__brand {
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.nav__links { display: flex; gap: var(--space-md); margin-left: auto; }
+
+.nav__link {
+  position: relative;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+}
+.nav__link::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: -4px;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.nav__link:hover, .nav__link.is-active { color: var(--ink); }
+.nav__link:hover::after, .nav__link.is-active::after { transform: scaleX(1); transform-origin: left; }
+
+body.is-project .nav__links { visibility: hidden; }
+
+@media (max-width: 640px) {
+  .nav__links { display: none; }
+  .nav__cta { margin-left: auto; }
+}
+
+/* ── Layout helpers ────────────────────────────────── */
+.hero, .overview, .work, .approach, .freelance, .about, .footer__inner {
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.overview, .work, .approach, .freelance, .about { padding-top: var(--space-2xl); }
+
+.section-head { margin-bottom: var(--space-lg); }
+
+.section-title {
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.section-sub {
+  margin-top: var(--space-xs);
+  max-width: 60ch;
+  color: var(--ink-2);
+}
+
+/* ── Hero ──────────────────────────────────────────── */
+.hero { padding-top: clamp(64px, 12vh, 140px); }
+
+/* Selection frame: the one bold thing. Width is user-resizable. */
+.hero__frame {
+  --frame-w: 15ch;
+  position: relative;
+  width: min(100%, var(--frame-w));
+  padding: 6px 10px 10px;
+  margin-left: -11px; /* text optically aligns with gutter */
+  outline: 1px solid var(--select);
+  outline-offset: 0;
+  font-size: var(--text-display);
+}
+
+.hero__title {
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.hero__frame-name,
+.hero__size {
+  position: absolute;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hero__frame-name { left: -1px; bottom: calc(100% + 8px); color: var(--select); }
+.hero__size {
+  left: 50%;
+  top: calc(100% + 8px);
+  padding: 4px 6px;
+  color: #fff;
+  background: var(--select);
+  border-radius: 3px;
+  transform: translateX(-50%);
+}
+
+.hero__handle {
+  position: absolute;
+  width: 9px; height: 9px;
+  background: var(--surface);
+  border: 1px solid var(--select);
+  cursor: ew-resize;
+  touch-action: none;
+}
+.hero__handle::before { content: ''; position: absolute; inset: -12px; } /* bigger hit area */
+.hero__handle:focus-visible { outline-offset: 2px; background: var(--select); }
+.hero__handle--nw { left: -5px; top: -5px; }
+.hero__handle--ne { right: -5px; top: -5px; }
+.hero__handle--sw { left: -5px; bottom: -5px; }
+.hero__handle--se { right: -5px; bottom: -5px; }
+
+.hero__frame.is-resizing { user-select: none; }
+.hero__frame.is-resizing .hero__handle { background: var(--select); }
+
+/* Load sequence: frame draws, then details fade in */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__frame { animation: frame-draw 900ms var(--ease-out) both 120ms; }
+  .hero__handle { animation: handle-pop 420ms var(--ease-spring) both 700ms; }
+  .hero__frame-name, .hero__size { animation: fade-in 400ms ease both 900ms; }
+  .hero__lede, .hero__facts { animation: rise 700ms var(--ease-out) both; }
+  .hero__lede { animation-delay: 320ms; }
+  .hero__facts { animation-delay: 440ms; }
+}
+
+@keyframes frame-draw {
+  from { outline-color: transparent; clip-path: inset(0 100% 0 0); }
+  40% { outline-color: var(--select); }
+  to { clip-path: inset(-40px -40px -40px -40px); }
+}
+@keyframes handle-pop { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+.hero__lede {
+  max-width: 52ch;
+  margin-top: var(--space-xl);
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.hero__facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
   margin-top: var(--space-xl);
-  margin-bottom: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line);
 }
+.hero__facts dt { font-size: var(--text-sm); color: var(--ink-3); }
+.hero__facts dd { margin-top: 2px; font-size: var(--text-sm); font-weight: 500; }
 
-/* Transformed (flying button lands here) — big stadium pill.
-   height:auto so it isn't clamped to the base 54px; the flying button
-   reads this anchor's geometry for its morph target. --about mirrors
-   the padding/gap onto the flying button itself. */
-.about__cta,
-.btn-cta--about {
-  height: auto;
-  font-size: 42px;
-  line-height: 1;
-  padding: 22px 36px;
-  gap: 24px;
-  border-radius: 100px;
-}
+@media (max-width: 900px) { .hero__facts { grid-template-columns: repeat(2, 1fr); } }
 
-/* about section secondary overrides */
-.about .btn-secondary {
-  font-size: var(--size-lead);
-  padding: 10px 20px 10px 28px;
-  opacity: 0;
-}
-
-
-/* ── Hero ───────────────────────────────────────────── */
-
-.hero {
-  position: relative;
-  /* Frozen px height captured at load (--hero-lock = innerHeight, set in
-     project-page.js). lvh is meant to be constant but still jitters on some
-     mobile browsers when the toolbar slides; a baked px value never does.
-     Falls back to 100lvh if the var is unset. Same trick as project hero. */
-  min-height: var(--hero-lock, 100lvh);
-  padding-top: calc(var(--nav-height) + 180px);
-}
-
-.hero__tagline {
-  user-select: none;
-}
-
-/* ── Load reveal (CSS — no JS dependency) ───────────── */
-
-@keyframes load-fade-down {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes load-fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* animation-fill-mode: both — applies "from" state during delay too,
-   so elements are invisible before their entrance begins */
-
-.nav__cta {
-  opacity: 0;
-}
-
-/* Name + tagline fade in together, a beat after the cards start */
-.hero__intro {
-  opacity: 0;
-  animation: load-fade-up 0.9s 0.8s var(--ease-out) both;
-}
-
-.hero__card {
-  opacity: 0;
-  animation: load-fade-up 0.6s var(--ease-out) both;
-}
-
-.hero__card--1 { animation-delay: 0.85s; }
-.hero__card--2 { animation-delay: 0.94s; }
-.hero__card--3 { animation-delay: 1.03s; }
-.hero__card--4 { animation-delay: 1.12s; }
-.hero__card--5 { animation-delay: 1.21s; }
-
-/* ── Scroll cue — small down arrow, fades on scroll ──── */
-
-.hero__scroll-cue {
-  position: absolute;
-  bottom: var(--space-lg);
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: #fff;
-  cursor: pointer;
-  z-index: 1;
-  animation: load-fade-up 0.7s 1.4s var(--ease-out) backwards;
-  transition: opacity 0.4s var(--ease-out);
-}
-
-body.is-scrolled .hero__scroll-cue {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Faint circle blooms in behind the arrow on hover */
-.hero__scroll-cue::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0;
-  transform: scale(0.3);
-  transition: transform 0.4s var(--ease-spring), opacity 0.3s var(--ease-out);
-}
-
-.hero__scroll-cue svg {
-  position: relative;
-  transition: transform 0.3s var(--ease-spring), color 0.2s var(--ease-out);
-}
-
-.hero__scroll-cue:hover::before {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.hero__scroll-cue:hover svg {
-  color: var(--color-bg);
-  animation: cue-bob 0.9s var(--ease-out) infinite;
-}
-
-/* Press: arrow snaps down + shrinks */
-.hero__scroll-cue:active svg {
-  animation: none;
-  transform: translateY(7px) scale(0.82);
-  transition: transform 0.12s var(--ease-out);
-}
-
-@keyframes cue-bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(4px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__scroll-cue:hover svg { animation: none; }
-}
-
-@media (max-width: 768px) {
-  .hero__scroll-cue { display: none; }
-}
-
-/* ── Hero intro — name + tagline (DOM text, sharp at any DPR) ──
-   Absolute inside .hero (position:relative) so it scrolls with the
-   section: desktop glide + mobile scroll-up both free, no JS. Left +
-   top match the old WebGL mesh coords (TEXT_LEFT 170/1920, NAME_TOP). */
-.hero__intro {
-  position: absolute;
-  left: 8.85%;
-  /* Anchor to the locked viewport (same var the canvas uses), NOT .hero's own
-     height — on mobile .hero is only 0.8·lvh, which would pull the name up. */
-  top: calc(0.42 * var(--hero-lock, 100lvh));
-  z-index: 1;
-}
-
-.hero__name {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--size-hero-name);
-  line-height: 1;
-  color: #fff;
-  /* -0.5em lifts the glyph center to 42%; optical left nudge + 5px right */
-  margin: -0.5em 0 0 calc(-0.06em + 8px);
-  user-select: none;
-}
-
-.hero__tagline {
-  font-family: var(--font-body);
-  font-size: var(--size-hero-tagline);
-  font-weight: 500;
-  color: #fff;
-  line-height: var(--leading-normal);
-  margin-top: clamp(12px, 1.4vw, 20px);
-  max-width: 860px;
-}
-
-/* Hero cards — placeholder positions until Three.js (Phase 7) */
-
-.hero__cards {
-  position: absolute;
-  inset: 0;
-  pointer-events: none; /* canvas inside re-enables its own events */
-}
-
-.hero__card {
-  position: absolute;
-  overflow: hidden;
-}
-
-.hero__card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero__card--1 { width: 47%; height: 370px; left: 47%; top: 52%; }
-.hero__card--2 { width: 27%; height: 307px; left: 65%; top: 43%; }
-.hero__card--3 { width: 16%; height: 392px; left: 20%; top: 44%; }
-.hero__card--4 { width: 24%; height: 258px; left: 9%; top: 74%; }
-.hero__card--5 { width: 31%; height: 336px; left: 57%; top: 65%; }
-
-/* ── Project view: hide all index content ───────────── */
-/* !important ensures any stray inline style cannot reveal */
-body.is-project-view .hero,
-body.is-project-view .work,
-body.is-project-view .personal-work,
-body.is-project-view .about,
-body.is-project-view .scroll-bg {
-  display: none !important;
-}
-
-/* ── Section layout (shared) ────────────────────────── */
-
-.work,
-.personal-work,
-.about {
-  display: flex;
-  padding-bottom: var(--space-2xl);
-  position: relative;
-  z-index: 2;
-}
-
-.scroll-bg {
-  position: fixed;
-  /* Mirror the shader canvas exactly: top-anchored + 100lvh+220px overscan so
-     the darkening bleeds behind the iOS bottom bar + Firefox toolbar strip,
-     leaving no uncovered gap. Firefox iOS hides top URL bar + bottom nav, so
-     the reveal delta is bigger than Safari's — 140 was short. */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100lvh + 220px);
-  z-index: -1;
-  /* Quiets the shader behind content so the work, not the gradient, leads */
-  background: color-mix(in lab, var(--color-bg) 20%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.work,
-.personal-work,
-.about {
-  background: transparent;
-}
-
-.about {
-  padding-bottom: calc(var(--space-2xl) * 2);
-}
-
-.section-aside {
-  width: var(--col-offset);
-  flex-shrink: 0;
-  padding-left: var(--gutter);
-  padding-top: var(--space-xl);
-}
-
-.section-main {
-  flex: 1;
-  padding: var(--space-xl) var(--gutter) 0 0;
-  min-width: 0;
-}
-
-/* ── Section labels ─────────────────────────────────── */
-
-.section-label {
-  position: sticky;
-  /* Pin in the nav band so the label centers at the same height as the
-     flying Contact button (which sits centered in the nav). */
-  top: 0;
-  height: var(--nav-height);
-  display: flex;
-  align-items: center;
-  /* Promote to its own compositor layer — Firefox Android stutters sticky
-     elements during the toolbar slide unless they're GPU-composited. */
-  will-change: transform;
-  transform: translateZ(0);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: var(--size-heading-md);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
-  font-variation-settings: 'SOFT' 0, 'WONK' 1;
-  width: 95px;
-}
-
-.section-label--work     { color: var(--color-blue); }
-.section-label--personal { color: var(--color-teal); }
-.section-label--about    { color: var(--color-orange); }
-
-/* ── Work ───────────────────────────────────────────── */
-
-.work__entry {
-  border: 0.5px solid var(--color-rule);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-2xl);
-}
-
-.work__entry-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-}
-
-.work__project-text {
-  display: flex;
-  gap: var(--space-xl);
-  align-items: flex-start;
+/* ── Overview ──────────────────────────────────────── */
+.overview__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
   margin-top: var(--space-lg);
 }
 
-.work__entry:last-child {
-  margin-bottom: 0;
+.overview__col {
+  padding: var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
-
-.work__project {
-  display: flex;
-  flex-direction: column;
-  margin-top: var(--space-xl);
-}
-
-.work__project:first-child {
-  margin-top: 0;
-}
-
-.work__project-header {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.work__project-desc {
-  flex: 1;
-  min-width: 0;
-}
-
-/* One display moment per block: the project title (or the company, for
-   single-project entries). Multi-project entries set the company one step
-   down, in the italic display voice of the section labels. */
-.work__meta,
-.work__project-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--size-display-lg);
-  color: var(--color-blue);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
-  /* Optical left edge: large display glyphs carry side bearing that reads
-     as an indent against the UI text below */
-  margin-left: -0.04em;
-  /* Body copy is pulled left into this column by (2xl - xl); wrap before it */
-  max-width: calc(100% - var(--space-2xl) + var(--space-xl));
-}
-
-.work__entry-header .work__meta {
-  font-style: italic;
-  font-size: var(--size-heading-lg);
-  max-width: none;
-}
-
-.work__entry-header .work__role {
-  margin-top: var(--space-xs);
-}
-
-/* Role is the claim (what I did, not just that I was there) — reads as a
-   subtitle, not fine print */
-.work__role,
-.work__project-role {
-  font-family: var(--font-ui);
-  font-weight: 500;
-  font-size: var(--size-role);
-  color: var(--color-blue);
-  line-height: var(--leading-normal);
-}
-
-.work__project-role {
-  margin-top: 12px;
-  align-self: stretch;
-}
-
-.work__project-body {
-  font-family: var(--font-ui);
-  font-size: var(--size-body);
-  color: var(--color-text);
-  line-height: var(--leading-body);
-  max-width: var(--measure);
-  margin-left: calc(-1 * var(--space-2xl));
-  margin-right: var(--space-2xl);
-}
-
-.work__project-body + .work__project-body {
-  margin-top: var(--space-sm);
-}
-
-
-.work__project-image {
-  position: relative;
-  cursor: pointer;
-  border: none;
-  padding: 0;
-  background: none;
-  display: block;
-  overflow: hidden;
-  width: 100%;
-}
-
-.work__project-image img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  transition: transform 0.5s var(--ease-out);
-}
-
-.work__project-image:hover img {
-  transform: scale(1.03);
-}
-
-.work__see-more {
-  align-self: flex-start;
-  margin-top: var(--space-md);
-  margin-left: calc(-1 * var(--space-2xl));
-}
-
-.work__see-more-arrow {
-  display: block;
-  flex-shrink: 0;
-}
-
-/* Coming Soon — pill base, but muted + non-interactive (no fill, no nav).
-   Only the JS hover-scale applies. */
-.work__coming-soon {
-  align-self: flex-start;
-  margin-top: var(--space-md);
-  margin-left: calc(-1 * var(--space-2xl));
-  cursor: default;
-  color: rgba(255, 255, 255, 0.55);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.work__coming-soon-x {
-  display: block;
-  flex-shrink: 0;
-}
-
-.work__project-image::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-
-.work__project-image:hover::after,
-.work__project-image:focus-visible::after {
-  opacity: 1;
-}
-
-/* Coming Soon cover — static, no zoom / pointer / vignette. Must follow the
-   base + hover rules above: equal specificity, so source order wins. */
-.work__project-image--soon {
-  cursor: default;
-}
-.work__project-image--soon:hover img {
-  transform: none;
-}
-.work__project-image--soon::after {
-  content: none;
-}
-
-
-/* ── Personal Work ──────────────────────────────────── */
-
-/* Spans exactly 2 of the 4 grid columns so the open right half reads as
-   intentional space */
-.personal-work__intro {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--size-lead);
-  color: var(--color-teal);
-  line-height: var(--leading-normal);
-  max-width: calc(50% - var(--space-md) / 2);
-  margin-bottom: var(--space-2xl);
-}
-
-.personal-work__grid {
-  columns: 4;
-  column-gap: var(--space-md);
-}
-
-.personal-work__item {
-  position: relative;
-  break-inside: avoid;
+.overview__col-title {
   margin-bottom: var(--space-sm);
-  cursor: pointer;
-  display: block;
-  border: none;
-  padding: 0;
-  background: none;
-  text-align: left;
-  padding-top: var(--pt, 0);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+.overview__list { list-style: none; }
+.overview__item {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.overview__name { display: block; font-size: var(--text-sm); font-weight: 500; }
+.overview__detail { display: block; font-size: var(--text-sm); color: var(--ink-2); line-height: 1.45; }
+
+@media (max-width: 900px) { .overview__grid { grid-template-columns: 1fr; } }
+
+/* ── Work ──────────────────────────────────────────── */
+.work__company {
+  display: grid;
+  grid-template-columns: 3fr 9fr;
+  gap: var(--space-lg);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--line);
 }
 
-.personal-work__item:nth-child(1)  { --pt: 0; }
-.personal-work__item:nth-child(2)  { --pt: 50px; }
-.personal-work__item:nth-child(3)  { --pt: 15px; }
-.personal-work__item:nth-child(4)  { --pt: 70px; }
-.personal-work__item:nth-child(5)  { --pt: 30px; }
-.personal-work__item:nth-child(6)  { --pt: 0; }
-.personal-work__item:nth-child(7)  { --pt: 55px; }
-.personal-work__item:nth-child(8)  { --pt: 20px; }
-.personal-work__item:nth-child(9)  { --pt: 40px; }
-.personal-work__item:nth-child(10) { --pt: 10px; }
+.work__company-head {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-md));
+  align-self: start;
+}
+.work__company-name { font-size: var(--text-lg); font-weight: 500; line-height: 1.25; }
+.work__company-period {
+  margin-top: 2px;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.work__company-about { margin-top: var(--space-xs); font-size: var(--text-sm); color: var(--ink-3); max-width: 28ch; }
 
-/* Media wrapper == image box: clips hover scale + carries the vignette,
-   so neither spills into the stagger padding above. */
-.personal-work__media {
+.work__projects { display: grid; gap: var(--space-xl); }
+
+.project-card {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--space-lg);
+  align-items: start;
+  text-decoration: none;
+}
+
+/* Figma-style frame: name label above, selection outline on hover */
+.frame {
   position: relative;
   display: block;
-  overflow: hidden;
 }
-
-.personal-work__item:nth-child(1)  { margin-bottom: 30px; }
-.personal-work__item:nth-child(2)  { margin-bottom: 60px; }
-.personal-work__item:nth-child(4)  { margin-bottom: 20px; }
-.personal-work__item:nth-child(5)  { margin-bottom: 45px; }
-.personal-work__item:nth-child(7)  { margin-bottom: 25px; }
-.personal-work__item:nth-child(8)  { margin-bottom: 55px; }
-
-.personal-work__media img {
-  width: 100%;
-  height: auto;
+.frame__label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 16px; /* label + margin = 22px; top corners sit at 22 - 4 */
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--duration-fast) ease;
+}
+.frame__media {
+  position: relative;
   display: block;
-  transition: transform 0.5s var(--ease-out);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: var(--radius-sm);
 }
-
-.personal-work__item:hover .personal-work__media img {
-  transform: scale(1.03);
+.frame__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
 }
-
-.personal-work__media::after {
+.frame__media::after {
   content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(22, 24, 29, 0.06);
+  transition: box-shadow var(--duration-fast) ease;
+}
+.frame__corner {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.48) 100%);
+  width: 8px; height: 8px;
+  background: var(--surface);
+  border: 1px solid var(--select);
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transform: scale(0.4);
+  transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-spring);
   pointer-events: none;
 }
+.frame__corner:nth-last-child(4) { left: -4px; top: 18px; }
+.frame__corner:nth-last-child(3) { right: -4px; top: 18px; }
+.frame__corner:nth-last-child(2) { left: -4px; bottom: -4px; }
+.frame__corner:nth-last-child(1) { right: -4px; bottom: -4px; }
 
-.personal-work__item:hover .personal-work__media::after,
-.personal-work__item:focus-visible .personal-work__media::after {
-  opacity: 1;
-}
+a.project-card:hover .frame__label,
+a.project-card:focus-visible .frame__label { color: var(--select); }
+a.project-card:hover .frame__media::after,
+a.project-card:focus-visible .frame__media::after { box-shadow: inset 0 0 0 1.5px var(--select); }
+a.project-card:hover .frame__corner,
+a.project-card:focus-visible .frame__corner { opacity: 1; transform: none; }
+a.project-card:hover .frame__media img { transform: scale(1.025); }
+a.project-card:focus-visible { outline: none; }
 
-/* ── About ──────────────────────────────────────────── */
-
-
-.about__content {
-  display: flex;
-  gap: var(--space-2xl);
-}
-
-.about__text {
-  flex: 1;
-  min-width: 0;
-  max-width: 720px;
-}
-
-/* Personal voice — exception to the neutral text rule: section hue, lead
-   size, medium weight */
-.about__body {
-  font-family: var(--font-body);
-  font-size: var(--size-lead);
+.project-card__title {
+  font-size: var(--text-xl);
   font-weight: 500;
-  color: var(--color-orange);
-  line-height: var(--leading-normal);
-  margin-bottom: var(--space-lg);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.project-card__role { margin-top: 4px; font-size: var(--text-sm); color: var(--ink-2); }
+.project-card__summary { margin-top: var(--space-sm); color: var(--ink-2); max-width: 46ch; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-sm); list-style: none; }
+.tag {
+  padding: 3px 10px;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
 }
 
-.about__body:last-child {
-  margin-bottom: 0;
-}
-
-.about__portrait {
-  width: 260px;
-  flex-shrink: 0;
-  align-self: flex-start;
-}
-
-.about__portrait img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-}
-
-/* ── Footer ─────────────────────────────────────────── */
-
-.footer {
-  display: flex;
+.project-card__cta {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: var(--space-lg) var(--gutter);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  position: relative;
-  z-index: 2;
+  gap: 6px;
+  margin-top: var(--space-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
+.project-card__cta svg { transition: transform var(--duration-base) var(--ease-out); }
+a.project-card:hover .project-card__cta svg { transform: translateX(4px); }
+.project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
 
-.footer__copy {
-  font-family: var(--font-ui);
-  font-size: var(--size-meta);
-  color: var(--color-text-faint);
-}
-
-/* ── Responsive: tablet ─────────────────────────────── */
+/* Coming-soon: no hover affordance */
+div.project-card .frame__media img { filter: saturate(0.85); }
 
 @media (max-width: 1024px) {
-  .personal-work__grid { columns: 2; }
-  .personal-work__intro { max-width: var(--measure); }
-
-  .about__portrait { width: 250px; }
-  .about__content  { gap: var(--space-xl); }
+  .work__company { grid-template-columns: 1fr; gap: var(--space-md); }
+  .work__company-head { position: static; }
+}
+@media (max-width: 720px) {
+  .project-card { grid-template-columns: 1fr; gap: var(--space-sm); }
 }
 
-/* ── Responsive: mobile ─────────────────────────────── */
+/* ── Approach ──────────────────────────────────────── */
+.approach__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+.approach__item { padding-top: var(--space-sm); border-top: 1.5px solid var(--ink); }
+.approach__title { font-size: var(--text-lg); font-weight: 500; line-height: 1.3; }
+.approach__body { margin-top: var(--space-xs); color: var(--ink-2); max-width: 40ch; }
 
-@media (max-width: 768px) {
-  :root {
-    --col-offset: 0px;
-  }
+@media (max-width: 900px) { .approach__grid { grid-template-columns: 1fr; gap: var(--space-md); } }
 
-  /* Top spacing matches side gutter (was center-aligned in nav bar = too tight) */
-  .nav {
-    height: auto;
-    align-items: flex-start;
-    padding: var(--gutter) var(--gutter) 0;
-  }
+/* ── Freelance ─────────────────────────────────────── */
+.freelance__strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(160px, 18vw, 240px);
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: var(--space-sm);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.freelance__item {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--line);
+  scroll-snap-align: start;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.freelance__item img { width: 100%; height: 100%; object-fit: cover; }
+.freelance__item:hover { transform: translateY(-4px); }
+.freelance__item:focus-visible { outline-offset: 2px; }
 
-  /* Nav pills hug their label (not fixed 200px) */
-  .nav__back,
-  .nav__cta { width: auto; }
+/* ── About ─────────────────────────────────────────── */
+.about {
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+.about__portrait {
+  overflow: hidden;
+  aspect-ratio: 750 / 824;
+  border-radius: var(--radius);
+  background: var(--line);
+}
+.about__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.about__text p { margin-top: var(--space-sm); max-width: 62ch; color: var(--ink-2); }
+.about__text p:first-of-type { margin-top: var(--space-md); font-size: var(--text-lg); line-height: 1.5; color: var(--ink); }
 
-  .hero { min-height: calc(0.8 * var(--hero-lock, 100lvh)); padding-top: calc(var(--nav-height) + 80px); }
-
-  /* Stack sections; label sticks to header as the section scrolls */
-  .work,
-  .personal-work,
-  .about {
-    flex-direction: column;
-    padding-top: var(--space-xl);
-  }
-
-  /* Dissolve the aside box so the label's sticky container becomes the
-     full-height section (a short aside box would give it no travel) */
-  .section-aside {
-    display: contents;
-  }
-
-  /* Pin in the nav band so the label centers at the same height as the
-     flying Contact button (which sits centered in the nav) */
-  .section-label {
-    width: auto;
-    padding-left: var(--gutter);
-    margin-bottom: var(--space-md);
-    top: 0;
-    /* Vertically centre on the nav buttons: 54px pill pinned at the gutter,
-       so centre sits at gutter + 27px. */
-    height: calc(var(--gutter) + 54px);
-    display: flex;
-    align-items: center;
-    padding-top: var(--gutter);
-    font-size: var(--size-heading-lg);
-    z-index: 10;
-  }
-
-  .section-main { padding: 0 var(--gutter); }
-
-  /* Work */
-  .work__project-text {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  /* No stroke box on mobile — content runs full gutter width */
-  .work__entry {
-    border: none;
-    padding: 0;
-  }
-  /* Bigger gap between stacked projects (multi-project entries like Remedy) */
-  .work__project { margin-top: var(--space-2xl); }
-  .work__project:first-child { margin-top: 0; }
-  /* Drop the desktop negative-offset; would overflow left when stacked */
-  .work__project-body,
-  .work__see-more,
-  .work__coming-soon {
-    margin-left: 0;
-    margin-right: 0;
-  }
-  .work__meta,
-  .work__project-title { max-width: none; }
-
-  /* Personal — two columns, reset staggered offsets */
-  .personal-work__grid {
-    columns: 2;
-    column-gap: var(--space-md);
-    max-width: none;
-  }
-  .personal-work__item:nth-child(n) {
-    --pt: 0;
-    margin-bottom: var(--space-lg);
-  }
-
-  /* About — portrait above bio (DOM is text→portrait) */
-  .about__content { flex-direction: column-reverse; }
-  .about__portrait {
-    width: 100%;
-    max-width: 300px;
-  }
-  /* Stack LinkedIn below Contact on mobile */
-  .about__actions {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  /* Same stadium-pill treatment as desktop, scaled down. Mirrored onto the
-     flying button so its class values match the anchor it morphs into. */
-  .about__cta,
-  .btn-cta--about {
-    font-size: clamp(28px, 8vw, 42px);
-    line-height: 1;
-    padding: 16px 30px;
-    gap: 16px;
-    border-radius: 100px;
-  }
-
-  .footer {
-    flex-direction: column;
-    gap: var(--space-sm);
-    text-align: center;
-  }
+@media (max-width: 800px) {
+  .about { grid-template-columns: 1fr; gap: var(--space-lg); }
+  .about__portrait { max-width: 320px; }
 }
 
+/* ── Footer ────────────────────────────────────────── */
+.footer {
+  margin-top: var(--space-2xl);
+  padding-block: var(--space-xl) var(--space-lg);
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+.footer__pitch {
+  max-width: 20ch;
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.footer__actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-lg); }
+.footer__copy { margin-top: var(--space-xl); font-size: var(--text-sm); color: var(--ink-3); }
+
+/* ── Lightbox ──────────────────────────────────────── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  border: 0;
+  background: rgba(244, 245, 247, 0.97);
+  color: var(--ink);
+}
+.lightbox[open] { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-sm); }
+.lightbox::backdrop { background: transparent; }
+
+.lightbox__figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 100%;
+  min-width: 0;
+  justify-content: center;
+}
+.lightbox__img {
+  max-width: 100%;
+  max-height: calc(100% - 40px);
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 30px 80px -30px rgba(22, 24, 29, 0.35);
+}
+.lightbox__caption { font-size: var(--text-sm); color: var(--ink-2); }
+.lightbox__close { position: absolute; top: var(--space-sm); right: var(--space-sm); }
+
+.lightbox__nav {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface) no-repeat center / 18px;
+  transition: border-color var(--duration-fast) ease;
+}
+.lightbox__nav:hover { border-color: var(--ink); }
+.lightbox__nav--prev { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9H4M8 5L4 9l4 4'/%3E%3C/svg%3E"); }
+.lightbox__nav--next { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h10M10 5l4 4-4 4'/%3E%3C/svg%3E"); }
+.lightbox.is-single .lightbox__nav { visibility: hidden; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox[open] { animation: fade-in var(--duration-base) ease; }
+  .lightbox[open] .lightbox__img { animation: zoom-in 420ms var(--ease-out); }
+}
+@keyframes zoom-in { from { transform: scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 640px) {
+  .lightbox { padding: var(--space-xl) var(--space-sm) var(--space-md); }
+  .lightbox[open] { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .lightbox__figure { grid-column: 1; grid-row: 1; }
+  .lightbox__nav { grid-row: 2; justify-self: center; }
+  .lightbox__nav--prev { grid-column: 1; margin-right: 60px; }
+  .lightbox__nav--next { grid-column: 1; margin-left: 60px; }
+}
+
+/* ── View switching ────────────────────────────────── */
+body.is-project #index-view { display: none; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 320ms; }
+::view-transition-group(project-media) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+
+/* ── Reduced motion ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}

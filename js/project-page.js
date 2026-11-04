@@ -1,591 +1,200 @@
-import { showForProject, setContactCollapsed, decodeEmails } from './lets-talk.js';
-import { openGallery } from './gallery.js';
-import { contentReady, data } from './content.js';
+// Case study view: fetch content/{id}.json, render, wire interactions.
 
-const container = document.getElementById('project-view');
-const noMotion  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+import { caseStudies, todoNote, arrow, frameMedia } from './content.js';
+import { openLightbox } from './gallery.js';
 
-// Lenis when smooth scroll is on, native otherwise
-const scrollPos = lenis => (lenis ? lenis.scroll : window.scrollY);
-function onScrollOf(lenis, fn) {
-  if (lenis) { lenis.on('scroll', fn); return () => lenis.off('scroll', fn); }
-  window.addEventListener('scroll', fn, { passive: true });
-  return () => window.removeEventListener('scroll', fn);
-}
+const view = document.getElementById('project-view');
+const cache = new Map();
+let cleanup = [];
 
-// Per-project JSON, fetched once — shared by showProject + the footer/menu list
-const _projectJson = new Map();
-function fetchProject(id) {
-  if (!_projectJson.has(id)) {
-    _projectJson.set(id, fetch(`content/${id}.json`).then(r => {
-      if (!r.ok) throw new Error(`${r.status}`);
+// Fetch + memoize; also used to prefetch on card hover
+export function loadProject(id) {
+  if (!cache.has(id)) {
+    cache.set(id, fetch(`content/${id}.json`).then(r => {
+      if (!r.ok) throw new Error(`${id} ${r.status}`);
       return r.json();
-    }));
-    _projectJson.get(id).catch(() => _projectJson.delete(id)); // allow retry
+    }).catch(err => { cache.delete(id); throw err; }));
   }
-  return _projectJson.get(id);
+  return cache.get(id);
 }
 
-// Lock hero height to load-time viewport — frozen, ignores later resizes
-// (desktop window drag + mobile address-bar show/hide). Used by both the
-// project hero and the index hero (css). Re-freeze only on width/orientation
-// change; the toolbar's height-only resize must NOT touch it (that's the jump).
-const lockHero = () =>
-  document.documentElement.style.setProperty('--hero-lock', `${window.innerHeight}px`);
-lockHero();
-let _heroLockW = window.innerWidth;
-window.addEventListener('resize', () => {
-  if (window.innerWidth === _heroLockW) return;
-  _heroLockW = window.innerWidth;
-  lockHero();
-});
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-let _currentId = null;
-let _cleanup = null;
-let _allProjects = null;
-
-// Flatten all projects from data.json into [{id, title, comingSoon, hero, heroAlt, role, period}]
-async function getAllProjects() {
-  if (_allProjects) return _allProjects;
-  // content.js already fetched data.json — refetch only if that failed
-  await contentReady;
-  const { work } = data ?? await fetch('content/data.json').then(r => r.json());
-  const projects = [];
-  for (const company of work) {
-    for (const p of company.projects) {
-      projects.push({ id: p.id, title: p.title || company.company, comingSoon: !!p.comingSoon });
-    }
+function figure(m, i) {
+  if (m.wide) {
+    return `
+      <figure class="case__figure">
+        <div class="case__pan" data-pan tabindex="0" aria-label="${m.alt}, scrollable">
+          <img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" />
+        </div>
+        ${m.caption ? `<figcaption>${m.caption}</figcaption>` : ''}
+      </figure>`;
   }
-  // Fetch hero images + role/period from per-project JSONs
-  await Promise.all(projects.map(async (p) => {
-    try {
-      const d = await fetchProject(p.id);
-      p.hero = d.hero?.src || '';
-      p.heroAlt = d.hero?.alt || '';
-      p.role = d.role || '';
-      p.period = d.period || '';
-    } catch { p.hero = ''; p.heroAlt = ''; p.role = ''; p.period = ''; }
-  }));
-  _allProjects = projects;
-  return _allProjects;
+  return `
+    <figure class="case__figure">
+      <button class="case__zoom" type="button" data-zoom="${i}" aria-label="Enlarge: ${m.alt}">
+        <img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" />
+      </button>
+      ${m.caption ? `<figcaption>${m.caption}</figcaption>` : ''}
+    </figure>`;
 }
 
-export async function showProject(projectId, lenis) {
-  // Clean up any lingering state from a previous project (covers rapid re-navigation)
-  if (_cleanup) { _cleanup(); _cleanup = null; }
-
-  _currentId = projectId;
-  container.hidden = false;
-  container.innerHTML = '<div class="project-page__loading"></div>';
-
-  try {
-    const project = await fetchProject(projectId);
-    if (_currentId !== projectId) return;
-    await render(project, lenis);
-  } catch (err) {
-    container.innerHTML = `<p class="project-page__error">Could not load project.</p>`;
-    console.warn('[project-page]', err.message);
-  }
-}
-
-// Footer row markup ("More Work"). Excludes currentId.
-function renderProjectRows(projects, currentId) {
-  const arrowSvg = `<svg class="project-footer__arrow" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 18H28.5M28.5 18L19.5 9M28.5 18L19.5 27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  return projects
-    .filter(p => p.id !== currentId)
-    .map(p => {
-      const meta = [p.role, p.period].filter(Boolean).join(' · ');
-      const bg = `
-      <div class="project-footer__row-bg">
-        ${p.hero ? `<img src="${p.hero}" alt="" loading="lazy" />` : ''}
-      </div>`;
-      const titleGroup = `
-      <div class="project-footer__title-group">
-        <span class="project-footer__title">${p.title}</span>
-        ${meta ? `<span class="project-footer__role">${meta}</span>` : ''}
-      </div>`;
-      // Coming Soon — non-clickable row, label in place of the arrow
-      if (p.comingSoon) {
-        return `
-    <div class="project-footer__row project-footer__row--soon">
-      ${bg}
-      ${titleGroup}
-      <span class="project-footer__soon">Coming Soon</span>
+function compare({ before, after }) {
+  return `
+    <div class="compare" data-compare>
+      <img src="${before.src}" alt="${before.alt}" loading="lazy" decoding="async" />
+      <img class="compare__after" src="${after.src}" alt="${after.alt}" loading="lazy" decoding="async" />
+      <span class="compare__divider" aria-hidden="true"></span>
+      <span class="compare__tag compare__tag--before" aria-hidden="true">Before</span>
+      <span class="compare__tag compare__tag--after" aria-hidden="true">After</span>
+      <input class="compare__range" type="range" min="0" max="100" value="50" aria-label="Compare before and after" />
     </div>`;
-      }
-      return `
-    <a class="project-footer__row" href="#/work/${p.id}">
-      ${bg}
-      ${titleGroup}
-      ${arrowSvg}
-    </a>`;
-    })
-    .join('');
 }
 
-// Burger menu rows — compact pills. One markup, two layouts (CSS-driven):
-//   • Desktop — pills open as a row on the header line; the burger fades out and
-//     the close (X) button is the right-most item here. Contact is hidden (the
-//     flying/nav Contact pill is used instead).
-//   • Mobile — the burger itself is the X toggle and the list cascades below it;
-//     the close button is hidden and Contact joins the list.
-// The close button is a .project-menu__item, so it inherits the row's close-on-
-// click wiring for free. Order (rows → contact → close) puts close right-most.
-function renderMenuRows(projects, currentId) {
-  // --i drives the mobile stagger, set in visual top-to-bottom order.
-  // Coming-soon projects are omitted — they're not navigable.
-  const items = projects.filter(p => p.id !== currentId && !p.comingSoon);
-  const rows = items.map((p, k) => `
-    <a class="project-menu__item" href="#/work/${p.id}" style="--i:${k + 1}">
-      <span class="project-menu__label">${p.title}</span>
-    </a>`).join('');
-  // Contact lives in the menu on mobile only (desktop uses the flying button)
-  const contact = `
-    <a class="project-menu__item project-menu__item--contact" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l" aria-label="Send Mirko an email" style="--i:${items.length + 1}">
-      <span class="project-menu__label">Contact</span>
-    </a>`;
-  // Desktop close (X) — right-most pill; hidden on mobile (burger is the X)
-  const closeSvg = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  const close = `
-    <button class="project-menu__item project-menu__item--close" type="button" aria-label="Close menu" style="--i:0">
-      <span class="project-menu__label">${closeSvg}</span>
-    </button>`;
-  return rows + contact + close;
-}
+function render(p) {
+  // Flat list of zoomable images → one lightbox sequence for the page
+  const zoomables = [];
+  const ids = new Map(p.sections.map(s => [s, slug(s.heading)]));
+  const sections = p.sections.map(s => {
+    const id = ids.get(s);
+    const media = (s.media || []).map(m => {
+      if (m.wide) return figure(m);
+      zoomables.push(m);
+      return figure(m, zoomables.length - 1);
+    });
+    return `
+      <section class="case__section" id="${id}" aria-labelledby="${id}-h">
+        <p class="case__stage">${s.stage}</p>
+        <h2 class="case__heading" id="${id}-h">${s.heading}</h2>
+        <div class="case__text">${s.body.map(b => `<p>${b}</p>`).join('')}</div>
+        ${s.pull ? `<p class="case__pull">${s.pull}</p>` : ''}
+        ${media.length ? `<div class="case__media case__media--n${media.length}">${media.join('')}</div>` : ''}
+        ${s.compare ? compare(s.compare) : ''}
+      </section>`;
+  }).join('');
 
-async function render(project, lenis) {
+  // TOC grouped by stage (stages repeat across consecutive sections)
+  const groups = [];
+  p.sections.forEach(s => {
+    const last = groups.at(-1);
+    if (last && last.stage === s.stage) last.items.push(s);
+    else groups.push({ stage: s.stage, items: [s] });
+  });
+  const toc = groups.map(g => `
+    <p class="case__toc-stage">${g.stage}</p>
+    <ol>${g.items.map(s => `<li><a href="#${ids.get(s)}" data-toc="${ids.get(s)}">${s.heading}</a></li>`).join('')}</ol>`).join('');
 
-  const allProjects = await getAllProjects();
-  const footerRows = renderProjectRows(allProjects, project.id);
+  const all = caseStudies();
+  const next = all[(all.findIndex(c => c.id === p.id) + 1) % all.length];
 
-  container.innerHTML = `
-    <article class="project-page">
-      <section class="project-page__hero" aria-label="Project hero">
-        <div class="project-page__hero-img-wrap">
-          <img class="project-page__hero-img" src="${project.hero.src}" alt="${project.hero.alt}" />
-        </div>
-        <div class="project-page__info-card">
-          <div class="project-page__info-header">
-            <div class="project-page__info-title-group">
-              <p class="project-page__info-title">${project.title}</p>
-              <p class="project-page__info-role">${project.role} · ${project.period}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <div class="project-page__content">
-        <div class="project-page__body">
-          ${project.sections.map(renderSection).join('')}
+  view.innerHTML = `
+    <article class="case">
+      <a class="case__back" href="#/" data-back>${arrow('left')} All work</a>
+      <header class="case__head">
+        <p class="case__company">${p.company}, ${p.period}</p>
+        <h1 class="case__title">${p.title}</h1>
+        <p class="case__summary">${p.summary}</p>
+      </header>
+      <dl class="case__meta">
+        ${p.meta.map(m => `<div><dt>${m.label}</dt><dd>${m.value}</dd></div>`).join('')}
+      </dl>
+      <div class="case__hero" data-vt="media">
+        <img src="${p.hero.src}" alt="${p.hero.alt}" decoding="async" fetchpriority="high" />
+      </div>
+      <div class="case__body">
+        <nav class="case__toc" aria-label="On this page">${toc}</nav>
+        <div class="case__content">
+          ${sections}
+          <section class="case__results" aria-labelledby="results-h">
+            <h2 class="case__results-title" id="results-h">Results</h2>
+            <ul class="case__results-list">
+              ${p.results.map(r => `<li class="case__result"><strong>${r.title}</strong><span>${r.detail}</span></li>`).join('')}
+            </ul>
+            ${(p.todo || []).map(todoNote).join('')}
+          </section>
         </div>
       </div>
-      <nav class="project-footer" aria-label="Other projects">
-        <span class="project-footer__label">More Work</span>
-        ${footerRows}
-      </nav>
-      <div class="project-menu__backdrop" hidden></div>
-      <nav class="project-menu" id="project-menu" aria-label="Projects" hidden>
-        ${renderMenuRows(allProjects, project.id)}
-      </nav>
+      ${next ? `
+      <a class="case__next" href="#/work/${next.id}" data-project="${next.id}">
+        <div>
+          <p class="case__next-label">Next case study</p>
+          <p class="case__next-title">${next.title}</p>
+        </div>
+        ${frameMedia(next.cover)}
+      </a>` : ''}
     </article>`;
 
-  decodeEmails(container); // wire the menu's obfuscated contact mailto
-
-  // Reveals + contact button + burger menu + image gallery
-  const cleanups = [
-    initProjectReveals(),
-    initFooterArrows(),
-    initBurgerMenu(lenis),
-    initProjectGallery(),
-    initHeroParallax(lenis),
-    initHeaderCollapse(lenis),
-  ];
-  showForProject();
-
-  _cleanup = () => cleanups.forEach(fn => fn?.());
+  document.title = `${p.title} | Mirko Aus`;
+  wire(zoomables);
 }
 
-// ── Hero image parallax — drifts slower than content as it scrolls away ──
-// Mirrors the index hero feel: foreground leaves, background lags behind.
-
-function initHeroParallax(lenis) {
-  if (noMotion) return null;
-
-  const hero = container.querySelector('.project-page__hero');
-  const img  = container.querySelector('.project-page__hero-img');
-  if (!hero || !img) return null;
-
-  const FACTOR = 0.4; // 0 = scrolls with content, 1 = fully fixed
-  img.style.willChange = 'transform';
-
-  function onScroll() {
-    // Only animate while hero still touches the viewport
-    if (hero.getBoundingClientRect().bottom <= 0) return;
-    const y = scrollPos(lenis) * FACTOR;
-    img.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
-  }
-
-  const off = onScrollOf(lenis, onScroll);
-  onScroll();
-
-  return () => {
-    off();
-    img.style.willChange = '';
-    img.style.transform = '';
-  };
-}
-
-// ── Header pill collapse on scroll ────────────────────
-// Scroll down → Home (and the flying Contact on desktop) retract to icon-only
-// circles, masking the label. Scroll up, return to the top, or hover any header
-// button → labels reveal. Mobile shows Home only (Contact lives in the menu).
-
-function initHeaderCollapse(lenis) {
-  if (noMotion) return null;
-
-  const navBack = document.querySelector('.nav__back');
-  if (!navBack) return null;
-
-  // Offset that carries the (flush-left) arrow to the 54px circle's centre.
-  const arrow = navBack.querySelector('.nav__back-arrow');
-  if (arrow) {
-    const padL = parseFloat(getComputedStyle(navBack).paddingLeft) || 0;
-    const w = arrow.getBoundingClientRect().width || 18;
-    navBack.style.setProperty('--icon-shift', `${(27 - (padL + w / 2)).toFixed(2)}px`);
-  }
-
-  let collapsed = false;
-  let lastY = scrollPos(lenis);
-  // Mistake space: need this much consistent-direction scroll before toggling,
-  // applied symmetrically (collapse on down, reveal on up). Any reversal resets
-  // the budget, so small jitters never flip it.
-  const THRESHOLD = 160;
-  let accum = 0;
-
-  const apply = () => {
-    navBack.classList.toggle('nav__back--collapsed', collapsed);
-    setContactCollapsed(collapsed);
-  };
-
-  const onScroll = () => {
-    const y = scrollPos(lenis);
-    const dy = y - lastY;
-    lastY = y;
-    if (y <= 4) { collapsed = false; accum = 0; apply(); return; } // top → full
-    if (collapsed) {
-      accum = dy < 0 ? accum + dy : 0;           // need upward intent to reveal
-      if (accum <= -THRESHOLD) { collapsed = false; accum = 0; apply(); }
-    } else {
-      accum = dy > 0 ? accum + dy : 0;           // need downward intent to collapse
-      if (accum >= THRESHOLD) { collapsed = true; accum = 0; apply(); }
-    }
-  };
-
-  // Hover any header button → reveal and latch open; only a fresh downward
-  // scroll past the deadzone collapses again.
-  const HEADER_SEL = '.nav__back, .nav__burger, .btn-cta--nav';
-  const canHover = window.matchMedia('(hover: hover)').matches;
-  const navCta = document.querySelector('.nav__cta');
-
-  // main.js sized the cursor-fill ball for the collapsed circle; once hover
-  // expands the pill to its full width the ball would only cover the circle.
-  // Recompute it against the expanded box so it grows from the cursor and
-  // fills the whole pill. Home keeps its left edge; Contact slides back to the
-  // nav anchor. (Both expand to the .nav__cta width token.)
-  const refillExpanded = (btn, x, y) => {
-    const cur = btn.getBoundingClientRect();
-    const a = navCta ? navCta.getBoundingClientRect() : null;
-    const width = a ? a.width : cur.width;
-    const left = btn.classList.contains('btn-cta--nav') && a ? a.left : cur.left;
-    const px = x - left, py = y - cur.top, h = cur.height;
-    const rad = Math.max(
-      Math.hypot(px, py), Math.hypot(width - px, py),
-      Math.hypot(px, h - py), Math.hypot(width - px, h - py),
-    );
-    btn.style.setProperty('--btn-mx', `${px}px`);
-    btn.style.setProperty('--btn-my', `${py}px`);
-    btn.style.setProperty('--btn-r', `${rad}px`);
-  };
-
-  const onOver = (e) => {
-    const btn = e.target.closest?.(HEADER_SEL);
-    if (!btn || btn.contains(e.relatedTarget)) return;
-    const wasCollapsed = collapsed;
-    collapsed = false; accum = 0; apply();
-    // Only the two collapsible pills resize on hover; the burger never does.
-    if (wasCollapsed && canHover && !btn.classList.contains('nav__burger')) {
-      refillExpanded(btn, e.clientX, e.clientY);
-    }
-  };
-
-  const off = onScrollOf(lenis, onScroll);
-  document.addEventListener('pointerover', onOver);
-
-  return () => {
-    off();
-    document.removeEventListener('pointerover', onOver);
-    navBack.classList.remove('nav__back--collapsed');
-    setContactCollapsed(false);
-  };
-}
-
-// ── Content images → gallery overlay ──────────────────
-// Every content image on the page becomes one filmstrip entry.
-
-function initProjectGallery() {
-  const figures = [...container.querySelectorAll(
-    '.project-page__section-image, .project-page__section--image-only'
-  )];
-  if (!figures.length) return null;
-
-  const list = figures.map(fig => {
-    const img = fig.querySelector('img');
-    const cap = fig.querySelector('figcaption');
-    return {
-      src: img.getAttribute('src'),
-      alt: img.getAttribute('alt') || '',
-      caption: cap ? cap.textContent : '',
-    };
+function wire(zoomables) {
+  view.querySelectorAll('[data-zoom]').forEach(btn => {
+    btn.addEventListener('click', () => openLightbox(zoomables, Number(btn.dataset.zoom)));
   });
 
-  const handlers = [];
-  figures.forEach((fig, i) => {
-    fig.classList.add('is-zoomable');
-    const onClick = () => openGallery(list, i, fig);
-    fig.addEventListener('click', onClick);
-    handlers.push({ fig, onClick });
+  // Before/after: range input drives --pos (keyboard accessible)
+  view.querySelectorAll('[data-compare]').forEach(el => {
+    const range = el.querySelector('input');
+    range.addEventListener('input', () => el.style.setProperty('--pos', `${range.value}%`));
   });
 
-  return () => handlers.forEach(({ fig, onClick }) =>
-    fig.removeEventListener('click', onClick));
-}
-
-// ── Footer arrow hover (mirrors See-More) ─────────────
-
-function initFooterArrows() {
-  if (typeof gsap === 'undefined') return null;
-  const rows = container.querySelectorAll('.project-footer__row');
-  if (!rows.length) return null;
-
-  const handlers = [];
-
-  rows.forEach(row => {
-    const arrow = row.querySelector('.project-footer__arrow');
-    if (!arrow) return;
-
-    const onEnter = () => {
-      gsap.killTweensOf(arrow);
-      gsap.timeline()
-        .to(arrow, { x: 24, opacity: 0, duration: 0.25, ease: 'power3.in' })
-        .set(arrow, { x: -16 })
-        .to(arrow, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
-    };
-
-    const onLeave = () => {
-      gsap.killTweensOf(arrow);
-      gsap.to(arrow, { x: 0, opacity: 1, duration: 0.3, ease: 'power2.out' });
-    };
-
-    row.addEventListener('mouseenter', onEnter);
-    row.addEventListener('mouseleave', onLeave);
-    handlers.push({ row, onEnter, onLeave });
-  });
-
-  return () => {
-    handlers.forEach(({ row, onEnter, onLeave }) => {
-      row.removeEventListener('mouseenter', onEnter);
-      row.removeEventListener('mouseleave', onLeave);
+  // Wide flow: drag to pan with mouse (touch scrolls natively)
+  view.querySelectorAll('[data-pan]').forEach(el => {
+    let x0 = 0, s0 = 0, down = false;
+    el.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      down = true; x0 = e.clientX; s0 = el.scrollLeft;
+      el.classList.add('is-dragging');
     });
-  };
-}
-
-// ── Section renderer ──────────────────────────────────
-
-const paras = content => content.map(p => `<p>${p}</p>`).join('');
-const img   = ({ src, alt }) => `<img src="${src}" alt="${alt}" loading="lazy" />`;
-
-// Grid of plain figures, optional per-image caption
-const figureRow = (images) => images.map(im => `
-  <figure>
-    ${img(im)}
-    ${im.caption ? `<figcaption>${im.caption}</figcaption>` : ''}
-  </figure>`).join('');
-
-const textOnly = s => `<div class="project-page__section project-page__section--text-only">
-  ${paras(s.content)}
-</div>`;
-
-const imageOnly = s => `<figure class="project-page__section project-page__section--image-only">
-  <div class="project-page__image-frame">${img(s)}</div>
-  ${s.caption ? `<figcaption>${s.caption}</figcaption>` : ''}
-</figure>`;
-
-// image-left / image-right share markup — only the layout modifier differs
-const imageText = (s, side) => `<div class="project-page__section project-page__section--img-text-${side}">
-  <div class="project-page__section-text">${paras(s.content)}</div>
-  <figure class="project-page__section-image">${img(s)}</figure>
-</div>`;
-
-function renderSection(section) {
-  switch (section.type) {
-    case 'image-left':  return imageText(section, 'left');
-    case 'image-right': return imageText(section, 'right');
-    case 'image-only':
-    case 'image':       return imageOnly(section);   // 'image' = legacy
-    case 'text-only':
-    case 'text':        return textOnly(section);    // 'text' = legacy
-
-    // Two images side-by-side, paragraph below the first (left) image
-    case 'pair-text':
-      return `<div class="project-page__section project-page__section--pair-text">
-        <div class="project-page__pair-imgs">
-          ${section.images.map(im => `<figure class="project-page__section-image">${img(im)}</figure>`).join('')}
-        </div>
-        <div class="project-page__pair-textblock">${paras(section.content)}</div>
-      </div>`;
-
-    // Legacy compat
-    case 'image-pair':
-      return `<div class="project-page__section project-page__section--image-pair">${figureRow(section.images)}</div>`;
-
-    // Three images side-by-side, no text
-    case 'image-trio':
-      return `<div class="project-page__section project-page__section--image-trio">${figureRow(section.images)}</div>`;
-
-    default:
-      return '';
-  }
-}
-
-// ── Scroll reveals on content sections ────────────────
-
-function initProjectReveals() {
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return null;
-  if (noMotion) return null;
-
-  const sections = container.querySelectorAll('.project-page__section');
-  if (!sections.length) return null;
-
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-  gsap.set(sections, { y: 50, opacity: 0 });
-
-  // Snapshot triggers before batch so we can diff after
-  const before = new Set(ScrollTrigger.getAll());
-
-  ScrollTrigger.batch(sections, {
-    onEnter: batch => gsap.to(batch, {
-      y: 0, opacity: 1,
-      duration: 0.9,
-      stagger: 0.12,
-      ease: 'power3.out',
-    }),
-    start: isMobile ? '10% bottom' : 'top 95%',
-    once: true,
+    el.addEventListener('pointermove', (e) => { if (down) el.scrollLeft = s0 - (e.clientX - x0); });
+    const end = () => { down = false; el.classList.remove('is-dragging'); };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointerleave', end);
+    el.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
-  const batchTriggers = ScrollTrigger.getAll().filter(t => !before.has(t));
+  // TOC: in-page links scroll without touching the route hash
+  const toc = view.querySelector('.case__toc');
+  toc.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-toc]');
+    if (!a) return;
+    e.preventDefault();
+    document.getElementById(a.dataset.toc).scrollIntoView({ block: 'start' });
+  });
 
-  // Content images reserve their height (16:9 aspect-ratio in CSS) before they
-  // load, so layout never shifts and trigger positions are stable from the
-  // first refresh — no per-image re-refresh needed (that caused a scroll hitch).
-  ScrollTrigger.refresh();
-
-  return () => {
-    batchTriggers.forEach(t => t.kill());
-  };
+  // TOC: highlight the section crossing the upper third of the viewport
+  const links = new Map([...toc.querySelectorAll('[data-toc]')].map(a => [a.dataset.toc, a]));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      links.forEach(a => a.classList.remove('is-current'));
+      links.get(en.target.id)?.classList.add('is-current');
+    });
+  }, { rootMargin: '-30% 0px -65% 0px' });
+  view.querySelectorAll('.case__section').forEach(s => io.observe(s));
+  cleanup.push(() => io.disconnect());
 }
 
-
-// ── Burger menu: reveal + open/close ──────────────────
-
-function initBurgerMenu(lenis) {
-  const burger   = document.querySelector('.nav__burger');
-  const panel    = container.querySelector('.project-menu');
-  const backdrop = container.querySelector('.project-menu__backdrop');
-  if (!burger || !panel || !backdrop) return null;
-
-  burger.hidden = false;
-  let open = false;
-
-  function setOpen(next) {
-    if (next === open) return;
-    open = next;
-    burger.setAttribute('aria-expanded', String(open));
-    if (open) {
-      // --open drives both layouts: desktop fades the burger out (the row's
-      // close X takes over), mobile morphs the burger into the X in place
-      burger.classList.add('nav__burger--open');
-      scrollAccum = 0; lenisAnchor = null;  // fresh intent budget per open
-      panel.hidden = false;
-      backdrop.hidden = false;
-      // force reflow so the closed state is committed as the transition's
-      // starting point — a single rAF batches with the unhide and skips it
-      void panel.offsetWidth;
-      panel.classList.add('project-menu--open');
-      backdrop.classList.add('project-menu__backdrop--open');
-    } else {
-      // reverse in sync: row collapses while the burger fades/morphs back
-      panel.classList.remove('project-menu--open');
-      backdrop.classList.remove('project-menu__backdrop--open');
-      burger.classList.remove('nav__burger--open');
-      // hide after the morph completes so it leaves the a11y tree
-      setTimeout(() => { if (!open) { panel.hidden = true; backdrop.hidden = true; } }, 450);
-    }
+export async function showProject(id) {
+  hideProject();
+  view.hidden = false;
+  try {
+    render(await loadProject(id));
+  } catch {
+    view.innerHTML = `
+      <div class="case case__error">
+        <h1 class="case__title">Case study not found</h1>
+        <p>This project doesn't have a case study yet.</p>
+        <a class="btn btn--primary" href="#/">Back to all work</a>
+      </div>`;
   }
-
-  // Close on a deliberate scroll, not a stray trackpad/touch nudge. Accumulate
-  // intent and only close past a threshold; reset whenever the menu reopens.
-  const CLOSE_THRESHOLD = 60;
-  let scrollAccum = 0;
-  let lenisAnchor = null;
-  function bumpScroll(amount) {
-    if (!open || !Number.isFinite(amount)) return;
-    scrollAccum += Math.abs(amount);
-    if (scrollAccum >= CLOSE_THRESHOLD) setOpen(false);
-  }
-
-  const onBurger   = () => setOpen(!open);
-  const onBackdrop = () => setOpen(false);
-  const onRow      = () => setOpen(false);              // navigation happens via href
-  const onKey      = (e) => { if (e.key === 'Escape' && open) { setOpen(false); burger.focus(); } };
-  const onWheel    = (e) => bumpScroll(e.deltaY);
-  const onLenis    = (e) => {
-    const y = e && typeof e.scroll === 'number' ? e.scroll : (lenis ? lenis.scroll : 0);
-    if (lenisAnchor === null) lenisAnchor = y;
-    bumpScroll(y - lenisAnchor);
-    lenisAnchor = y;
-  };
-
-  burger.addEventListener('click', onBurger);
-  backdrop.addEventListener('click', onBackdrop);
-  panel.querySelectorAll('.project-menu__item').forEach(r => r.addEventListener('click', onRow));
-  document.addEventListener('keydown', onKey);
-  window.addEventListener('wheel', onWheel, { passive: true });
-  window.addEventListener('touchmove', onWheel, { passive: true });
-  if (lenis) lenis.on('scroll', onLenis);
-
-  // Visible for the whole project page
-  burger.classList.add('nav__burger--visible');
-
-  return () => {
-    setOpen(false);
-    burger.removeEventListener('click', onBurger);
-    backdrop.removeEventListener('click', onBackdrop);
-    document.removeEventListener('keydown', onKey);
-    window.removeEventListener('wheel', onWheel);
-    window.removeEventListener('touchmove', onWheel);
-    if (lenis) lenis.off('scroll', onLenis);
-    burger.classList.remove('nav__burger--visible', 'nav__burger--open');
-    burger.setAttribute('aria-expanded', 'false');
-    burger.hidden = true;
-  };
 }
-
-// ── Public: hide project ──────────────────────────────
 
 export function hideProject() {
-  _currentId = null;
-  if (_cleanup) { _cleanup(); _cleanup = null; }
-  container.hidden = true;
-  container.innerHTML = '';
+  cleanup.forEach(fn => fn());
+  cleanup = [];
+  view.hidden = true;
+  view.innerHTML = '';
+  document.title = 'Mirko Aus — Product & UX Designer';
 }

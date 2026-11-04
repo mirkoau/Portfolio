@@ -2,16 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# portfoolio — Mirko's Portfolio
+# portfoolio v2 — Mirko's Portfolio (product/corporate version)
 
 ## Context
-Senior UX Designer @ Remedy Entertainment. Personal portfolio site.
-Design delivered from Figma. Implementation guided by `PLAN.md` (phased, phases 1–8 complete).
+Senior UX Designer @ Remedy Entertainment. v2 = product-centered, corporate redesign of the live portfolio (`../portfoolio`, mirkoaus.com). Audience: product/SaaS hiring managers. `PLAN.md` describes v1 and is historical.
+
+**Git: `origin` is the LIVE site repo. Commit locally only — never push** until a separate remote is set up. This overrides the auto-push rule below.
 
 ## Site Goals
-- Simple, premium aesthetic
-- Smooth organic microinteractions
-- Fast, lightweight, no bloat
+- Light, editorial SaaS look; calm, credible, not templated
+- Smart microinteractions that answer user actions
+- Fast, lightweight, zero runtime deps
 
 ## Development
 No build step. Serve with any static server:
@@ -20,11 +21,11 @@ npx serve .
 # or VS Code Live Server
 # or python -m http.server 8080
 ```
-All deps loaded via CDN (Three.js 0.160.1, GSAP 3.12.5 + ScrollTrigger, Lenis 1.0.42) — no `npm install` needed. PP Neue Montreal is self-hosted in `assets/fonts/`.
+No runtime deps (Three.js/GSAP/Lenis from v1 removed). PP Neue Montreal is self-hosted in `assets/fonts/`. TODO notes in content JSON (`todo` fields) render only on localhost.
 
 ## Stack
 - Pure HTML5 + CSS3 + Vanilla JS (ES modules)
-- Three.js, GSAP, Lenis via CDN
+- Native APIs: View Transitions, IntersectionObserver, ResizeObserver, `<dialog>`
 - No framework, no bundler required
 
 ## Code Conventions
@@ -79,47 +80,32 @@ moving on. Fix any type errors or missing imports immediately.
 
 ### File Structure
 ```
-index.html              — SPA shell, all sections + project-view container
-css/style.css           — Global styles, tokens, main page sections
-css/project-page.css    — Project detail page (hero zone + content zone)
-css/gallery.css         — Overlay image gallery
-js/main.js              — Orchestrator: init, routing, index/project toggle
-js/hero.js              — Three.js liquid gradient shader + floating cards
-js/scroll.js            — Lenis smooth scroll + hero snap + ScrollTrigger reveals
-js/content.js           — Fetches data.json, renders work/personal/about sections
-js/project-page.js      — Project detail: render, snap scroll, reveals, cleanup
-js/page-transition.js   — FLIP animation between index ↔ project views
-js/lets-talk.js         — Flying Contact button (nav ↔ about), project page exports
-js/router.js            — Hash-based SPA routing (#/work/{id})
-js/gallery.js           — Personal work overlay gallery
-js/cursor.js            — Custom cursor (velocity-reactive)
-content/data.json       — Main content: work entries, personal items, about
-content/{id}.json       — Per-project detail data (sections, tags, hero)
+index.html              — SPA shell: nav, hero (static), section containers, case-study view, lightbox, footer
+css/style.css           — Tokens, base, nav, hero, overview, work, approach, freelance, about, footer, lightbox
+css/project-page.css    — Case study page
+js/main.js              — Orchestrator: init, email decode/copy, nav state, view transitions, routing
+js/router.js            — Hash routing (#/work/{id}); everything else = index
+js/content.js           — Fetches data.json, renders index sections; shared helpers (isDev, todoNote, frameMedia)
+js/hero.js              — Resizable headline selection frame (drag/arrow keys, live W × H tag)
+js/project-page.js      — Case study: fetch/cache content/{id}.json, render, TOC spy, compare slider, pan, zoom
+js/gallery.js           — <dialog> lightbox (freelance strip + case study images)
+content/data.json       — overview, work (companies → projects), approach, freelance, about
+content/{id}.json       — Case study: meta, hero, sections[{stage, heading, body, pull?, media?, compare?}], results, todo
 ```
 
 ### Key Patterns
-- **Routing:** Hash-based (`#/work/alan-wake-2`). `router.js` parses, `main.js` toggles views.
-- **Shader:** Three.js liquid gradient (simplex noise FBM + domain warping). Fixed canvas z-index:-2. `hero.hideCards()`/`showCards()` keeps shader running on project pages while hiding card meshes.
-- **Scroll:** Lenis smooth scroll + hero snap (wheel/touch intercepted, snaps to next section). Both index and project pages use snap behavior.
-- **Contact button:** Single flying `<a>` element. State machine: hidden → nav → about. `showForProject()`/`hideForProject()` exported for project pages.
-- **FLIP transitions:** `page-transition.js` captures source card rect, clones image, animates to/from project hero.
-- **Content sections (project page):** 4 types: `image-left`, `image-right`, `image-only`, `text-only`. Legacy types (`text`, `image`, `image-pair`) still supported.
-- **Scroll reveals:** GSAP ScrollTrigger batch, `start: '20% bottom'`, staggered. Project page reveals are cleaned up in `hideProject()`.
+- **Design motif:** Figma selection frame. Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
+- **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
+- **Media:** `media` array renders count-aware grid (n1–n4). `wide: true` = horizontal pan strip. `compare: {before, after}` = range-driven slider.
+- **Transitions:** View Transitions API morphs clicked card image → case hero (`view-transition-name: project-media`) and back. Falls back to instant swap; skipped on reduced motion.
+- **Prefetch:** case JSON fetched on card hover.
+- **Email:** base64 `data-c`/`data-d` decoded at runtime; copy button with confirmation + live region.
 
-### Design Tokens
-Defined in `css/style.css :root`. LAB color space. Key tokens:
-- Colors: `--color-bg`, `--color-blue`, `--color-orange`, `--color-teal`
-- Typography: `--font-display` (Archivo Narrow), `--font-body` (PP Neue Montreal)
-- Spacing: 8px base (`--space-xs` through `--space-2xl`)
-- Layout: `--gutter` (80/40/20px responsive), `--col-offset`, `--nav-height`
-- Animation: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`
-
-### Data Flow
-1. `content.js` fetches `data.json` → renders work/personal/about into DOM
-2. Click project → `captureSource()` + `navigate(#/work/{id})`
-3. `main.js` hides index, calls `showProject(id, lenis)`
-4. `project-page.js` fetches `content/{id}.json` → renders hero + content zones
-5. Back → `transitionToIndex()` FLIP → `hideProject()` cleanup → `showIndex()`
+### Design Tokens (`css/style.css :root`)
+- Color: `--paper #f4f5f7`, `--surface #fff`, `--ink #16181d`, `--ink-2/-3` secondary text, `--line`, `--select #1a6bff` (only accent; selection/focus/active)
+- Type: `--font` PP Neue Montreal only; scale `--text-sm` … `--text-display`
+- Space: 8px base `--space-2xs` … `--space-2xl`; layout `--max 1280px`, `--gutter`, `--nav-height`
+- Motion: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`
 
 ## Status
-Work subpage implemented: full-viewport hero with shader, info card with tags, 4 content section layouts, snap scroll, Contact button on content scroll. Tags also added to main page Work section.
+v2 redesign implemented. Open: confirm tools list + metrics (see TODO notes on localhost), convert large PNGs to WebP.

@@ -1,57 +1,76 @@
 {
+  "overview": {
+    "columns": [
+      {
+        "title": "Worked on",
+        "items": [
+          { "name": "AAA games", "detail": "Control Resonant, FBC: Firebreak, Alan Wake 2" },
+          { "name": "Robotic parcel lockers", "detail": "Kiosk touchscreens, mobile app, back office, AR assembly tooling" },
+          { "name": "Manufacturing analytics SaaS", "detail": "Web dashboards for managers, tablet app for operators" },
+          { "name": "Festival branding", "detail": "Identity and marketing for Estonian music festivals" }
+        ]
+      },
+      {
+        "title": "What I did",
+        "items": [
+          { "name": "UX and flows", "detail": "Information architecture, user flows, edge cases" },
+          { "name": "UI and interaction", "detail": "Menus, HUDs, dashboards, touch interfaces" },
+          { "name": "Design systems", "detail": "Component libraries, specs, handoff" },
+          { "name": "Design lead", "detail": "Team planning, roadmaps, stakeholder alignment" },
+          { "name": "Prototyping", "detail": "Interactive prototypes and front-end builds" },
+          { "name": "Brand and motion", "detail": "Rebrand, illustration, animated icons" }
+        ]
+      },
+      {
+        "title": "Tools",
+        "items": [
+          { "name": "Figma", "detail": "Design, prototyping, component libraries" },
+          { "name": "After Effects and Lottie", "detail": "UI motion and animated icons" },
+          { "name": "Illustrator and Photoshop", "detail": "Illustration, brand assets" },
+          { "name": "HTML, CSS, JavaScript", "detail": "Prototypes and production front-end" },
+          { "name": "Claude Code and AI tools", "detail": "Building and testing ideas in the real product" },
+          { "name": "Jira and Confluence", "detail": "Planning, specs, documentation" }
+        ],
+        "todo": "Confirm tools list. After Effects, Illustrator/Photoshop, Jira/Confluence are inferred. Add engine/editor tools if shareable (e.g. Northlight)."
+      }
+    ]
+  },
+
   "work": [
     {
       "id": "remedy",
       "company": "Remedy Entertainment",
-      "role": "Senior UX Designer",
-      "period": "2022–...",
+      "role": "UX Designer to Lead UI/UX Designer",
+      "period": "2022–present",
+      "about": "Finnish AAA studio behind Alan Wake and Control.",
       "projects": [
         {
           "id": "control-resonant",
           "title": "Control Resonant",
-          "role": "Senior UX Designer · 2026",
+          "role": "Senior UX Designer",
+          "period": "2026",
           "comingSoon": true,
-          "tags": ["Interaction Design", "UI Design", "Game Design", "Content Creation"],
-          "body": [
-            "I joined Control Resonant deep into production as Senior UX designer, focused on improving problematic interactions and mechanics.",
-            "I helped push several features to shipping quality, among them the character customization screen, HUD notifications, upgrade trees, and crafting features."
-          ],
-          "gallery": [
-            { "src": "assets/images/control-resonant_cover.png", "alt": "Control Resonant UI/UX work", "caption": "Control Resonant — overview" }
-          ]
+          "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
+          "did": ["Interaction design", "UI design", "Game design"],
+          "cover": { "src": "assets/images/control-resonant_cover.png", "alt": "Control Resonant key art" }
         },
         {
           "id": "fbc-firebreak",
           "title": "FBC: Firebreak",
-          "role": "Lead UI/UX Designer · 2023–2026",
-          "tags": ["Lead Design", "Interaction Design", "UI Design", "Project Management", "Stakeholder Management"],
-          "body": [
-            "Lead UI/UX designer from preproduction through to post-launch. A team of two alongside a UI artist, working hand in hand with the UI programmers.",
-            "I owned the full UI: structure, flows, HUD, menus, and visual style, plus the production planning behind it. Proudest of the main menu, Remedy's first to live inside a 3D environment."
-          ],
-          "gallery": [
-            { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak UI/UX work", "caption": "FBC: Firebreak — overview of UI systems" },
-            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak additional work", "caption": "FBC: Firebreak — interaction design detail" },
-            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak HUD design", "caption": "FBC: Firebreak — HUD layout & hierarchy" },
-            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak menu systems", "caption": "FBC: Firebreak — main menu and lobby UI" },
-            { "src": "assets/images/placeholder.svg", "alt": "FBC: Firebreak loadout screen", "caption": "FBC: Firebreak — loadout & gear selection" }
-          ]
+          "role": "Lead UI/UX Designer",
+          "period": "2023–2026",
+          "summary": "Owned the full UI of a co-op multiplayer game from preproduction to post-launch: structure, flows, HUD, menus, visual style and the production plan behind them.",
+          "did": ["Design lead", "Information architecture", "UI design", "Production planning"],
+          "cover": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" }
         },
         {
           "id": "alan-wake-2",
           "title": "Alan Wake 2",
-          "role": "UX Designer · 2022–2023",
-          "tags": ["Interaction Design", "UI Design", "Game Design", "Usability Research"],
-          "body": [
-            "UX designer supporting the game and narrative design teams, working closely with UI and game programmers. The direction was diegetic and minimalistic, with UI living inside the fiction rather than on top of it.",
-            "My work spanned the maps, the menus, and several of the game's core in-game systems, from the case board and inventory to the weapon quick-select and photo mode."
-          ],
-          "gallery": [
-            { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 UI/UX work", "caption": "Alan Wake 2 — UI overview" },
-            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 additional work", "caption": "Alan Wake 2 — interaction systems" },
-            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 inventory UI", "caption": "Alan Wake 2 — inventory & weapon wheel" },
-            { "src": "assets/images/placeholder.svg", "alt": "Alan Wake 2 case board", "caption": "Alan Wake 2 — case board UI exploration" }
-          ]
+          "role": "UX Designer",
+          "period": "2022–2023",
+          "summary": "Designed core systems for a narrative survival-horror game: maps, case board, inventory, weapon quick-select and an award-winning photo mode.",
+          "did": ["Interaction design", "UI design", "Usability research"],
+          "cover": { "src": "assets/images/alanwake-cover.jpg", "alt": "Alan Wake 2 case board" }
         }
       ]
     },
@@ -60,82 +79,75 @@
       "company": "Cleveron",
       "role": "UI/UX Designer",
       "period": "2020–2022",
+      "about": "Robotic parcel lockers, warehouse to doorstep.",
       "projects": [
         {
           "id": "cleveron-main",
-          "title": null,
-          "role": null,
-          "tags": ["Product Design", "UI Design", "UX Design", "Design Systems"],
-          "body": [
-            "In-house designer at Cleveron. I designed across the whole journey: touchscreens, the operator app, office software, and internal tooling.",
-            "I moved the team to Figma, built a component library from the ground up, and redesigned the office software so it explained itself."
-          ],
-          "gallery": [
-            { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron UI/UX work", "caption": "Cleveron — product design overview" },
-            { "src": "assets/images/cleveron_office-software.png", "alt": "Cleveron office software", "caption": "Cleveron — office software redesign" },
-            { "src": "assets/images/cleveron_component-library.png", "alt": "Cleveron component library", "caption": "Cleveron — Figma component library" }
-          ]
+          "title": "Parcel locker platform",
+          "role": "UI/UX Designer",
+          "period": "2020–2022",
+          "summary": "Designed across the whole parcel journey, built the team's first Figma component library, and redesigned back-office software that used to need a 40-page manual.",
+          "did": ["Product design", "Design system", "Enterprise UX"],
+          "cover": { "src": "assets/images/cleveron-cover.png", "alt": "Cleveron parcel locker interfaces" }
         }
       ]
     },
     {
       "id": "evocon",
       "company": "Evocon",
-      "role": "UI/UX/Visual Designer",
+      "role": "UI/UX and Visual Designer",
       "period": "2019–2020",
+      "about": "Production-monitoring SaaS for manufacturers.",
       "projects": [
         {
           "id": "evocon-main",
-          "title": null,
-          "role": null,
-          "tags": ["UI Design", "UX Design", "Visual Design", "SaaS"],
-          "body": [
-            "In-house designer at Evocon, a manufacturing SaaS. I designed for two opposite audiences: data-heavy office software for managers, and dead-simple tablet software for shop-floor operators.",
-            "I also led Evocon's rebranding, stretching into brand, illustration, and motion. In 2019, Evocon won the EAS award for Best Design Implementation."
-          ],
-          "gallery": [
-            { "src": "assets/images/evocon-cover.png", "alt": "Evocon front page desktop", "caption": "Evocon — front page desktop view" },
-            { "src": "assets/images/evocon-1.png", "alt": "Evocon design work", "caption": "Evocon — design overview" },
-            { "src": "assets/images/evocon-2.png", "alt": "Evocon design work", "caption": "Evocon — UI design" },
-            { "src": "assets/images/evocon-3.png", "alt": "Evocon design work", "caption": "Evocon — interface design" },
-            { "src": "assets/images/evocon-4.png", "alt": "Evocon design work", "caption": "Evocon — product design" },
-            { "src": "assets/images/evocon-5.png", "alt": "Evocon design work", "caption": "Evocon — visual design" },
-            { "src": "assets/images/evocon-6.png", "alt": "Evocon design work", "caption": "Evocon — design detail" },
-            { "src": "assets/images/evocon-article_image_2.png", "alt": "Evocon article image", "caption": "Evocon — article imagery" },
-            { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign" },
-            { "src": "assets/images/evocon-kodukas-uus-2.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign detail" },
-            { "src": "assets/images/evocon-kodukas-uus-3.png", "alt": "Evocon Kodukas redesign", "caption": "Evocon — Kodukas redesign view" },
-            { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon Kodukas original", "caption": "Evocon — Kodukas original design" },
-            { "src": "assets/images/evocon-kodukas-vana-2.png", "alt": "Evocon Kodukas original", "caption": "Evocon — Kodukas original detail" },
-            { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon good speed animation", "caption": "Evocon — good speed indicator" },
-            { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon slow speed animation", "caption": "Evocon — slow speed indicator" },
-            { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon microstop animation", "caption": "Evocon — microstop speed indicator" }
-          ]
+          "title": "Production analytics",
+          "role": "UI/UX and Visual Designer",
+          "period": "2019–2020",
+          "summary": "Turned factory data into clear answers for managers, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
+          "did": ["Data UX", "UI design", "Brand and motion"],
+          "cover": { "src": "assets/images/evocon-cover.png", "alt": "Evocon production dashboard" }
         }
       ]
     }
   ],
-  "personalWork": {
-    "intro": "My freelance work is mostly graphic design, branding and marketing materials for up-and-coming music festivals in Estonia. Alongside that I dabble in digital painting and vector art, a habit left over from roughly eight years of art school as a kid.",
+
+  "approach": [
+    {
+      "title": "Structure before pixels",
+      "body": "I map flows, states and edge cases first. Most complex products get simple once the structure is right, not once the screens are pretty."
+    },
+    {
+      "title": "Design that survives the build",
+      "body": "Component libraries, clear specs and daily contact with engineers. I plan the work with the team so what ships matches what was designed."
+    },
+    {
+      "title": "Test on the real thing",
+      "body": "I prototype in code and use AI tools daily. When a working build answers the question faster than a mockup, I skip the mockup."
+    }
+  ],
+
+  "freelance": {
+    "intro": "Branding and marketing for up-and-coming Estonian music festivals, plus digital painting and vector art from roughly eight years of art school.",
     "items": [
-      { "id": "p10", "src": "assets/images/funkfest-1.png", "alt": "Funkfest", "caption": "Funkfest" },
-      { "id": "p3", "src": "assets/images/personal-3.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p7", "src": "assets/images/indiefest-2.png", "alt": "Indiefest", "caption": "Indiefest" },
-      { "id": "p1", "src": "assets/images/personal-1.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p11", "src": "assets/images/funkfest-2.png", "alt": "Funkfest", "caption": "Funkfest" },
-      { "id": "p5", "src": "assets/images/personal-5.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p9", "src": "assets/images/iwe.gif", "alt": "Indiefest animation", "caption": "Indiefest" },
-      { "id": "p2", "src": "assets/images/personal-2.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p4", "src": "assets/images/personal-4.png", "alt": "Personal work", "caption": "Personal work" },
-      { "id": "p12", "src": "assets/images/delfi_illustration.webp", "alt": "Delfi illustration", "caption": "Delfi illustration" }
+      { "src": "assets/images/funkfest-1.png", "alt": "Funkfest festival poster", "caption": "Funkfest" },
+      { "src": "assets/images/indiefest-2.png", "alt": "Indiefest festival artwork", "caption": "Indiefest" },
+      { "src": "assets/images/personal-3.png", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/funkfest-2.png", "alt": "Funkfest festival artwork", "caption": "Funkfest" },
+      { "src": "assets/images/iwe.gif", "alt": "Indiefest animated artwork", "caption": "Indiefest" },
+      { "src": "assets/images/personal-1.png", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/delfi_illustration.webp", "alt": "Editorial illustration for Delfi", "caption": "Delfi illustration" },
+      { "src": "assets/images/personal-5.png", "alt": "Vector artwork", "caption": "Personal work" },
+      { "src": "assets/images/personal-2.png", "alt": "Digital painting", "caption": "Personal work" },
+      { "src": "assets/images/personal-4.png", "alt": "Digital painting", "caption": "Personal work" }
     ]
   },
+
   "about": {
     "body": [
-      "I'm a 32-year-old designer from Pärnu, Estonia, currently based in Helsinki, Finland. I enjoy playing and making video games, visiting museums, travelling and cooking.",
-      "I'm a product-minded design generalist. I've shaped B2B software, service platforms, and most recently video game UI and interaction systems. I care about making complex things feel simple and intuitive, without sacrificing personality.",
-      "My work spans UX, UI, interaction design, and visual design. I like understanding the full stack of a product, from wireframes to motion to front-end, so I can design with real constraints in mind. AI is part of my everyday toolkit too, at work and in personal projects. Sometimes that means skipping the mockup entirely and building or changing the product directly. A working product is the most honest place to test an idea.",
-      "I prefer working in-house where I can go deep on a product, but I'm open to the right freelance collaboration. If you think we'd work well together — let's talk."
+      "I'm a designer from Pärnu, Estonia, based in Helsinki. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI. The common thread is taking something complex and making it feel obvious to the person using it.",
+      "I work across UX, UI, interaction and visual design, and I like understanding the full stack, from wireframes to motion to front-end, so my designs hold up against real constraints.",
+      "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making games, museums, travel and cooking."
     ],
     "portrait": { "src": "assets/images/mirko_profile.jpg", "alt": "Portrait of Mirko Aus" }
   }

@@ -1,77 +1,95 @@
 {
   "id": "evocon-main",
-  "title": "Evocon",
+  "title": "Production analytics",
   "company": "Evocon",
-  "role": "UI/UX/Visual Designer",
   "period": "2019–2020",
-  "tags": ["UI Design", "UX Design", "Visual Design", "SaaS"],
-  "hero": { "src": "assets/images/evocon-cover.png", "alt": "Evocon front page desktop" },
+  "summary": "A manufacturing SaaS for two opposite users: managers reading large volumes of data, and operators on the shop floor with no time for screens.",
+  "meta": [
+    { "label": "Role", "value": "UI/UX and Visual Designer, in-house" },
+    { "label": "Timeline", "value": "2019–2020" },
+    { "label": "Platforms", "value": "Web on desktop and mobile, shop-floor tablet" },
+    { "label": "Scope", "value": "Product UX and UI, rebrand, illustration, motion" }
+  ],
+  "hero": { "src": "assets/images/evocon-cover.png", "alt": "Evocon production dashboard" },
   "sections": [
     {
-      "type": "image-left",
-      "src": "assets/images/evocon-6.png",
-      "alt": "Evocon office dashboard — OEE, scrap, quantity and downtime charts",
-      "content": [
-        "I was an in-house designer at Evocon, a startup helping manufacturers improve production performance and waste less time and material. The work meant designing for two very different audiences at once. On one side was the office software, used on both PC and mobile by managers and office staff and built around large volumes of data represented through extensive tables and graphs."
-      ]
-    },
-    {
-      "type": "image-right",
-      "src": "assets/images/evocon-4.png",
-      "alt": "Evocon improvement view — reduce machine reset time",
-      "content": [
-        "The goal was to make all of that genuinely easy to understand — to help people pinpoint the exact problem holding their production back, see whether they'd been improving over time, and read real-time info on how every production line was running."
-      ]
-    },
-    {
-      "type": "image-trio",
-      "images": [
-        { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Evocon speed indicator — good" },
-        { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Evocon speed indicator — slow" },
-        { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Evocon speed indicator — microstop" }
-      ]
-    },
-    {
-      "type": "text-only",
-      "content": [
-        "Designing for two opposite users at once: mountains of factory data turned into one clear answer, and a shop-floor screen simple enough to ask almost nothing."
-      ]
-    },
-    {
-      "type": "image-left",
-      "src": "assets/images/evocon-5.png",
-      "alt": "Evocon shop-floor tablet — factory view with live station status",
-      "content": [
-        "On the other side was the tablet software for the operators on the production lines. Here the challenge was the opposite: keep it dead simple and ask for as few button presses as possible to get the necessary info from the shop floor up to office management. It also had to make slowdowns impossible to miss — where production was lagging and why — so the floor could act the moment it happened."
-      ]
-    },
-    {
-      "type": "pair-text",
-      "images": [
-        { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon homepage — redesigned" },
-        { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon homepage — original" }
+      "stage": "Context",
+      "heading": "Helping factories waste less",
+      "body": [
+        "Evocon is a startup that helps manufacturers improve production performance and waste less time and material. I designed for both sides of the product: office software for managers, and tablet software for operators on the line."
       ],
-      "content": [
-        "Alongside the product work, I led Evocon's rebranding. Part of Evocon's mission is to teach its users about efficient production, so the brand needed to feel more contemporary and friendlier to match."
+      "media": [
+        { "src": "assets/images/evocon-6.png", "alt": "Office dashboard with OEE, scrap, quantity and downtime charts", "caption": "Office dashboard" }
       ]
     },
     {
-      "type": "image-left",
-      "src": "assets/images/evocon-article_image_2.png",
-      "alt": "Evocon brand illustration — friendly character on the factory floor",
-      "content": [
-        "I shaped that through a friendly character, fun animations, and really easy-to-understand illustrations built to get the main idea across at a glance — work that stretched my range well beyond product UX into brand, illustration, and motion. In 2019, Evocon won the EAS award for Best Design Implementation."
-      ]
-    },
-    {
-      "type": "pair-text",
-      "images": [
-        { "src": "assets/images/evocon_iconset-1.gif", "alt": "Evocon animated icon set — production concepts" },
-        { "src": "assets/images/evocon_iconset-2.gif", "alt": "Evocon animated icon set — production concepts" }
+      "stage": "Challenge",
+      "heading": "Two users, opposite needs",
+      "body": [
+        "Managers work with large volumes of data in tables and charts on PC and mobile. Operators need to report what's happening on the line in as few taps as possible. One product had to serve both."
       ],
-      "content": [
-        "Simple animated icons that trigger on hover (or on press on tablets) that simplify common concepts used in Evocon. All icon and character animations were exported using Lottie to be reusable and reactive throughout the product."
+      "pull": "Mountains of factory data turned into one clear answer, and a shop-floor screen that asks for almost nothing."
+    },
+    {
+      "stage": "Approach",
+      "heading": "Data that answers a question",
+      "body": [
+        "For managers, the aim was to make the data easy to act on: pinpoint the exact problem holding production back, see whether things are improving over time, and read the real-time state of every line."
+      ],
+      "media": [
+        { "src": "assets/images/evocon-4.png", "alt": "Improvement view for reducing machine reset time", "caption": "Improvement tracking" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "A shop floor screen you can read from across the room",
+      "body": [
+        "For operators, I kept the tablet app minimal, with as few presses as possible to get information from the floor to management. Slowdowns had to be impossible to miss, so speed states are animated and color-coded."
+      ],
+      "media": [
+        { "src": "assets/images/evocon-5.png", "alt": "Shop-floor tablet factory view with live station status", "caption": "Operator tablet" },
+        { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Speed indicator, good", "caption": "Good speed" },
+        { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Speed indicator, slow", "caption": "Slow speed" },
+        { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Speed indicator, microstop", "caption": "Microstop" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "A friendlier brand for a teaching product",
+      "body": [
+        "I led Evocon's rebrand. Part of Evocon's mission is teaching users about efficient production, so the brand needed to feel more contemporary and approachable. Drag the slider to compare the old and new site."
+      ],
+      "compare": {
+        "before": { "src": "assets/images/evocon-kodukas-vana.png", "alt": "Evocon website before the rebrand" },
+        "after": { "src": "assets/images/evocon-kodukas-uus.png", "alt": "Evocon website after the rebrand" }
+      }
+    },
+    {
+      "stage": "Approach",
+      "heading": "Illustration and motion in the product",
+      "body": [
+        "A friendly character, simple illustrations and animated icons explain production concepts at a glance. Icons animate on hover, or on press on tablets, and were exported with Lottie so they could be reused across the product."
+      ],
+      "media": [
+        { "src": "assets/images/evocon-article_image_2.png", "alt": "Brand illustration of a character on the factory floor", "caption": "Brand illustration" },
+        { "src": "assets/images/evocon_iconset-1.gif", "alt": "Animated icon set", "caption": "Animated icons" },
+        { "src": "assets/images/evocon_iconset-2.gif", "alt": "Animated icon set", "caption": "Animated icons" }
+      ]
+    },
+    {
+      "stage": "Outcome",
+      "heading": "Recognized for design",
+      "body": [
+        "In 2019, Evocon won the EAS award for Best Design Implementation."
       ]
     }
+  ],
+  "results": [
+    { "title": "EAS Best Design Implementation", "detail": "Awarded to Evocon in 2019." },
+    { "title": "One product, two audiences", "detail": "Analytics for managers, a few-tap tablet app for operators." },
+    { "title": "Rebrand shipped", "detail": "Identity, illustration and Lottie motion system." }
+  ],
+  "todo": [
+    "Add a product metric if you have one: operator input time, adoption, or customer feedback."
   ]
 }

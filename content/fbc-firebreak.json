@@ -2,79 +2,88 @@
   "id": "fbc-firebreak",
   "title": "FBC: Firebreak",
   "company": "Remedy Entertainment",
-  "role": "Lead UI/UX Designer",
   "period": "2023–2026",
-  "tags": ["Lead Design", "Interaction Design", "UI Design", "Project Management", "Stakeholder Management"],
-  "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak UI/UX work" },
+  "summary": "Leading UI/UX for a co-op multiplayer game, from the first wireframes in preproduction to post-launch support.",
+  "meta": [
+    { "label": "Role", "value": "Lead UI/UX Designer" },
+    { "label": "Team", "value": "Me and a UI artist, with 3 UI programmers" },
+    { "label": "Timeline", "value": "2023–2026, preproduction to post-launch" },
+    { "label": "Scope", "value": "Information architecture, flows, HUD, menus, visual style, production planning" }
+  ],
+  "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" },
   "sections": [
     {
-      "type": "image-right",
-      "content": [
-        "I was the lead UI/UX designer on FBC: Firebreak, joining from preproduction and staying through to post-launch support. A UI artist and I were a team of two, working hand in hand with the three-person UI programming team."
+      "stage": "Context",
+      "heading": "A full game UI, owned by a team of two",
+      "body": [
+        "I joined FBC: Firebreak in preproduction as the lead UI/UX designer. A UI artist and I were the entire design side of the UI, working day to day with a three-person UI programming team.",
+        "Beyond the interface, I worked with art direction, the game director, game design, audio and VFX, and helped shape mission design and the core gameplay loop."
       ],
-      "src": "assets/images/fbc-character-select.png",
-      "alt": "FBC: Firebreak character select / main menu"
-    },
-    {
-      "type": "image-left",
-      "content": [
-        "Beyond that I collaborated closely with nearly every discipline on the project: art direction, the game director, game design, audio, and VFX. And beyond the interface itself, I helped shape mission design and the primary gameplay loop, and brainstormed the side activities that fleshed out the experience."
-      ],
-      "src": "assets/images/fbc-anomaly-interaction.png",
-      "alt": "FBC: Firebreak in-game anomaly interaction"
-    },
-    {
-      "type": "image-right",
-      "content": [
-        "From there I owned the full UI: the structure, the flows, the HUD, the menus, and the overall visual style, plus a fair bit of production work, planning out the tasks for the design and programming teams and mapping the timeline, both short and long term."
-      ],
-      "src": "assets/images/fbc-customization.png",
-      "alt": "FBC: Firebreak customization screen"
-    },
-    {
-      "type": "text-only",
-      "content": [
-        "Remedy's first menu that lives inside a 3D world. Pick a loadout and you watch your gear change on the table in front of you."
+      "media": [
+        { "src": "assets/images/fbc-character-select.png", "alt": "Character select screen", "caption": "Character select" }
       ]
     },
     {
-      "type": "image-only",
-      "src": "assets/images/fbc-loadout.png",
-      "alt": "FBC: Firebreak loadout in 3D space",
-      "caption": "Every menu item has its own dedicated corner of the space, and the camera glides to it on selection. Picking a loadout doesn't just happen in the UI. You watch your gear change on the table in front of you."
-    },
-    {
-      "type": "image-left",
-      "content": [
-        "The piece I'm proudest of is the main menu. Designed in close collaboration with the art director to create Remedy's first menu that lives inside a 3D environment. A feature this ambitious only came together thanks to how closely the art director, the programmers, and I worked on it."
+      "stage": "Challenge",
+      "heading": "Live-service scope on a tight schedule",
+      "body": [
+        "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking, parties and a HUD that reads under pressure. All of it had to ship together, on a schedule that left little room for rework."
       ],
-      "src": "assets/images/fbc-crisis-select.png",
-      "alt": "FBC: Firebreak crisis select menu"
-    },
-    {
-      "type": "image-only",
-      "src": "assets/images/fbc-containment-board.png",
-      "alt": "FBC: Firebreak containment mission board"
-    },
-    {
-      "type": "image-right",
-      "content": [
-        "I also designed an onboarding flow for the metagame, and made the matchmaking and into-the-game flows fully modular, so players could sit in a queue while still browsing and swapping their equipment and cosmetics.",
-        "The game didn't find the success we'd hoped for, and we didn't hit every goal we'd set for the craft team. But on an impossible schedule, the team pulled off something close to impossible: shipping a great, genuinely functional UI. I'm proud of what we built together under that pressure."
-      ],
-      "src": "assets/images/fbc-party.png",
-      "alt": "FBC: Firebreak party and matchmaking flow"
-    },
-    {
-      "type": "text-only",
-      "content": [
-        "On an impossible schedule, the team pulled off something close to impossible: a great, genuinely functional UI."
+      "media": [
+        { "src": "assets/images/fbc-anomaly-interaction.png", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
       ]
     },
     {
-      "type": "image-only",
-      "src": "assets/images/fbc-frost-anomalies.png",
-      "alt": "FBC: Firebreak in-game HUD"
+      "stage": "Approach",
+      "heading": "Own the structure and the plan",
+      "body": [
+        "I owned the UI end to end: structure, flows, HUD, menus and overall visual style. I also ran the production side, breaking the work into tasks for design and programming and keeping both the short- and long-term timeline realistic."
+      ],
+      "media": [
+        { "src": "assets/images/fbc-customization.png", "alt": "Customization screen", "caption": "Customization" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "A main menu that lives in the world",
+      "body": [
+        "With the art director, I designed Remedy's first main menu set inside a 3D environment. Each menu item has its own corner of the space and the camera glides there on selection. Pick a loadout and you watch your gear change on the table in front of you."
+      ],
+      "pull": "Remedy's first menu that lives inside a 3D world.",
+      "media": [
+        { "src": "assets/images/fbc-loadout.png", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
+        { "src": "assets/images/fbc-crisis-select.png", "alt": "Crisis select menu", "caption": "Crisis select" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Modular flows instead of waiting screens",
+      "body": [
+        "I designed onboarding for the metagame and made matchmaking and the into-game flow fully modular. Players can sit in a queue while still browsing and swapping equipment and cosmetics, instead of staring at a spinner."
+      ],
+      "media": [
+        { "src": "assets/images/fbc-party.png", "alt": "Party and matchmaking flow", "caption": "Party and matchmaking" },
+        { "src": "assets/images/fbc-containment-board.png", "alt": "Containment mission board", "caption": "Mission board" }
+      ]
+    },
+    {
+      "stage": "Outcome",
+      "heading": "Shipped complete and functional",
+      "body": [
+        "The game didn't find the commercial success we hoped for, and we didn't hit every goal we set for the craft team. But on a very tight schedule, the team shipped a complete, polished and functional UI, and I'm proud of what we built together."
+      ],
+      "media": [
+        { "src": "assets/images/fbc-frost-anomalies.png", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
+      ]
     }
+  ],
+  "results": [
+    { "title": "Full UI shipped", "detail": "Menus, metagame, matchmaking and HUD at launch, with a two-person design team." },
+    { "title": "First 3D main menu at Remedy", "detail": "Built with art direction and UI programming." },
+    { "title": "Queue without waiting", "detail": "Modular matchmaking lets players customize while queued." }
+  ],
+  "todo": [
+    "Add any UI-related review quotes, player feedback or usability test findings.",
+    "Add team-size numbers for the wider project if useful."
   ]
 }

@@ -1,178 +1,165 @@
-import { initContent  } from './content.js';
-import { initCursor   } from './cursor.js';
-import { initScroll   } from './scroll.js';
-import { initLetsTalk, decodeEmails } from './lets-talk.js';
-import { initHeroBg   } from './hero-bg.js';
-import { initHero     } from './hero.js';
-import { initGallery  } from './gallery.js';
-import { initRouter, resetRoute } from './router.js';
-import { showProject, hideProject } from './project-page.js';
-import { curtainTransition } from './page-transition.js';
+import { initContent } from './content.js';
+import { initHero } from './hero.js';
+import { initGallery, openLightbox } from './gallery.js';
+import { initRouter } from './router.js';
+import { showProject, hideProject, loadProject } from './project-page.js';
 
-await initContent(); // DOM populated before observers attach
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const live = document.querySelector('[data-live]');
+const nav = document.querySelector('[data-nav]');
+let email = '';
 
-// initCursor(); // white dot cursor hidden
-const lenis = initScroll();
-decodeEmails(); // wire mailto hrefs before flying button copies navAnchor.href
-initLetsTalk(lenis);
-const heroBg = initHeroBg();
-const hero = initHero(heroBg);
-initGallery(lenis);
+initHero();
+initGallery();
+decodeEmails();
+initCopyEmail();
+initNavState();
 
-// ── Black load overlay fades out → reveals shader ──────
-const loadOverlay = document.querySelector('.load-overlay');
-if (loadOverlay) {
-  if (typeof gsap !== 'undefined') {
-    gsap.to(loadOverlay, {
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power2.inOut',
-      onComplete() { loadOverlay.remove(); },
-    });
-  } else {
-    loadOverlay.remove();
-  }
+let data = null;
+try {
+  data = await initContent();
+} catch (err) {
+  console.warn('[content]', err.message);
 }
 
-// Index sections hidden via body.is-project-view class (see style.css)
-// CSS-driven hide is robust against accidental inline style overrides.
-const projectView = document.getElementById('project-view');
-const navBack = document.querySelector('.nav__back');
-let _scrollY = 0;
+if (data) {
+  initFreelance(data.freelance.items);
+  initNavSpy();
+}
 
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-navBack.addEventListener('click', (e) => {
-  e.preventDefault();
-  backToIndex(() => {
-    history.replaceState(null, '', location.pathname);
-    resetRoute();
+// ── Email: obfuscated in markup, decoded at runtime ─────
+function decodeEmails() {
+  document.querySelectorAll('[data-c][data-d]').forEach(a => {
+    email = `${atob(a.dataset.c)}@${atob(a.dataset.d)}`;
+    a.href = `mailto:${email}`;
+    a.removeAttribute('data-c');
+    a.removeAttribute('data-d');
   });
+}
+
+function initCopyEmail() {
+  const btn = document.querySelector('[data-copy-email]');
+  if (!btn) return;
+  let timer;
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      return; // clipboard blocked: mailto button remains
+    }
+    btn.classList.add('is-copied');
+    live.textContent = `Copied ${email}`;
+    clearTimeout(timer);
+    timer = setTimeout(() => btn.classList.remove('is-copied'), 1800);
+  });
+}
+
+// ── Nav: hairline once scrolled; active link per section ─
+function initNavState() {
+  const onScroll = () => nav.classList.toggle('is-scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+function initNavSpy() {
+  const links = [...document.querySelectorAll('.nav__link')];
+  const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      const link = byId.get(en.target.id);
+      if (link) link.classList.toggle('is-active', en.isIntersecting);
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  byId.forEach((_, id) => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+}
+
+function initFreelance(items) {
+  document.querySelector('[data-freelance]').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-freelance-idx]');
+    if (btn) openLightbox(items, Number(btn.dataset.freelanceIdx));
+  });
+}
+
+// ── Prefetch case study JSON on intent ──────────────────
+document.addEventListener('pointerover', (e) => {
+  const card = e.target.closest?.('[data-project]');
+  if (card) loadProject(card.dataset.project).catch(() => {});
 });
 
-// Reverse curtain → tear down project view, restore index (+ optional extra)
-function backToIndex(after) {
-  curtainTransition(() => {
+// ── Views + view transitions ────────────────────────────
+// Clicked card's image morphs into the case study hero (and back).
+let indexScroll = 0;
+let lastProjectId = null;
+
+const jump = (y) => window.scrollTo({ top: y, behavior: 'instant' });
+
+function setMorph(el) {
+  document.querySelectorAll('[style*="view-transition-name"]').forEach(n => {
+    n.style.removeProperty('view-transition-name');
+  });
+  if (el) el.style.viewTransitionName = 'project-media';
+}
+
+function transition(update) {
+  if (!document.startViewTransition || reduceMotion.matches) {
+    return Promise.resolve(update());
+  }
+  const vt = document.startViewTransition(update);
+  vt.finished.finally(() => setMorph(null));
+  return vt.updateCallbackDone;
+}
+
+const cardMedia = (id) =>
+  document.querySelector(`#index-view [data-project="${id}"] [data-vt="media"]`);
+
+async function toProject(id, fromProject, sourceEl) {
+  setMorph(sourceEl);
+  await transition(async () => {
+    if (!fromProject) indexScroll = scrollY;
+    document.body.classList.add('is-project');
+    await showProject(id);
+    setMorph(document.querySelector('.case__hero'));
+    jump(0);
+  });
+  lastProjectId = id;
+}
+
+async function toIndex() {
+  setMorph(document.querySelector('.case__hero'));
+  const id = lastProjectId;
+  await transition(() => {
     hideProject();
-    showIndex();
-    after?.();
-  }, { reverse: true });
-}
-
-function hideIndex() {
-  _scrollY = window.scrollY;
-  document.body.classList.add('is-project-view');
-  navBack.hidden = false;
-  window.scrollTo(0, 0);
-  lenis?.scrollTo(0, { immediate: true });
-  hero?.hideCards();
-}
-
-function showIndex() {
-  document.body.classList.remove('is-project-view');
-  navBack.hidden = true;
-  window.scrollTo(0, _scrollY);
-  lenis?.scrollTo(_scrollY, { immediate: true });
-  hero?.showCards();
-  if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
-  lenis?.start();
-}
-
-// ── Button cursor-fill ────────────────────────────────
-// White ball grows from the pointer + masks the label to black.
-// Delegated so dynamic buttons (see-more, project menu, flying Contact)
-// are covered with no per-render wiring.
-const FILL_SELECTOR =
-  '.btn-cta, .btn-secondary, .work__see-more, .nav__burger, .project-menu__item';
-const canHover = matchMedia('(hover: hover)').matches;
-
-function enhanceBtn(btn) {
-  if (btn.dataset.fill) return;
-  btn.dataset.fill = '1';
-  const fill = document.createElement('span');
-  fill.className = 'btn-fill';
-  fill.setAttribute('aria-hidden', 'true');
-  fill.innerHTML = btn.innerHTML;
-  // Force the cloned label/icons black — inline beats any component color
-  // rule (e.g. .project-menu__label) regardless of selector specificity.
-  fill.style.color = '#000';
-  fill.querySelectorAll('*').forEach(el => { el.style.color = '#000'; });
-  btn.append(fill);
-}
-
-// Grow the fill ball from (clientX, clientY) to cover the whole button.
-function fillExpand(btn, clientX, clientY) {
-  enhanceBtn(btn);
-  const r = btn.getBoundingClientRect();
-  const x = clientX - r.left;
-  const y = clientY - r.top;
-  // radius reaches the farthest corner → ball always fully fills
-  const rad = Math.max(
-    Math.hypot(x, y), Math.hypot(r.width - x, y),
-    Math.hypot(x, r.height - y), Math.hypot(r.width - x, r.height - y),
-  );
-  btn.style.setProperty('--btn-mx', `${x}px`);
-  btn.style.setProperty('--btn-my', `${y}px`);
-  btn.style.setProperty('--btn-r', `${rad}px`);
-}
-
-// Retract the ball toward the exit/release point.
-function fillRetract(btn, clientX, clientY) {
-  const r = btn.getBoundingClientRect();
-  btn.style.setProperty('--btn-mx', `${clientX - r.left}px`);
-  btn.style.setProperty('--btn-my', `${clientY - r.top}px`);
-  btn.style.setProperty('--btn-r', '0px');
-}
-
-if (canHover) {
-  document.addEventListener('pointerover', (e) => {
-    const btn = e.target.closest?.(FILL_SELECTOR);
-    if (!btn || btn.contains(e.relatedTarget)) return; // ignore moves between inner nodes
-    fillExpand(btn, e.clientX, e.clientY);
+    document.body.classList.remove('is-project');
+    jump(indexScroll);
+    setMorph(id ? cardMedia(id) : null);
   });
-
-  document.addEventListener('pointerout', (e) => {
-    const btn = e.target.closest?.(FILL_SELECTOR);
-    if (!btn || btn.contains(e.relatedTarget)) return; // still inside
-    fillRetract(btn, e.clientX, e.clientY); // retract toward exit
-  });
-} else {
-  // Touch: no hover. Fill the whole button on press, then retract — but a tap
-  // releases almost instantly, so hold until the fill visibly completes.
-  const FILL_MS = 550; // matches --btn-r transition in style.css
-  let pressed = null;
-  let pressedAt = 0;
-  document.addEventListener('pointerdown', (e) => {
-    const btn = e.target.closest?.(FILL_SELECTOR);
-    if (!btn) return;
-    pressed = btn;
-    pressedAt = performance.now();
-    fillExpand(btn, e.clientX, e.clientY);
-  });
-  const release = (e) => {
-    if (!pressed) return;
-    const btn = pressed;
-    const cx = e.clientX, cy = e.clientY;
-    const wait = Math.max(0, FILL_MS - (performance.now() - pressedAt));
-    setTimeout(() => fillRetract(btn, cx, cy), wait);
-    pressed = null;
-  };
-  document.addEventListener('pointerup', release);
-  document.addEventListener('pointercancel', release);
+  lastProjectId = null;
 }
+
+// Brand link on index: back to top (route unchanged, so router skips it)
+document.querySelector('[data-home]').addEventListener('click', (e) => {
+  if (document.body.classList.contains('is-project')) return;
+  e.preventDefault();
+  window.scrollTo({ top: 0 });
+});
+
+// Remember which element was clicked so the morph starts from it
+let pendingSource = null;
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-project]');
+  pendingSource = card ? card.querySelector('[data-vt="media"]') : null;
+});
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 initRouter((route, prev) => {
   if (route.view === 'project') {
-    const fromProject = prev && prev.view === 'project';
-    curtainTransition(() => {
-      if (fromProject) {
-        window.scrollTo(0, 0);
-        lenis?.scrollTo(0, { immediate: true });
-      } else {
-        hideIndex();
-      }
-      showProject(route.projectId, lenis);
-    });
-  } else if (prev && prev.view === 'project') {
-    backToIndex();
+    toProject(route.projectId, prev?.view === 'project', pendingSource);
+    pendingSource = null;
+  } else if (prev?.view === 'project') {
+    toIndex();
   }
 });
