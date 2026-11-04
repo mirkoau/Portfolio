@@ -14,6 +14,23 @@ export const arrow = (dir = 'right') =>
 export const img = (m, attrs = '') =>
   `<img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" ${attrs}/>`;
 
+// Former GIFs: muted loops. preload=metadata so the box sizes from the video before playback.
+export const media = (m, attrs = '') => m.video
+  ? `<video muted loop playsinline preload="metadata" poster="${m.poster}" aria-label="${m.alt}" data-autoplay ${attrs}><source src="${m.video}" type="video/mp4" /></video>`
+  : img(m, attrs);
+
+// Loops play only while on screen; reduced-motion users keep the still poster
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const videoIO = new IntersectionObserver((entries) => entries.forEach(({ target: v, isIntersecting }) => {
+  if (isIntersecting && !reduceMotion.matches) v.play().catch(() => {});
+  else v.pause();
+}), { rootMargin: '100px' });
+
+export const observeVideos = (root) =>
+  root.querySelectorAll('video[data-autoplay]').forEach(v => videoIO.observe(v));
+export const unobserveVideos = (root) =>
+  root.querySelectorAll('video[data-autoplay]').forEach(v => videoIO.unobserve(v));
+
 const $ = (sel) => document.querySelector(sel);
 
 let data = null;
@@ -152,18 +169,26 @@ function initTimeline() {
 
 function renderApproach(items) {
   $('[data-approach]').innerHTML = items.map(i => `
-    <div class="approach__item">
+    <div class="approach__row">
       <h3 class="approach__title">${i.title}</h3>
       <p class="approach__body">${i.body}</p>
+      <div class="approach__proof">
+        <p class="approach__proof-label">Seen in</p>
+        <ul>${i.proof.map(pr => `<li>${pr.href
+          ? `<a class="approach__link" href="${pr.href}">${pr.label}</a>`
+          : `<span>${pr.label}</span>`}</li>`).join('')}</ul>
+      </div>
     </div>`).join('');
 }
 
 function renderFreelance({ intro, items }) {
   $('[data-freelance-intro]').textContent = intro;
-  $('[data-freelance]').innerHTML = items.map((item, i) => `
+  const strip = $('[data-freelance]');
+  strip.innerHTML = items.map((item, i) => `
     <button class="freelance__item" type="button" data-freelance-idx="${i}" aria-label="Open ${item.alt}">
-      ${img({ src: item.src, alt: '' })}
+      ${media({ ...item, alt: '' })}
     </button>`).join('');
+  observeVideos(strip);
 }
 
 function renderAbout({ body, portrait }) {

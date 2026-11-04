@@ -5,12 +5,27 @@
   "period": "2019–2020",
   "summary": "A manufacturing SaaS for two opposite users: managers reading large volumes of data, and operators on the shop floor with no time for screens.",
   "meta": [
-    { "label": "Role", "value": "UI/UX and Visual Designer, in-house" },
-    { "label": "Timeline", "value": "2019–2020" },
-    { "label": "Platforms", "value": "Web on desktop and mobile, shop-floor tablet" },
-    { "label": "Scope", "value": "Product UX and UI, rebrand, illustration, motion" }
+    {
+      "label": "Role",
+      "value": "UI/UX and Visual Designer, in-house"
+    },
+    {
+      "label": "Timeline",
+      "value": "2019–2020"
+    },
+    {
+      "label": "Platforms",
+      "value": "Web on desktop and mobile, shop-floor tablet"
+    },
+    {
+      "label": "Scope",
+      "value": "Product UX and UI, rebrand, illustration, motion"
+    }
   ],
-  "hero": { "src": "assets/images/evocon-cover.webp", "alt": "Evocon production dashboard" },
+  "hero": {
+    "src": "assets/images/evocon-cover.webp",
+    "alt": "Evocon production dashboard"
+  },
   "sections": [
     {
       "stage": "Context",
@@ -19,7 +34,11 @@
         "Evocon is a startup that helps manufacturers improve production performance and waste less time and material. I designed for both sides of the product: office software for managers, and tablet software for operators on the line."
       ],
       "media": [
-        { "src": "assets/images/evocon-6.webp", "alt": "Office dashboard with OEE, scrap, quantity and downtime charts", "caption": "Office dashboard" }
+        {
+          "src": "assets/images/evocon-6.webp",
+          "alt": "Office dashboard with OEE, scrap, quantity and downtime charts",
+          "caption": "Office dashboard"
+        }
       ]
     },
     {
@@ -37,7 +56,11 @@
         "For managers, the aim was to make the data easy to act on: pinpoint the exact problem holding production back, see whether things are improving over time, and read the real-time state of every line."
       ],
       "media": [
-        { "src": "assets/images/evocon-4.webp", "alt": "Improvement view for reducing machine reset time", "caption": "Improvement tracking" }
+        {
+          "src": "assets/images/evocon-4.webp",
+          "alt": "Improvement view for reducing machine reset time",
+          "caption": "Improvement tracking"
+        }
       ]
     },
     {
@@ -47,10 +70,29 @@
         "For operators, I kept the tablet app minimal, with as few presses as possible to get information from the floor to management. Slowdowns had to be impossible to miss, so speed states are animated and color-coded."
       ],
       "media": [
-        { "src": "assets/images/evocon-5.webp", "alt": "Shop-floor tablet factory view with live station status", "caption": "Operator tablet" },
-        { "src": "assets/images/evocon-good-speed-animation.gif", "alt": "Speed indicator, good", "caption": "Good speed" },
-        { "src": "assets/images/evocon-slow-speed-animation.gif", "alt": "Speed indicator, slow", "caption": "Slow speed" },
-        { "src": "assets/images/evocon-microstop-speed-animation.gif", "alt": "Speed indicator, microstop", "caption": "Microstop" }
+        {
+          "src": "assets/images/evocon-5.webp",
+          "alt": "Shop-floor tablet factory view with live station status",
+          "caption": "Operator tablet"
+        },
+        {
+          "alt": "Speed indicator, good",
+          "caption": "Good speed",
+          "video": "assets/images/evocon-good-speed-animation.mp4",
+          "poster": "assets/images/evocon-good-speed-animation-poster.webp"
+        },
+        {
+          "alt": "Speed indicator, slow",
+          "caption": "Slow speed",
+          "video": "assets/images/evocon-slow-speed-animation.mp4",
+          "poster": "assets/images/evocon-slow-speed-animation-poster.webp"
+        },
+        {
+          "alt": "Speed indicator, microstop",
+          "caption": "Microstop",
+          "video": "assets/images/evocon-microstop-speed-animation.mp4",
+          "poster": "assets/images/evocon-microstop-speed-animation-poster.webp"
+        }
       ]
     },
     {
@@ -60,8 +102,14 @@
         "I led Evocon's rebrand. Part of Evocon's mission is teaching users about efficient production, so the brand needed to feel more contemporary and approachable. Drag the slider to compare the old and new site."
       ],
       "compare": {
-        "before": { "src": "assets/images/evocon-kodukas-vana.webp", "alt": "Evocon website before the rebrand" },
-        "after": { "src": "assets/images/evocon-kodukas-uus.webp", "alt": "Evocon website after the rebrand" }
+        "before": {
+          "src": "assets/images/evocon-kodukas-vana.webp",
+          "alt": "Evocon website before the rebrand"
+        },
+        "after": {
+          "src": "assets/images/evocon-kodukas-uus.webp",
+          "alt": "Evocon website after the rebrand"
+        }
       }
     },
     {
@@ -71,9 +119,23 @@
         "A friendly character, simple illustrations and animated icons explain production concepts at a glance. Icons animate on hover, or on press on tablets, and were exported with Lottie so they could be reused across the product."
       ],
       "media": [
-        { "src": "assets/images/evocon-article_image_2.webp", "alt": "Brand illustration of a character on the factory floor", "caption": "Brand illustration" },
-        { "src": "assets/images/evocon_iconset-1.webp", "alt": "Animated icon set", "caption": "Animated icons" },
-        { "src": "assets/images/evocon_iconset-2.webp", "alt": "Animated icon set", "caption": "Animated icons" }
+        {
+          "src": "assets/images/evocon-article_image_2.webp",
+          "alt": "Brand illustration of a character on the factory floor",
+          "caption": "Brand illustration"
+        },
+        {
+          "alt": "Animated icon set",
+          "caption": "Animated icons",
+          "video": "assets/images/evocon_iconset-1.mp4",
+          "poster": "assets/images/evocon_iconset-1-poster.webp"
+        },
+        {
+          "alt": "Animated icon set",
+          "caption": "Animated icons",
+          "video": "assets/images/evocon_iconset-2.mp4",
+          "poster": "assets/images/evocon_iconset-2-poster.webp"
+        }
       ]
     },
     {
@@ -85,9 +147,18 @@
     }
   ],
   "results": [
-    { "title": "EAS Best Design Implementation", "detail": "Awarded to Evocon in 2019." },
-    { "title": "One product, two audiences", "detail": "Analytics for managers, a few-tap tablet app for operators." },
-    { "title": "Rebrand shipped", "detail": "Identity, illustration and Lottie motion system." }
+    {
+      "title": "EAS Best Design Implementation",
+      "detail": "Awarded to Evocon in 2019."
+    },
+    {
+      "title": "One product, two audiences",
+      "detail": "Analytics for managers, a few-tap tablet app for operators."
+    },
+    {
+      "title": "Rebrand shipped",
+      "detail": "Identity, illustration and Lottie motion system."
+    }
   ],
   "todo": [
     "Add a product metric if you have one: operator input time, adoption, or customer feedback."

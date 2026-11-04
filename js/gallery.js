@@ -2,7 +2,9 @@
 
 const dialog = document.querySelector('[data-lightbox]');
 const img = dialog.querySelector('[data-lightbox-img]');
+const video = dialog.querySelector('[data-lightbox-video]');
 const caption = dialog.querySelector('[data-lightbox-caption]');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
 const SWIPE_PX = 50;
 
@@ -12,8 +14,22 @@ let index = 0;
 function show(i) {
   index = (i + list.length) % list.length;
   const item = list[index];
-  img.src = item.src;
-  img.alt = item.alt;
+  const isVideo = Boolean(item.video);
+  img.hidden = isVideo;
+  video.hidden = !isVideo;
+  if (isVideo) {
+    img.removeAttribute('src');
+    video.poster = item.poster;
+    video.src = item.video;
+    video.setAttribute('aria-label', item.alt);
+    // Opening is user-initiated, but reduced-motion users still start paused
+    if (!reduceMotion.matches) video.play().catch(() => {});
+  } else {
+    video.pause();
+    video.removeAttribute('src');
+    img.src = item.src;
+    img.alt = item.alt;
+  }
   caption.textContent = item.caption || '';
 }
 
@@ -29,7 +45,7 @@ export function initGallery() {
     const step = e.target.closest('[data-lightbox-step]');
     if (step) return show(index + Number(step.dataset.lightboxStep));
     // Close button and backdrop both land here: anything but the image closes
-    if (e.target !== img) dialog.close();
+    if (e.target !== img && e.target !== video) dialog.close();
   });
 
   dialog.addEventListener('keydown', (e) => {
@@ -44,5 +60,9 @@ export function initGallery() {
     if (Math.abs(dx) > SWIPE_PX) show(index + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
-  dialog.addEventListener('close', () => { img.removeAttribute('src'); });
+  dialog.addEventListener('close', () => {
+    img.removeAttribute('src');
+    video.pause();
+    video.removeAttribute('src');
+  });
 }

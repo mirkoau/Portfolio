@@ -10,7 +10,7 @@ Senior UX Designer @ Remedy Entertainment. v2 = product-centered, corporate rede
 **Git: `origin` is the LIVE site repo. Commit locally only — never push** until a separate remote is set up. This overrides the auto-push rule below.
 
 ## Site Goals
-- Light, editorial SaaS look; calm, credible, not templated
+- Editorial + product-designer feel, NOT SaaS: square corners, no pills, big type, italic pull quotes, numbered figures. Tasteful motion: one hero moment, nothing gratuitous
 - Smart microinteractions that answer user actions
 - Fast, lightweight, zero runtime deps
 
@@ -98,6 +98,9 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Selection frame (legacy note):** Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
+- **Motion:** hero letters drift + settle (hero.js `splitChars`, CSS `.char` vars) then frame draws; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive); footer email letters ripple on hover. All off under reduced motion.
+- **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.
+- **Fonts:** WOFF (book, medium, italic) built from the OTFs with fontTools. WOFF2 needs `brotli` (not installed).
 - **Media:** `media` array renders count-aware grid (n1–n4). `wide: true` = horizontal pan strip. `compare: {before, after}` = range-driven slider.
 - **Transitions:** View Transitions API morphs clicked card image → case hero (`view-transition-name: project-media`) and back. Falls back to instant swap; skipped on reduced motion.
 - **Prefetch:** case JSON fetched on card hover.

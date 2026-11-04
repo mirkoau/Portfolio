@@ -12,8 +12,8 @@
   <meta name="description" content="Mirko Aus, product-minded UX designer. Senior UX Designer at Remedy Entertainment. Previously B2B SaaS and logistics products at Evocon and Cleveron." />
   <link rel="canonical" href="https://mirkoaus.com/" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-medium.otf" as="font" type="font/otf" crossorigin />
-  <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-book.otf" as="font" type="font/otf" crossorigin />
+  <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-medium.woff" as="font" type="font/woff" crossorigin />
+  <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-book.woff" as="font" type="font/woff" crossorigin />
 
   <link rel="preload" href="content/data.json" as="fetch" crossorigin />
   <link rel="modulepreload" href="js/content.js" />
@@ -35,7 +35,7 @@
       <a class="nav__link" href="#approach">Approach</a>
       <a class="nav__link" href="#about">About</a>
     </nav>
-    <a class="btn btn--primary nav__cta" href="#contact" data-to-contact>Contact</a>
+    <a class="nav__cta" href="#contact" data-to-contact>Contact</a>
   </header>
 
   <main id="main">
@@ -83,7 +83,7 @@
 
       <section class="approach" id="approach" aria-labelledby="approach-title">
         <h2 class="section-title" id="approach-title">How I work</h2>
-        <div class="approach__grid" data-approach></div>
+        <div class="approach__rows" data-approach></div>
       </section>
 
       <section class="freelance" id="freelance" aria-labelledby="freelance-title">
@@ -95,7 +95,10 @@
       </section>
 
       <section class="about" id="about" aria-labelledby="about-title">
-        <div class="about__portrait" data-portrait></div>
+        <div class="frame about__frame">
+          <span class="frame__label" aria-hidden="true"><span>Mirko Aus</span><span>Helsinki</span></span>
+          <div class="about__portrait" data-portrait></div>
+        </div>
         <div class="about__text">
           <h2 class="section-title" id="about-title">About</h2>
           <div data-about></div>
@@ -135,6 +138,7 @@
     <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image" data-lightbox-step="-1"></button>
     <figure class="lightbox__figure">
       <img class="lightbox__img" alt="" data-lightbox-img />
+      <video class="lightbox__img" muted loop playsinline controls hidden data-lightbox-video></video>
       <figcaption class="lightbox__caption" data-lightbox-caption></figcaption>
     </figure>
     <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next image" data-lightbox-step="1"></button>

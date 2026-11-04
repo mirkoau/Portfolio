@@ -1,5 +1,5 @@
 import { initContent } from './content.js';
-import { initHero } from './hero.js';
+import { initHero, splitChars } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
@@ -47,7 +47,9 @@ function initCopyEmail() {
   const live = document.querySelector('[data-live]');
   const email = document.querySelector('a[href^="mailto:"]')?.href.slice('mailto:'.length);
   if (!btn || !email) return;
-  btn.querySelector('[data-email-text]').textContent = email;
+  const text = btn.querySelector('[data-email-text]');
+  text.textContent = email;
+  splitChars(text);
   let timer;
   btn.addEventListener('click', async () => {
     try {

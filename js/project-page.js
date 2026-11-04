@@ -1,6 +1,6 @@
 // Case study view: fetch content/{id}.json, render, wire interactions.
 
-import { caseStudies, todoNote, arrow, frameMedia, img } from './content.js';
+import { caseStudies, todoNote, arrow, frameMedia, img, media, observeVideos, unobserveVideos } from './content.js';
 import { openLightbox } from './gallery.js';
 
 const view = document.getElementById('project-view');
@@ -24,14 +24,14 @@ export function loadProject(id) {
 // Prefixed so section ids can't collide with index ids (#work, #about) that stay in the DOM
 const slug = (s) => 'cs-' + s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-function figure(m, zoomIdx) {
+function figure(m, zoomIdx, num) {
   const wrap = m.wide
-    ? `<div class="case__pan" data-pan tabindex="0" role="region" aria-label="${m.alt}, scrollable">${img(m)}</div>`
-    : `<button class="case__zoom" type="button" data-zoom="${zoomIdx}" aria-label="Enlarge: ${m.alt}">${img(m)}</button>`;
+    ? `<div class="case__pan" data-pan tabindex="0" role="region" aria-label="${m.alt}, scrollable">${media(m)}</div>`
+    : `<button class="case__zoom" type="button" data-zoom="${zoomIdx}" aria-label="Enlarge: ${m.alt}">${media(m)}</button>`;
   return `
     <figure class="case__figure">
       ${wrap}
-      ${m.caption ? `<figcaption>${m.caption}</figcaption>` : ''}
+      <figcaption><span class="case__fig">Fig. ${num}</span>${m.caption ? `<span>${m.caption}</span>` : ''}</figcaption>
     </figure>`;
 }
 
@@ -50,13 +50,15 @@ function compare({ before, after }) {
 function render(p) {
   // One lightbox sequence across all zoomable images on the page
   const zoomables = [];
+  let figNum = 0;
   const ids = new Map(p.sections.map(s => [s, slug(s.heading)]));
   const sections = p.sections.map(s => {
     const id = ids.get(s);
     const media = (s.media || []).map(m => {
-      if (m.wide) return figure(m);
+      figNum++;
+      if (m.wide) return figure(m, null, figNum);
       zoomables.push(m);
-      return figure(m, zoomables.length - 1);
+      return figure(m, zoomables.length - 1, figNum);
     });
     return `
       <section class="case__section" id="${id}" aria-labelledby="${id}-h">
@@ -86,14 +88,17 @@ function render(p) {
   view.innerHTML = `
     <article class="case">
       <a class="case__back" href="#/">${arrow('left')} All work</a>
-      <header class="case__head">
-        <p class="case__company">${p.company}, ${p.period}</p>
-        <h1 class="case__title">${p.title}</h1>
-        <p class="case__summary">${p.summary}</p>
-      </header>
-      <dl class="facts">
-        ${p.meta.map(m => `<div><dt>${m.label}</dt><dd>${m.value}</dd></div>`).join('')}
-      </dl>
+      <div class="case__intro">
+        <header class="case__head">
+          <p class="case__company">${p.company}, ${p.period}</p>
+          <h1 class="case__title">${p.title}</h1>
+          <p class="case__summary">${p.summary}</p>
+        </header>
+        <dl class="case__inspect" aria-label="Project details">
+          ${p.meta.map(m => `<div><dt>${m.label}</dt><dd>${m.value}</dd></div>`).join('')}
+        </dl>
+      </div>
+      <span class="frame__label case__hero-label" aria-hidden="true"><span>${p.title}</span><span>${p.period}</span></span>
       <div class="case__hero">
         <img src="${p.hero.src}" alt="${p.hero.alt}" decoding="async" fetchpriority="high" />
       </div>
@@ -125,6 +130,9 @@ function render(p) {
 }
 
 function wire(zoomables) {
+  observeVideos(view);
+  cleanup.push(() => unobserveVideos(view));
+
   view.querySelectorAll('[data-zoom]').forEach(btn => {
     btn.addEventListener('click', () => openLightbox(zoomables, Number(btn.dataset.zoom)));
   });
