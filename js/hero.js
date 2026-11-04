@@ -147,11 +147,20 @@ function startMesh(hero, title) {
 }
 
 // ── Scramble reveal (GSAP SplitText) ──────────────────
-// Two levels of scramble: the words start as a shuffled sentence, and inside each longer
-// word its 2–3 letter chunks are shuffled too. Step 1: words drop into their own line while
-// their chunks reassemble. Step 2: words slide along the line into place. Then the split is
-// reverted so the headline is plain, reflowable text again.
+// Partial scramble: most of the sentence starts in place. About a third of the words start
+// nudged off their spot, about half of the longer words have their 2–3 letter chunks
+// shuffled, and one or two pieces start much further away and fly home last. Everything
+// lands on a quick-start / long-soft-landing curve, then the split is reverted.
 const MESH = false; // ember mesh fill (startMesh): parked for now, flip to bring it back
+
+const WORD_SHARE = 0.35;  // share of words nudged off their spot
+const CHUNK_SHARE = 0.5;  // share of longer words whose chunks get shuffled
+const NUDGE = 0.45;       // em: max sideways nudge for ordinary words
+const FAR = [1.6, 2.8];   // em: distance range for the 1–2 outliers
+
+const rand = (a, b) => a + Math.random() * (b - a);
+const sign = () => (Math.random() < 0.5 ? -1 : 1);
+const pick = (list, n) => [...list].sort(() => Math.random() - 0.5).slice(0, n);
 
 const shuffle = (n) => {
   const order = [...Array(n).keys()];
@@ -159,7 +168,6 @@ const shuffle = (n) => {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
-  // Never leave an item in its own slot, so every piece visibly moves
   if (n > 1) for (let i = 0; i < n; i++) if (order[i] === i) { const k = (i + 1) % n; [order[i], order[k]] = [order[k], order[i]]; }
   return order;
 };
@@ -177,27 +185,6 @@ const chunk = (chars) => {
   return out;
 };
 
-const pos = (el, box) => { const r = el.getBoundingClientRect(); return { x: r.left - box.left, y: r.top - box.top }; };
-
-// Where each word lands if the sentence is laid out in `order` (hidden clone, same width
-// and type), so the scrambled sentence is a real, non-overlapping jumble
-function shuffledSlots(title, words, order) {
-  const ghost = document.createElement('p');
-  ghost.className = title.className;
-  ghost.setAttribute('aria-hidden', 'true');
-  Object.assign(ghost.style, {
-    position: 'absolute', visibility: 'hidden', pointerEvents: 'none',
-    left: `${title.offsetLeft}px`, top: `${title.offsetTop}px`, width: `${title.offsetWidth}px`, margin: '0',
-  });
-  ghost.innerHTML = order.map((k) => `<span>${words[k].textContent}</span>`).join(' ');
-  title.after(ghost);
-  const box = ghost.getBoundingClientRect();
-  const slot = [];
-  [...ghost.children].forEach((span, n) => { slot[order[n]] = pos(span, box); });
-  ghost.remove();
-  return slot;
-}
-
 async function revealHeadline(title) {
   const { gsap, SplitText } = window;
   if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
@@ -206,46 +193,62 @@ async function revealHeadline(title) {
 
   const split = SplitText.create(title, { type: 'words,chars', wordsClass: 'hero__word', charsClass: 'hero__char' });
   const words = split.words;
-  const titleBox = title.getBoundingClientRect();
-  const home = words.map((w) => pos(w, titleBox));
-  const slot = shuffledSlots(title, words, shuffle(words.length));
+  const em = parseFloat(getComputedStyle(title).fontSize);
+  const lineH = words[0].getBoundingClientRect().height;
 
-  // Inside each word: lay its chunks out in shuffled order; every char of a chunk moves together
-  const charShift = new Map();
-  const chunksOf = new Map(); // word → its scrambled chunks (arrays of chars)
-  words.forEach((word) => {
+  // Movers: [element(s), start {x, y}, isOutlier]
+  const movers = [];
+
+  // Some words nudged: a little sideways, sometimes a third of a line up/down
+  const nudged = pick(words, Math.max(2, Math.round(words.length * WORD_SHARE)));
+  nudged.forEach((w) => movers.push([w, {
+    x: sign() * rand(0.15, NUDGE) * em,
+    y: Math.random() < 0.5 ? sign() * lineH * 0.33 : 0,
+  }, false]));
+
+  // Some longer words: chunks laid out in shuffled order (chars of a chunk move together)
+  const long = words.filter((w) => w.textContent.length > 3);
+  pick(long, Math.max(1, Math.round(long.length * CHUNK_SHARE))).forEach((word) => {
     const chunks = chunk([...word.querySelectorAll('.hero__char')]);
     if (chunks.length < 2) return;
-    chunksOf.set(word, chunks);
-    const box = word.getBoundingClientRect();
+    const left = word.getBoundingClientRect().left;
+    const start = chunks.map((c) => c[0].getBoundingClientRect().left - left);
     const width = (c) => c.reduce((sum, ch) => sum + ch.getBoundingClientRect().width, 0);
-    const start = chunks.map((c) => pos(c[0], box).x);
     let x = 0;
     shuffle(chunks.length).forEach((k) => {
-      const dx = x - start[k];
-      chunks[k].forEach((ch) => charShift.set(ch, dx));
+      movers.push([chunks[k], { x: x - start[k], y: 0 }, false]);
       x += width(chunks[k]);
     });
   });
-  const chars = [...charShift.keys()];
 
-  gsap.set(words, { x: (i) => slot[i].x - home[i].x, y: (i) => slot[i].y - home[i].y });
-  gsap.set(chars, { x: (i, el) => charShift.get(el) });
+  // One or two pieces (a word, or a chunk of one) start much further out — toward the side
+  // with room, so they never start beyond the sheet
+  const sheet = (title.closest('.sheet') || document.body).getBoundingClientRect();
+  const pool = movers.filter(([, , far]) => !far);
+  pick(pool, Math.random() < 0.5 ? 1 : 2).forEach((m) => {
+    const els = [m[0]].flat();
+    const l = els[0].getBoundingClientRect().left;
+    const r = els.at(-1).getBoundingClientRect().right;
+    const dist = rand(...FAR) * em;
+    const roomLeft = l - sheet.left - em * 0.5;
+    const roomRight = sheet.right - r - em * 0.5;
+    const x = roomRight >= dist || roomRight > roomLeft ? Math.min(dist, roomRight) : -Math.min(dist, roomLeft);
+    m[1] = { x, y: sign() * rand(1, 2) * lineH };
+    m[2] = true;
+  });
+
+  movers.forEach(([el, from]) => gsap.set(el, from));
   title.classList.add('is-ready');
   if (MESH) startMesh(title.closest('.hero'), title);
 
-  // Every word runs its own two steps from its own random start; its chunks reassemble at
-  // their own random moments during step 1. Nothing moves in lockstep.
-  const ease = 'power3.inOut';
-  const rnd = gsap.utils.random;
-  const tl = gsap.timeline({ delay: 0.3, onComplete: () => split.revert() });
-  words.forEach((word) => {
-    const t = rnd(0, 0.6);
-    tl.to(word, { y: 0, duration: 0.4, ease }, t);                         // step 1: into its line
-    (chunksOf.get(word) || []).forEach((c) => {
-      tl.to(c, { x: 0, duration: 0.35, ease }, t + rnd(0, 0.35));          //   chunks reassemble
-    });
-    tl.to(word, { x: 0, duration: 0.45, ease }, t + rnd(0.3, 0.5));        // step 2: slide into place
+  // Quick, decisive start; long soft landing. Ordinary pieces settle within ~1s;
+  // the outliers leave a touch later and arrive last.
+  const tl = gsap.timeline({ delay: 0.25, onComplete: () => split.revert() });
+  movers.forEach(([el, , far]) => {
+    tl.to(el, far
+      ? { x: 0, y: 0, duration: 1.15, ease: 'expo.inOut' }
+      : { x: 0, y: 0, duration: rand(0.7, 0.9), ease: 'expo.out' },
+    far ? rand(0.2, 0.3) : rand(0, 0.35));
   });
 }
 
