@@ -22,8 +22,8 @@ const REVEAL = [
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 56;   // px of travel at the very edge
-const EDGE = 0.28;  // share of the viewport over which a unit enters / leaves
+const SHIFT = 72;   // px of travel at the very edge
+const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
