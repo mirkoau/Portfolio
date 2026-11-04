@@ -59,15 +59,12 @@ function projectCard(p) {
     : `<span class="project-card__cta"><span class="project-card__cta-label" data-draw-line>Read case study</span> ${arrow()}</span>`;
   return `
     <${tag} class="project-card"${href}${p.comingSoon ? '' : ' data-draw-trigger'}>
-      <header class="project-card__head" aria-hidden="true"><span>${p.role}</span><span>${p.period}</span></header>
-      <div class="project-card__body">
-        <div class="frame">${frameMedia(p.cover)}</div>
-        <div class="project-card__text">
-          <h4 class="project-card__title">${p.title}</h4>
-          <p class="project-card__summary">${p.summary}</p>
-          <p class="project-card__scope">${p.did.join(', ')}</p>
-          ${cta}
-        </div>
+      <div class="frame">${frameMedia(p.cover)}</div>
+      <div class="project-card__text">
+        <p class="project-card__meta">${p.role}, ${p.period}</p>
+        <h4 class="project-card__title">${p.title}</h4>
+        <p class="project-card__summary">${p.summary}</p>
+        ${cta}
       </div>
     </${tag}>`;
 }

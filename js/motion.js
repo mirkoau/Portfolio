@@ -16,8 +16,8 @@ const REVEAL = [
   // index
   '.section-title', '.section-sub', '.work__company-head',
   // cards: each part moves on its own; the card frame stays put
-  '.project-card__head', '.project-card .frame', '.project-card__title', '.project-card__summary',
-  '.project-card__scope', '.project-card__cta',
+  '.project-card .frame', '.project-card__meta', '.project-card__title', '.project-card__summary',
+  '.project-card__cta',
   '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
   '.footer__pitch', '.footer__email', '.footer__links', '.footer__copy',
   // case study (.case__hero arrives via the morph)
