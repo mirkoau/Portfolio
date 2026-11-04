@@ -91,13 +91,13 @@ js/content.js           — Fetches data.json, renders index sections; shared he
 js/hero.js              — Hero headline line-mask reveal (keeps footnote markup)
 js/project-page.js      — Case study: fetch/cache content/{id}.json, render, TOC spy, compare slider, pan, zoom
 js/gallery.js           — <dialog> lightbox (freelance strip + case study images)
-content/data.json       — overview, work (companies → projects), approach, freelance, about
+content/data.json       — work (companies → projects), approach, freelance, about
 content/{id}.json       — Case study: meta, hero, sections[{stage, heading, body, pull?, media?, compare?}], results, todo
 ```
 
 ### Key Patterns
 - **Hero:** type-led. Big headline sits low in a full-screen hero (whitespace above), two editorial footnote markers (¹ ²) whose notes sit right-aligned below; hovering a marker or note highlights the pair and draws a hairline (pure CSS `:has`). Facts row anchors the bottom. Rejected and removed (don't reintroduce): Figma bounding box/selection frame, canvas dot grid, game input prompts / hold-to-confirm, rotating hero images, per-letter animation.
-- **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button (underline + 'Click to copy' on hover). Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
+- **Index sections:** sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button (underline + 'Click to copy' on hover). Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
 - **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.

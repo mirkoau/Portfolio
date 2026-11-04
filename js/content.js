@@ -39,7 +39,6 @@ export async function initContent() {
   const res = await fetch('content/data.json');
   if (!res.ok) throw new Error(`data.json ${res.status}`);
   data = await res.json();
-  renderOverview(data.overview);
   renderWork(data.work);
   renderApproach(data.approach);
   renderFreelance(data.freelance);
@@ -49,52 +48,6 @@ export async function initContent() {
 
 export const caseStudies = () =>
   data.work.flatMap(c => c.projects.filter(p => !p.comingSoon));
-
-// Capability matrix: projects × skills. A <table> so rows/cols stay navigable for AT.
-function renderOverview({ skills, rows, tools, todo }) {
-  const el = $('[data-overview]');
-  el.innerHTML = `
-    <div class="matrix__scroll">
-      <table class="matrix">
-        <caption class="sr-only">What I did on each project</caption>
-        <thead>
-          <tr>
-            <td></td>
-            ${skills.map((s, c) => `<th scope="col" data-col="${c}"><span>${s}</span></th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map((r, ri) => `
-            <tr data-row="${ri}">
-              <th scope="row"><span class="matrix__name">${r.name}</span><span class="matrix__kind">${r.kind}</span></th>
-              ${skills.map((_, c) => r.marks.includes(c)
-                ? `<td data-col="${c}"><span class="matrix__dot" role="img" aria-label="Yes"></span></td>`
-                : `<td data-col="${c}"><span class="sr-only">No</span></td>`).join('')}
-            </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-    <p class="matrix__tools"><span>Tools</span> ${tools.join(', ')}</p>
-    ${todoNote(todo)}`;
-
-  // Crosshair highlight: hovered row + column
-  const table = el.querySelector('.matrix');
-  let lit = [];
-  const clear = () => { lit.forEach(c => c.classList.remove('is-hl')); lit = []; };
-  table.addEventListener('pointerover', (e) => {
-    const cell = e.target.closest('td, th');
-    clear();
-    if (!cell) return;
-    const row = cell.closest('tbody tr');
-    const col = cell.dataset.col;
-    lit = [
-      ...(row ? row.cells : []),
-      ...(col ? table.querySelectorAll(`[data-col="${col}"]`) : []),
-    ];
-    lit.forEach(c => c.classList.add('is-hl'));
-  });
-  table.addEventListener('pointerleave', clear);
-}
 
 export const frameMedia = (m) => `<span class="frame__media" data-vt="media">${img(m)}</span>`;
 
