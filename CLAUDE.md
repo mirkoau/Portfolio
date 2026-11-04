@@ -21,6 +21,8 @@ npx serve .
 # or VS Code Live Server
 # or python -m http.server 8080
 ```
+**Caching gotcha:** `python -m http.server` sends no Cache-Control, so browsers heuristically cache ES modules and can mix a new `main.js` with a stale `router.js` etc. → import error → nothing JS-rendered (work, matrix, about, images). After JS edits, hard-reload (Ctrl+Shift+R), or use a server that sends `Cache-Control: no-cache`. Same risk for ~10 min after a GitHub Pages deploy (max-age=600) when module exports change.
+
 No runtime deps (Three.js/GSAP/Lenis from v1 removed). PP Neue Montreal is self-hosted in `assets/fonts/`. TODO notes in content JSON (`todo` fields) render only on localhost.
 
 ## Stack
