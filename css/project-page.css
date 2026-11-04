@@ -28,7 +28,8 @@
 }
 .case__head { min-width: 0; }
 
-.case__inspect { border-top: 1px solid var(--ink); font-size: var(--text-sm); }
+.case__inspect { font-size: var(--text-sm); }
+.case__inspect > div:first-child { border-top: 1px solid var(--ink); } /* rule moves with the row */
 .case__inspect > div {
   display: grid;
   grid-template-columns: 88px 1fr;

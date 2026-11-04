@@ -358,8 +358,10 @@ body.is-project .nav__links { visibility: hidden; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── Work: company groups ──────────────────────────── */
-.work__company { padding-block: var(--space-md) var(--space-xl); border-top: 1px solid var(--ink); }
+.work__company { padding-bottom: var(--space-xl); }
 .work__company-head {
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--ink); /* the company rule moves with its head */
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -481,7 +483,8 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 
 
 /* ── Approach: principle → how → where it shows up ── */
-.approach__rows { margin-top: var(--space-lg); border-top: 1px solid var(--ink); }
+.approach__rows { margin-top: var(--space-lg); }
+.approach__row:first-child { border-top: 1px solid var(--ink); } /* rule moves with the row */
 .approach__row {
   display: grid;
   grid-template-columns: 4fr 5fr 3fr;

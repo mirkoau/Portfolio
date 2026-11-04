@@ -9,13 +9,21 @@ const enabled = Boolean(gsap && ScrollTrigger && ScrollSmoother)
 
 const NAV_OFFSET = 88; // px: nav height + breathing room, where scroll targets land
 
-// Elements that drift in/out. Hero has its own load sequence, so it's not listed.
+// Units that move in/out with the scroll: leaf-level, never nested inside each other, so
+// nothing double-moves. Strokes travel with the element that owns them (rules are borders
+// on these units). Hero headline, dateline, fixed nav and pinned TOC are left out.
 const REVEAL = [
+  // index
   '.section-title', '.section-sub', '.work__company-head', '.project-card',
   '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
-  '.footer__pitch', '.footer__email', '.footer__links',
-  '.case__head > *', '.case__inspect', '.case__section > *', '.case__results', '.case__next', // .case__hero arrives via the morph
+  '.footer__pitch', '.footer__email', '.footer__links', '.footer__copy',
+  // case study (.case__hero arrives via the morph)
+  '.case__back', '.case__head > *', '.case__inspect > div',
+  '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
+
+const SHIFT = 14;   // px of travel at the very edge
+const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
@@ -50,39 +58,33 @@ export const scrollToEl = (el, { smooth = true, center = false } = {}) => {
 export const refresh = () => { if (enabled) ScrollTrigger.refresh(); };
 
 // ── Scroll in / out ──
-// Rise 6px and fade in on entry; ease out the same way past the top. Reverse on the way back.
-const SHIFT = 6;
-const IN = { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.04, overwrite: true };
-const out = (y) => ({ autoAlpha: 0, y, duration: 0.35, ease: 'power1.in', overwrite: true });
-
+// Scroll-linked, not timed: a unit rises SHIFT px into place and fades in while it crosses
+// the bottom EDGE of the viewport, and drifts SHIFT px up and fades out while it crosses
+// the top EDGE. It moves exactly as much as you scroll, both directions.
 export function reveal(root = document) {
   if (!enabled) return;
   const els = [...root.querySelectorAll(REVEAL)].filter((el) => !el.dataset.reveal);
-  if (!els.length) return;
-  els.forEach((el) => { el.dataset.reveal = ''; });
-  gsap.set(els, { autoAlpha: 0, y: SHIFT });
-  ScrollTrigger.batch(els, {
-    start: 'top 94%',
-    end: 'bottom 6%',
-    onEnter: (b) => gsap.to(b, IN),
-    onEnterBack: (b) => gsap.to(b, IN),
-    onLeave: (b) => gsap.to(b, out(-SHIFT)),
-    onLeaveBack: (b) => gsap.to(b, out(SHIFT)),
+  const inStart = 'top bottom';
+  const inEnd = `top ${(1 - EDGE) * 100}%`;
+  const outStart = `bottom ${EDGE * 100}%`;
+  els.forEach((el) => {
+    el.dataset.reveal = '';
+    gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
+      y: 0, autoAlpha: 1, ease: 'power1.out',
+      scrollTrigger: { trigger: el, start: inStart, end: inEnd, scrub: true },
+    });
+    gsap.fromTo(el, { y: 0, autoAlpha: 1 }, {
+      y: -SHIFT, autoAlpha: 0, ease: 'power1.in', immediateRender: false,
+      scrollTrigger: { trigger: el, start: outStart, end: 'bottom top', scrub: true },
+    });
   });
 }
 
-// Page swaps: put everything already on screen straight into its revealed state, so the
-// view transition captures final positions (a mid-reveal offset made the morph land a few
-// px off and then snap). Later batch callbacks tween to the same values: no movement.
-export function settleVisible(root = document) {
-  if (!enabled) return;
-  const vh = innerHeight;
-  root.querySelectorAll('[data-reveal]').forEach((el) => {
-    const r = el.getBoundingClientRect();
-    if (r.bottom <= 0 || r.top >= vh || (r.width === 0 && r.height === 0)) return;
-    gsap.killTweensOf(el);
-    gsap.set(el, { autoAlpha: 1, y: 0 });
-  });
+// Page swaps: scroll-linked states are a function of scroll position, so after a jump
+// force one synchronous update before the view transition captures. The morph then lands
+// exactly where the live element sits (no snap afterwards).
+export function settleVisible() {
+  if (enabled) ScrollTrigger.update();
 }
 
 // Drop triggers whose elements were removed (case study torn down)
