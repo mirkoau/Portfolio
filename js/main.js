@@ -68,6 +68,12 @@ function initNavState() {
   const onScroll = () => nav.classList.toggle('is-scrolled', scrollY > NAV_SCROLLED_AT);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Footer under the nav band → light nav text (nav has no fill of its own)
+  const footer = document.querySelector('.footer');
+  new IntersectionObserver(([e]) => nav.classList.toggle('is-on-dark', e.isIntersecting), {
+    rootMargin: '0px 0px -92% 0px', // a band about the nav's height at the top
+  }).observe(footer);
 }
 
 function initNavSpy() {

@@ -100,6 +100,8 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Index sections:** sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button (underline + 'Click to copy' on hover). Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
+- **Hero gradient:** each headline line is filled with an animated ember mesh (background-clip:text) while rising, then a registered `--fill` color animates transparent→ink so it settles into solid ink (~2.6s). hero.js restores plain markup on `ink-settle` end. Parked idea to test later: mesh bloom *behind* the hero.
+- **Nav:** transparent + backdrop blur only (no fill); `.is-on-dark` flips to light text when the footer is under it (IO band at top).
 - **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
 - **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.
 - **Fonts:** WOFF (book, medium, italic) built from the OTFs with fontTools. WOFF2 needs `brotli` (not installed).
@@ -109,7 +111,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Email:** base64 `data-c`/`data-d` decoded at runtime; copy button with confirmation + live region.
 
 ### Design Tokens (`css/style.css :root`)
-- Color: `--paper #f4f5f7`, `--surface #fff`, `--ink #16181d`, `--ink-2/-3` secondary text, `--line`, `--select #1a6bff` (only accent; selection/focus/active)
+- Color: `--paper`, `--surface`, `--ink`, `--ink-2/-3`, `--line`. Accent = Ember: `--accent #e2452b` (fills, rules, large text), `--accent-ink #b8321c` (small text, AA). Gradient palette `--ember-oxblood/-amber/-blush`. No blue (user: "feels Facebook").
 - Type: `--font` PP Neue Montreal only; scale `--text-sm` … `--text-display`
 - Space: 8px base `--space-2xs` … `--space-2xl`; layout `--max 1280px`, `--gutter`, `--nav-height`
 - Motion: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`

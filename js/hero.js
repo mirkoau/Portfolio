@@ -33,8 +33,15 @@ async function revealLines(title) {
     .join(' ');
   title.classList.add('is-ready');
 
+  // Restore once the last line's final animation ends (ink-settle if supported, else line-up)
   const last = title.querySelectorAll('.line__inner')[lines.length - 1];
-  last.addEventListener('animationend', () => { title.innerHTML = html; }, { once: true });
+  const finalAnim = CSS.supports('background-clip', 'text') || CSS.supports('-webkit-background-clip', 'text')
+    ? 'ink-settle' : 'line-up';
+  last.addEventListener('animationend', function done(e) {
+    if (e.animationName !== finalAnim) return;
+    last.removeEventListener('animationend', done);
+    title.innerHTML = html;
+  });
 }
 
 export function initHero() {
