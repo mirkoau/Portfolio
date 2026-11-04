@@ -2,6 +2,71 @@
 // Content is first-party JSON, so plain template strings are fine here.
 
 const isDev = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+// Mouse drag scrolls el sideways (touch already pans natively), optionally gliding on after
+// release. Pointer capture sends the click after a drag to el itself, so it never opens a
+// child. While dragging/gliding el has .is-free (no snapping). Returns stop() for the glide.
+export function dragScroll(el, { glide = false } = {}) {
+  let raf = 0;
+  let drag = null;
+  const stop = () => {
+    cancelAnimationFrame(raf);
+    el.classList.remove('is-free');
+  };
+  el.addEventListener('dragstart', (e) => e.preventDefault()); // no native image drag
+
+  el.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    stop();
+    drag?.abort(); // a release outside the window never sent pointerup
+    drag = new AbortController();
+    const on = (type, fn) => el.addEventListener(type, fn, { signal: drag.signal });
+    const x0 = e.clientX;
+    const s0 = el.scrollLeft;
+    let moved = false;
+    let v = 0; // px/ms
+    let lastX = x0;
+    let lastT = e.timeStamp;
+
+    on('pointermove', (ev) => {
+      if (!moved) {
+        if (Math.abs(ev.clientX - x0) < 4) return; // still a click
+        moved = true;
+        el.setPointerCapture(e.pointerId);
+        el.classList.add('is-dragging', 'is-free');
+      }
+      el.scrollLeft = s0 - (ev.clientX - x0);
+      const dt = ev.timeStamp - lastT;
+      if (dt > 0) v = 0.8 * ((lastX - ev.clientX) / dt) + 0.2 * v;
+      lastX = ev.clientX;
+      lastT = ev.timeStamp;
+    });
+    const end = (ev) => {
+      drag.abort();
+      if (!moved) return;
+      el.classList.remove('is-dragging');
+      if (!glide || ev.timeStamp - lastT > 80 || reduceMotion.matches) return stop();
+      const max = el.scrollWidth - el.clientWidth;
+      let pos = el.scrollLeft; // float: scrollLeft rounds, so small steps would stall
+      let t = 0;
+      const step = (now) => {
+        const dt = t ? now - t : 16;
+        t = now;
+        v *= Math.pow(0.95, dt / 16);
+        pos = Math.min(Math.max(pos + v * dt, 0), max);
+        el.scrollLeft = pos;
+        if (Math.abs(v) > 0.02 && pos > 0 && pos < max) raf = requestAnimationFrame(step);
+        else stop();
+      };
+      raf = requestAnimationFrame(step);
+    };
+    on('pointerup', end);
+    on('pointercancel', end);
+    on('lostpointercapture', end);
+  });
+  return stop;
+}
 
 export const todoNote = (text) =>
   isDev && text ? `<p class="todo">TODO: ${text}</p>` : '';
@@ -20,7 +85,6 @@ export const media = (m, attrs = '') => m.video
   : img(m, attrs);
 
 // Loops play only while on screen; reduced-motion users keep the still poster
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const videoIO = new IntersectionObserver((entries) => entries.forEach(({ target: v, isIntersecting }) => {
   if (isIntersecting && !reduceMotion.matches) v.play().catch(() => {});
   else v.pause();

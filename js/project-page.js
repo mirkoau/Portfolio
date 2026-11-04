@@ -1,6 +1,6 @@
 // Case study view: fetch content/{id}.json, render, wire interactions.
 
-import { caseStudies, todoNote, frameMedia, img, media, observeVideos, unobserveVideos } from './content.js';
+import { caseStudies, todoNote, frameMedia, img, media, observeVideos, unobserveVideos, dragScroll } from './content.js';
 import { openLightbox } from './gallery.js';
 import { scrollToEl, pin } from './motion.js';
 
@@ -144,25 +144,7 @@ function wire(zoomables) {
     range.addEventListener('input', () => el.style.setProperty('--pos', `${range.value}%`));
   });
 
-  // Mouse drag-to-pan; touch already scrolls natively
-  view.querySelectorAll('[data-pan]').forEach(el => {
-    el.addEventListener('pointerdown', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      el.setPointerCapture(e.pointerId);
-      const x0 = e.clientX, s0 = el.scrollLeft;
-      el.classList.add('is-dragging');
-      const drag = new AbortController();
-      const { signal } = drag;
-      const up = () => {
-        el.classList.remove('is-dragging');
-        drag.abort();
-      };
-      el.addEventListener('pointermove', (ev) => { el.scrollLeft = s0 - (ev.clientX - x0); }, { signal });
-      el.addEventListener('pointerup', up, { signal });
-      el.addEventListener('pointercancel', up, { signal });
-    });
-    el.addEventListener('dragstart', (e) => e.preventDefault());
-  });
+  view.querySelectorAll('[data-pan]').forEach((el) => dragScroll(el));
 
   // Scroll without touching location.hash (it holds the route)
   const toc = view.querySelector('.case__toc');

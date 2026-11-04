@@ -294,7 +294,9 @@ body.is-project .nav__links { visibility: hidden; }
   background: var(--paper);
   display: flow-root; /* keep the footer's bottom margin inside, so the smoother can scroll to it */
 }
-#index-view { overflow-x: clip; } /* full-bleed strip uses 100vw, which includes the scrollbar */
+/* Clip at viewport width (not the sheet) so the freelance strip can bleed to the screen edge;
+   100vw includes the scrollbar, so the bleed overshoots slightly */
+#smooth-content { overflow-x: clip; }
 
 .hero, .work, .approach, .freelance, .about, .footer__inner {
   max-width: var(--max);
@@ -527,11 +529,12 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 }
 
 /* ── Freelance: natural aspect ratios, one height ─── */
-/* Bleeds past the content column to the sheet's edge, so cut-off items signal more */
+/* Bleeds past the content column to the screen edge, so cut-off items signal more.
+   Mouse drag on the strip scrolls it (content.js dragScroll) */
 .freelance__strip {
   display: flex;
   gap: var(--space-sm);
-  margin-right: calc(var(--gutter) * -1);
+  margin-right: calc((100% - 100vw) / 2);
   padding: 6px var(--gutter) 0 0; /* top: room for hover lift; right: end breathing room */
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -539,17 +542,21 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   scrollbar-width: none;
 }
 .freelance__strip::-webkit-scrollbar { display: none; }
+@media (pointer: fine) { .freelance__strip { cursor: grab; } }
+.freelance__strip.is-dragging { cursor: grabbing; user-select: none; }
+.freelance__strip.is-free { scroll-snap-type: none; } /* snapping fights drags and the glide */
 .freelance__strip:focus-visible { outline-offset: 4px; }
 
 /* Custom scrollbar, content-column width. Thumb size/offset set by main.js */
 .freelance__bar {
   position: relative;
-  height: 8px;
+  height: 3px;
   margin-top: var(--space-md);
   background: var(--line);
   cursor: pointer;
   touch-action: none;
 }
+.freelance__bar::before { content: ''; position: absolute; inset: -8px 0; } /* bigger hit area than the line */
 .freelance__thumb {
   position: absolute;
   inset: 0 auto 0 0;

@@ -1,4 +1,4 @@
-import { initContent } from './content.js';
+import { initContent, dragScroll } from './content.js';
 import { initHero } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
@@ -100,12 +100,13 @@ function initFreelance(items) {
     const btn = e.target.closest('[data-freelance-idx]');
     if (btn) openLightbox(items, Number(btn.dataset.freelanceIdx));
   });
-  initStripBar(strip, document.querySelector('[data-freelance-bar]'));
+  const stopGlide = dragScroll(strip, { glide: true });
+  initStripBar(strip, document.querySelector('[data-freelance-bar]'), stopGlide);
 }
 
 // Custom scrollbar for the strip: the strip bleeds to the screen edge, the bar only
 // spans the content column. Thumb drag and track click both scroll the strip.
-function initStripBar(strip, bar) {
+function initStripBar(strip, bar, stopGlide) {
   const thumb = bar.firstElementChild;
   let raf = 0;
   let thumbW = 0;
@@ -136,24 +137,27 @@ function initStripBar(strip, bar) {
 
   bar.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
+    stopGlide();
     const r = bar.getBoundingClientRect();
-    const onThumb = e.target === thumb;
+    const t = thumb.getBoundingClientRect();
+    const onThumb = e.clientX >= t.left && e.clientX <= t.right; // the hit area is taller than the thumb
     // Track click: centre the thumb under the pointer, then keep dragging from there
-    const grab = onThumb ? e.clientX - thumb.getBoundingClientRect().left : thumbW / 2;
+    const grab = onThumb ? e.clientX - t.left : thumbW / 2;
     if (!onThumb) scrollToThumbX(e.clientX - r.left - grab);
 
     bar.setPointerCapture(e.pointerId);
     bar.classList.add('is-dragging');
-    strip.style.scrollSnapType = 'none'; // snapping fights a drag
+    strip.classList.add('is-free');
     const drag = new AbortController();
+    const on = (type, fn) => bar.addEventListener(type, fn, { signal: drag.signal });
     const end = () => {
       bar.classList.remove('is-dragging');
-      strip.style.removeProperty('scroll-snap-type');
+      strip.classList.remove('is-free');
       drag.abort();
     };
-    bar.addEventListener('pointermove', (ev) => scrollToThumbX(ev.clientX - r.left - grab), { signal: drag.signal });
-    bar.addEventListener('pointerup', end, { signal: drag.signal });
-    bar.addEventListener('pointercancel', end, { signal: drag.signal });
+    on('pointermove', (ev) => scrollToThumbX(ev.clientX - r.left - grab));
+    on('pointerup', end);
+    on('pointercancel', end);
   });
 }
 
