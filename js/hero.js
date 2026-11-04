@@ -147,9 +147,10 @@ function startMesh(hero, title) {
 }
 
 // ── Scramble reveal (GSAP SplitText) ──────────────────
-// Words start as a shuffled sentence (same words, wrong order). Step 1: every word drops
-// into its own line. Step 2: words slide along the line into place. Then the split is reverted
-// so the headline is plain, reflowable text again.
+// Two levels of scramble: the words start as a shuffled sentence, and inside each longer
+// word its 2–3 letter chunks are shuffled too. Step 1: words drop into their own line while
+// their chunks reassemble. Step 2: words slide along the line into place. Then the split is
+// reverted so the headline is plain, reflowable text again.
 const MESH = false; // ember mesh fill (startMesh): parked for now, flip to bring it back
 
 const shuffle = (n) => {
@@ -158,26 +159,29 @@ const shuffle = (n) => {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
-  // Never leave a word on its own slot, so every chunk visibly moves
-  for (let i = 0; i < n; i++) if (order[i] === i) { const k = (i + 1) % n; [order[i], order[k]] = [order[k], order[i]]; }
+  // Never leave an item in its own slot, so every piece visibly moves
+  if (n > 1) for (let i = 0; i < n; i++) if (order[i] === i) { const k = (i + 1) % n; [order[i], order[k]] = [order[k], order[i]]; }
   return order;
 };
 
-async function revealHeadline(title) {
-  const { gsap, SplitText } = window;
-  if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
-  gsap.registerPlugin(SplitText);
-  await document.fonts.ready;
+// Cut a word's chars into chunks of 2–3 (words of ≤3 chars stay whole)
+const chunk = (chars) => {
+  if (chars.length <= 3) return [chars];
+  const out = [];
+  for (let i = 0; i < chars.length;) {
+    const left = chars.length - i;
+    const size = left <= 3 ? left : (left === 4 ? 2 : 2 + Math.round(Math.random()));
+    out.push(chars.slice(i, i + size));
+    i += size;
+  }
+  return out;
+};
 
-  const split = SplitText.create(title, { type: 'words', wordsClass: 'hero__word' });
-  const words = split.words;
-  const pos = (el, box) => { const r = el.getBoundingClientRect(); return { x: r.left - box.left, y: r.top - box.top }; };
-  const titleBox = title.getBoundingClientRect();
-  const home = words.map((w) => pos(w, titleBox));
+const pos = (el, box) => { const r = el.getBoundingClientRect(); return { x: r.left - box.left, y: r.top - box.top }; };
 
-  // Lay the same words out in shuffled order (hidden clone, same width and type), so the
-  // scrambled state is a real, non-overlapping jumble rather than words piled on each other
-  const order = shuffle(words.length);
+// Where each word lands if the sentence is laid out in `order` (hidden clone, same width
+// and type), so the scrambled sentence is a real, non-overlapping jumble
+function shuffledSlots(title, words, order) {
   const ghost = document.createElement('p');
   ghost.className = title.className;
   ghost.setAttribute('aria-hidden', 'true');
@@ -187,22 +191,62 @@ async function revealHeadline(title) {
   });
   ghost.innerHTML = order.map((k) => `<span>${words[k].textContent}</span>`).join(' ');
   title.after(ghost);
-  const ghostBox = ghost.getBoundingClientRect();
+  const box = ghost.getBoundingClientRect();
   const slot = [];
-  [...ghost.children].forEach((span, n) => { slot[order[n]] = pos(span, ghostBox); });
+  [...ghost.children].forEach((span, n) => { slot[order[n]] = pos(span, box); });
   ghost.remove();
+  return slot;
+}
 
-  // Scrambled: each word starts where it sits in the shuffled sentence
-  gsap.set(words, {
-    x: (i) => slot[i].x - home[i].x,
-    y: (i) => slot[i].y - home[i].y,
+async function revealHeadline(title) {
+  const { gsap, SplitText } = window;
+  if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
+  gsap.registerPlugin(SplitText);
+  await document.fonts.ready;
+
+  const split = SplitText.create(title, { type: 'words,chars', wordsClass: 'hero__word', charsClass: 'hero__char' });
+  const words = split.words;
+  const titleBox = title.getBoundingClientRect();
+  const home = words.map((w) => pos(w, titleBox));
+  const slot = shuffledSlots(title, words, shuffle(words.length));
+
+  // Inside each word: lay its chunks out in shuffled order; every char of a chunk moves together
+  const charShift = new Map();
+  const chunksOf = new Map(); // word → its scrambled chunks (arrays of chars)
+  words.forEach((word) => {
+    const chunks = chunk([...word.querySelectorAll('.hero__char')]);
+    if (chunks.length < 2) return;
+    chunksOf.set(word, chunks);
+    const box = word.getBoundingClientRect();
+    const width = (c) => c.reduce((sum, ch) => sum + ch.getBoundingClientRect().width, 0);
+    const start = chunks.map((c) => pos(c[0], box).x);
+    let x = 0;
+    shuffle(chunks.length).forEach((k) => {
+      const dx = x - start[k];
+      chunks[k].forEach((ch) => charShift.set(ch, dx));
+      x += width(chunks[k]);
+    });
   });
+  const chars = [...charShift.keys()];
+
+  gsap.set(words, { x: (i) => slot[i].x - home[i].x, y: (i) => slot[i].y - home[i].y });
+  gsap.set(chars, { x: (i, el) => charShift.get(el) });
   title.classList.add('is-ready');
   if (MESH) startMesh(title.closest('.hero'), title);
 
-  gsap.timeline({ delay: 0.35, onComplete: () => split.revert() })
-    .to(words, { y: 0, duration: 0.45, ease: 'power3.inOut', stagger: { each: 0.02, from: 'random' } })
-    .to(words, { x: 0, duration: 0.5, ease: 'power3.inOut', stagger: { each: 0.02, from: 'random' } }, '-=0.15'); // overlap the steps: words barely meet mid-move
+  // Every word runs its own two steps from its own random start; its chunks reassemble at
+  // their own random moments during step 1. Nothing moves in lockstep.
+  const ease = 'power3.inOut';
+  const rnd = gsap.utils.random;
+  const tl = gsap.timeline({ delay: 0.3, onComplete: () => split.revert() });
+  words.forEach((word) => {
+    const t = rnd(0, 0.6);
+    tl.to(word, { y: 0, duration: 0.4, ease }, t);                         // step 1: into its line
+    (chunksOf.get(word) || []).forEach((c) => {
+      tl.to(c, { x: 0, duration: 0.35, ease }, t + rnd(0, 0.35));          //   chunks reassemble
+    });
+    tl.to(word, { x: 0, duration: 0.45, ease }, t + rnd(0.3, 0.5));        // step 2: slide into place
+  });
 }
 
 export function initHero() {
