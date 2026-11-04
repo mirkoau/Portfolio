@@ -18,12 +18,12 @@ const REVEAL = [
   '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
   '.footer__pitch', '.footer__email', '.footer__links', '.footer__copy',
   // case study (.case__hero arrives via the morph)
-  '.case__back', '.case__head > *', '.case__inspect > div',
+  '.case__head > *', '.case__inspect > div',
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 14;   // px of travel at the very edge
-const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
+const SHIFT = 56;   // px of travel at the very edge
+const EDGE = 0.28;  // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 

@@ -206,7 +206,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .nav.is-scrolled { border-bottom-color: var(--line); }
 
+/* Back link: only in project view, docked left of the name */
+.nav__back {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  view-transition-name: nav-back;
+}
+body.is-project .nav__back { display: inline-flex; }
+body.is-project .nav__back + .nav__brand { margin-left: calc(var(--space-lg) * -1 + var(--space-md)); } /* tighter pair */
+
 .nav__brand {
+  view-transition-name: nav-brand; /* glides right when the back link docks in */
   font-weight: 500;
   text-decoration: none;
   letter-spacing: -0.01em;
@@ -466,14 +480,11 @@ a.project-card:focus-visible { outline: none; }
   font-weight: 500;
 }
 
-/* Hovering a project dims the rest of the list; the hovered title steps forward */
-.project-card__title { transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) ease; }
+/* Hovering a project dims the rest of the list (titles stay still and unchanged) */
 .project-card__text { transition: color var(--duration-base) ease; }
 @media (hover: hover) {
-  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .project-card__text,
-  .work__companies:has(a.project-card:hover) .project-card:not(:hover) .project-card__title { color: var(--ink-3); }
+  .work__companies:has(a.project-card:hover) .project-card:not(:hover) :is(.project-card__summary, .project-card__scope, .project-card__cta) { color: var(--ink-3); }
   .work__companies:has(a.project-card:hover) .project-card:not(:hover) .frame__media img { opacity: 0.55; }
-  a.project-card:hover .project-card__title { transform: translateX(6px); }
 }
 .frame__media img { transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-base) ease; }
 .project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
@@ -726,6 +737,12 @@ body.is-project #index-view { display: none; }
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: 320ms; }
 ::view-transition-group(project-media) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+/* Nav: name glides to its new spot; "All work" rises into the bar / sinks out of it */
+::view-transition-group(nav-brand) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+::view-transition-new(nav-back) { animation: nav-back-in 520ms var(--ease-out) both; }
+::view-transition-old(nav-back) { animation: nav-back-out 320ms ease-in both; }
+@keyframes nav-back-in { from { opacity: 0; transform: translateY(14px); } }
+@keyframes nav-back-out { to { opacity: 0; transform: translateY(14px); } }
 
 /* Smoother active (js/motion.js): GSAP pins replace sticky */
 html.has-smoother .case__toc { position: static; top: auto; }

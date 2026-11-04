@@ -1,6 +1,6 @@
 // Case study view: fetch content/{id}.json, render, wire interactions.
 
-import { caseStudies, todoNote, arrow, frameMedia, img, media, observeVideos, unobserveVideos } from './content.js';
+import { caseStudies, todoNote, frameMedia, img, media, observeVideos, unobserveVideos } from './content.js';
 import { openLightbox } from './gallery.js';
 import { scrollToEl, pin } from './motion.js';
 
@@ -88,7 +88,6 @@ function render(p) {
 
   view.innerHTML = `
     <article class="case">
-      <a class="case__back" href="#/">${arrow('left')} All work</a>
       <div class="case__intro">
         <header class="case__head">
           <p class="case__company">${p.company}, ${p.period}</p>
