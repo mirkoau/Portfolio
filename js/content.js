@@ -40,6 +40,7 @@ export async function initContent() {
   if (!res.ok) throw new Error(`data.json ${res.status}`);
   data = await res.json();
   renderWork(data.work);
+  renderHeroIndex(data.work);
   renderApproach(data.approach);
   renderFreelance(data.freelance);
   renderAbout(data.about);
@@ -115,6 +116,68 @@ function initTimeline() {
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   document.querySelectorAll('.project-card[data-years]').forEach(c => io.observe(c));
+}
+
+// Hero contents: every project as an editorial index row; hover shows its cover
+function renderHeroIndex(work) {
+  const list = $('[data-hero-index]');
+  if (!list) return;
+  list.innerHTML = work.flatMap(c => c.projects).map(p => {
+    const cells = `<span class="index__title">${p.title}</span>
+      <span class="index__role">${p.comingSoon ? 'Case study after launch' : p.role}</span>
+      <span class="index__years">${p.period}</span>`;
+    return p.comingSoon
+      ? `<li><div class="index__row is-soon" data-cover="${p.cover.src}">${cells}</div></li>`
+      : `<li><a class="index__row" href="#/work/${p.id}" data-project="${p.id}" data-cover="${p.cover.src}">${cells}</a></li>`;
+  }).join('');
+  initIndexPreview(list);
+}
+
+// Cover follows the pointer with a soft lag while hovering the index (hover devices only)
+function initIndexPreview(list) {
+  if (!matchMedia('(hover: hover)').matches) return;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const preview = document.createElement('div');
+  preview.className = 'index-preview';
+  preview.setAttribute('aria-hidden', 'true');
+  const pic = new Image();
+  pic.alt = '';
+  preview.append(pic);
+  document.body.append(preview);
+
+  let x = 0, y = 0, tx = 0, ty = 0, raf = 0, active = false;
+  // Docked just left of the index column, following the pointer vertically only, and
+  // clamped between the byline's end and the list's end so it never covers text
+  const about = document.querySelector('.hero__about');
+  const target = (e) => {
+    const l = list.getBoundingClientRect();
+    const h = preview.offsetHeight;
+    const minY = about ? about.getBoundingClientRect().bottom + 24 : l.top;
+    tx = l.left - preview.offsetWidth - 40;
+    ty = Math.min(Math.max(e.clientY - h / 2, minY), Math.max(l.bottom - h, minY));
+  };
+  const loop = () => {
+    const k = still ? 1 : 0.16;
+    x += (tx - x) * k;
+    y += (ty - y) * k;
+    preview.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    raf = active || Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(loop) : 0;
+  };
+  const hide = () => { active = false; preview.classList.remove('is-on'); };
+
+  list.addEventListener('pointerover', (e) => {
+    const row = e.target.closest('[data-cover]');
+    if (!row) return;
+    if (pic.getAttribute('src') !== row.dataset.cover) pic.src = row.dataset.cover;
+    target(e);
+    if (!active) { x = tx; y = ty; }
+    active = true;
+    preview.classList.add('is-on');
+    if (!raf) raf = requestAnimationFrame(loop);
+  });
+  list.addEventListener('pointermove', target);
+  list.addEventListener('pointerleave', hide);
+  list.addEventListener('click', hide); // route change: don't leave it floating
 }
 
 function renderApproach(items) {
