@@ -14,7 +14,10 @@ const NAV_OFFSET = 88; // px: nav height + breathing room, where scroll targets 
 // on these units). Hero headline, dateline, fixed nav and pinned TOC are left out.
 const REVEAL = [
   // index
-  '.section-title', '.section-sub', '.work__company-head', '.project-card',
+  '.section-title', '.section-sub', '.work__company-head',
+  // cards: each part moves on its own; the card frame stays put
+  '.project-card__head', '.project-card .frame', '.project-card__title', '.project-card__summary',
+  '.project-card__scope', '.project-card__cta',
   '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
   '.footer__pitch', '.footer__email', '.footer__links', '.footer__copy',
   // case study (.case__hero arrives via the morph)
@@ -22,8 +25,8 @@ const REVEAL = [
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 72;   // px of travel at the very edge
-const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
+const SHIFT = 56;   // px of travel at the very edge
+const EDGE = 0.18;  // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
