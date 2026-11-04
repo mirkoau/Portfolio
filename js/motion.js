@@ -115,4 +115,33 @@ export function pin(el, within) {
   return () => t.kill();
 }
 
+// "All work": starts in the page (at the placeholder's spot) and travels up with it; when
+// it reaches the nav row it docks there instead of sliding under the bar. In the last
+// stretch before docking, the name slides right to make room. Scroll-driven both ways.
+// Returns a cleanup that puts everything back.
+export function dockBack(placeholder) {
+  const back = document.querySelector('.nav__back');
+  const brand = document.querySelector('.nav__brand');
+  if (!enabled || !placeholder || !back || !brand) return () => {};
+  const docked = back.getBoundingClientRect().top - (gsap.getProperty(back, 'y') || 0);
+  const offset = Math.max(1, placeholder.getBoundingClientRect().top + getScrollY() - docked);
+  // Name ends one gap to the right of the docked link (measured, not assumed)
+  const b = back.getBoundingClientRect();
+  const shift = b.left + b.width + 20 - (brand.getBoundingClientRect().left - (gsap.getProperty(brand, 'x') || 0));
+  // The name makes room while the link crosses into the nav row, finishing just before it docks
+  const lead = Math.min(56, offset);
+  const done = Math.min(12, offset - lead);
+
+  const tl = gsap.timeline({
+    scrollTrigger: { start: 0, end: offset, scrub: true },
+  });
+  tl.fromTo(back, { y: offset }, { y: 0, ease: 'none', duration: offset }, 0)
+    .fromTo(brand, { x: 0 }, { x: shift, ease: 'power2.inOut', duration: lead }, offset - lead - done);
+  return () => {
+    tl.scrollTrigger?.kill();
+    tl.kill();
+    gsap.set([back, brand], { clearProps: 'transform' });
+  };
+}
+
 export const motionEnabled = () => enabled;

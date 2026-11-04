@@ -197,7 +197,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   gap: var(--space-lg);
   height: var(--nav-height);
   /* align with the centered content column */
-  padding-inline: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+  --nav-pad: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+  padding-inline: var(--nav-pad);
   background: transparent; /* the blur alone separates it from content */
   backdrop-filter: saturate(1.4) blur(16px);
   -webkit-backdrop-filter: saturate(1.4) blur(16px);
@@ -206,18 +207,25 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .nav.is-scrolled { border-bottom-color: var(--line); }
 
-/* Back link: only in project view, docked left of the name */
+/* Back link: project view only. Lives in the fixed nav layer at the content's left edge;
+   motion.js (dockBack) starts it down in the page and docks it as you scroll. */
 .nav__back {
+  position: absolute;
+  left: var(--nav-pad);
+  top: 50%;
+  margin-top: -10px;
   display: none;
   align-items: center;
   gap: 6px;
+  height: 20px;
   font-size: var(--text-sm);
   font-weight: 500;
   text-decoration: none;
-  view-transition-name: nav-back;
 }
 body.is-project .nav__back { display: inline-flex; }
-body.is-project .nav__back + .nav__brand { margin-left: calc(var(--space-lg) * -1 + var(--space-md)); } /* tighter pair */
+/* Without GSAP: no scroll dock, so keep it in the bar and move the name over */
+html:not(.has-smoother) body.is-project .nav__brand { margin-left: 104px; }
+
 
 .nav__brand {
   view-transition-name: nav-brand; /* glides right when the back link docks in */
@@ -304,7 +312,7 @@ body.is-project .nav__links { visibility: hidden; }
     column-gap: var(--space-xl);
     align-items: end;
   }
-  .section-head .section-sub { margin-top: 0; padding-bottom: 0.35em; }
+  .section-head .section-sub { margin-top: 0; padding-bottom: 0.35em; justify-self: end; text-align: right; }
 }
 
 .section-title {
@@ -735,12 +743,8 @@ body.is-project #index-view { display: none; }
 ::view-transition-old(root),
 ::view-transition-new(root) { animation-duration: 320ms; }
 ::view-transition-group(project-media) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
-/* Nav: name glides to its new spot; "All work" rises into the bar / sinks out of it */
+/* Nav: name glides back when leaving a project with "All work" docked */
 ::view-transition-group(nav-brand) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
-::view-transition-new(nav-back) { animation: nav-back-in 520ms var(--ease-out) both; }
-::view-transition-old(nav-back) { animation: nav-back-out 320ms ease-in both; }
-@keyframes nav-back-in { from { opacity: 0; transform: translateY(14px); } }
-@keyframes nav-back-out { to { opacity: 0; transform: translateY(14px); } }
 
 /* Smoother active (js/motion.js): GSAP pins replace sticky */
 html.has-smoother .case__toc { position: static; top: auto; }

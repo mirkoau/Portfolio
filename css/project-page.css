@@ -4,6 +4,8 @@
   margin-inline: auto;
   padding: var(--space-lg) var(--gutter) 0;
 }
+/* Where "All work" starts before it docks into the nav (motion.js dockBack) */
+.case__dock { display: block; height: 20px; }
 
 
 /* Title left, inspect panel right: specs read like a Figma properties panel */

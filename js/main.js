@@ -3,7 +3,7 @@ import { initHero } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
-import { initMotion, reveal, refresh, prune, settleVisible, getScrollY, scrollToY, scrollToEl } from './motion.js';
+import { initMotion, reveal, refresh, prune, settleVisible, dockBack, getScrollY, scrollToY, scrollToEl } from './motion.js';
 import { initDrawLines } from './drawline.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -190,6 +190,7 @@ document.addEventListener('pointerover', (e) => {
 // ── Views + view transitions ────────────────────────────
 // The clicked card's image morphs into the case study hero (and back).
 let indexScroll = 0;
+let undock = () => {};
 let morphEl = null;
 let pendingSource = null;
 
@@ -223,8 +224,10 @@ function toProject(id, sourceEl) {
     if (!fromProject) indexScroll = getScrollY();
     document.body.classList.add('is-project');
     prune();
+    undock();
     setMorph(heroEl());
     jump(0);
+    undock = dockBack(document.querySelector('.case__dock'));
     reveal(document.getElementById('project-view'));
     settleVisible(document.getElementById('project-view'));
   });
@@ -233,6 +236,8 @@ function toProject(id, sourceEl) {
 function toIndex(fromId) {
   setMorph(heroEl());
   return transition(() => {
+    undock();
+    undock = () => {};
     hideProject();
     document.body.classList.remove('is-project');
     prune();

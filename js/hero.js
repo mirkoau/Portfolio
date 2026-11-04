@@ -167,9 +167,10 @@ const SCRIPT = [
   { word: 'products', x: -1.2, y: 0.16, first: 'y', at: 0.11, d1: 0.44, d2: 0.6, gap: 0.03 },
   { word: 'so', x: -0.16, y: 0.24, first: 'y', at: 0.17, d1: 0.36, d2: 0.48, gap: 0.08 },
   { word: 'they', x: 0.2, y: -0.2, first: 'x', at: 0.22, d1: 0.4, d2: 0.52, gap: 0.05 },
-  { word: 'design', x: 0.18, y: -2.4, first: 'y', at: 0.26, d1: 0.6, d2: 0.5, gap: 0.02 },
+  { word: 'design', x: 0.18, y: -2.4, first: 'x', at: 0.26, d1: 0.4, d2: 0.66, gap: 0.03 },  // left first, then swoops down
   { word: 'explain', x: -0.24, y: 0.2, first: 'x', at: 0.31, d1: 0.38, d2: 0.5, gap: 0.07 },
-  { word: 'themselves.', x: 0.3, y: -0.16, first: 'x', at: 0.37, d1: 0.42, d2: 0.56, gap: 0.04 },
+  { word: 'themselves.', to: 4, x: 0.22, y: -0.16, first: 'x', at: 0.35, d1: 0.4, d2: 0.54, gap: 0.05 },   // "them"
+  { word: 'themselves.', from: 4, x: 0.34, y: 0.14, first: 'y', at: 0.41, d1: 0.36, d2: 0.58, gap: 0.03 },  // "selves."
 ];
 
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)

@@ -88,6 +88,7 @@ function render(p) {
 
   view.innerHTML = `
     <article class="case">
+      <span class="case__dock" aria-hidden="true"></span>
       <div class="case__intro">
         <header class="case__head">
           <p class="case__company">${p.company}, ${p.period}</p>
