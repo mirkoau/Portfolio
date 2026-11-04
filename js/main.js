@@ -3,7 +3,7 @@ import { initHero } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
-import { initMotion, reveal, refresh, prune, getScrollY, scrollToY, scrollToEl } from './motion.js';
+import { initMotion, reveal, refresh, prune, settleVisible, getScrollY, scrollToY, scrollToEl } from './motion.js';
 import { initDrawLines } from './drawline.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -226,6 +226,7 @@ function toProject(id, sourceEl) {
     setMorph(heroEl());
     jump(0);
     reveal(document.getElementById('project-view'));
+    settleVisible(document.getElementById('project-view'));
   });
 }
 
@@ -241,6 +242,7 @@ function toIndex(fromId) {
     if (!card) return setMorph(null);
     const r = card.getBoundingClientRect();
     if (r.bottom < 0 || r.top > innerHeight) scrollToEl(card, { smooth: false, center: true });
+    settleVisible(document.getElementById('index-view'));
     setMorph(card);
   });
 }

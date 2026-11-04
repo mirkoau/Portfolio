@@ -14,7 +14,7 @@ const REVEAL = [
   '.section-title', '.section-sub', '.work__company-head', '.project-card',
   '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
   '.footer__pitch', '.footer__email', '.footer__links',
-  '.case__head > *', '.case__inspect', '.case__hero', '.case__section > *', '.case__results', '.case__next',
+  '.case__head > *', '.case__inspect', '.case__section > *', '.case__results', '.case__next', // .case__hero arrives via the morph
 ].join(', ');
 
 let smoother = null;
@@ -68,6 +68,20 @@ export function reveal(root = document) {
     onEnterBack: (b) => gsap.to(b, IN),
     onLeave: (b) => gsap.to(b, out(-SHIFT)),
     onLeaveBack: (b) => gsap.to(b, out(SHIFT)),
+  });
+}
+
+// Page swaps: put everything already on screen straight into its revealed state, so the
+// view transition captures final positions (a mid-reveal offset made the morph land a few
+// px off and then snap). Later batch callbacks tween to the same values: no movement.
+export function settleVisible(root = document) {
+  if (!enabled) return;
+  const vh = innerHeight;
+  root.querySelectorAll('[data-reveal]').forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom <= 0 || r.top >= vh || (r.width === 0 && r.height === 0)) return;
+    gsap.killTweensOf(el);
+    gsap.set(el, { autoAlpha: 1, y: 0 });
   });
 }
 
