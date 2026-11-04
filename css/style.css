@@ -40,7 +40,7 @@
   --ink-3: #6b7180;
   --line: #dfe2e7;
   --line-strong: #c9cdd5;
-  --canvas: #e6e7eb; /* around the sheet */
+  --canvas: #ffffff; /* page background around the container */
   /* Ember: accent for fills/rules/large text; accent-ink for small text (AA on paper) */
   --accent: #e2452b;
   --accent-ink: #b8321c;
@@ -263,16 +263,14 @@ body.is-project .nav__links { visibility: hidden; }
 .project-card__cta-label { display: inline-block; }
 
 /* ── Layout helpers ────────────────────────────────── */
-/* The folio: one sheet, hairline edges, on a slightly darker surround */
+/* The folio: one centred container on a plain white page */
 .sheet {
   max-width: calc(var(--max) + var(--gutter) * 2);
   min-height: 100vh;
   margin-inline: auto;
   padding-top: var(--nav-height); /* nav is fixed above it */
   background: var(--paper);
-  border-inline: 1px solid var(--line-strong);
 }
-@media (max-width: 1023px) { .sheet { border-inline: 0; } }
 #index-view { overflow-x: clip; } /* full-bleed strip uses 100vw, which includes the scrollbar */
 
 .hero, .work, .approach, .freelance, .about, .footer__inner {
