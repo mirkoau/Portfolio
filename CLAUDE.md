@@ -88,7 +88,7 @@ css/project-page.css    — Case study page
 js/main.js              — Orchestrator: init, email decode/copy, nav state, view transitions, routing
 js/router.js            — Hash routing (#/work/{id}); everything else = index
 js/motion.js            — GSAP layer: ScrollSmoother, scroll in/out reveals, scroll helpers, TOC pin
-js/vendor/              — gsap.min.js, ScrollTrigger.min.js, ScrollSmoother.min.js
+js/vendor/              — gsap.min.js, ScrollTrigger.min.js, ScrollSmoother.min.js, SplitText.min.js
 js/content.js           — Fetches data.json, renders index sections; shared helpers (isDev, todoNote, frameMedia)
 js/hero.js              — Hero headline line-mask reveal (keeps footnote markup)
 js/project-page.js      — Case study: fetch/cache content/{id}.json, render, TOC spy, compare slider, pan, zoom
@@ -104,7 +104,8 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Index sections:** Work = company groups with project cards; hovering a card dims the others (text + images) and nudges its title (CSS `:has`). Dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, pinned TOC grouped by stage, Results block, next-project link.
-- **Hero gradient:** a true mesh gradient (WebGL2, hero.js `startMesh`): 4×4 ember colour vertices, Catmull-Rom interpolated, vertices drifting via a smooth warp field. Canvas sits over the headline with `mix-blend-mode: lighten` inside an isolated `.hero` (paper bg), so colour only shows on the dark letters; all channels capped ≤0.95 so paper never tints. After ~1.7s the shader sweeps ink in (soft front, top line first, sine ease, 2.6s), then the canvas removes itself. No WebGL2 / reduced motion → plain ink. Parked idea: mesh bloom *behind* the hero.
+- **Hero headline reveal (hero.js `revealHeadline`):** GSAP SplitText (words). Words start laid out as a shuffled sentence (measured from a hidden clone, so no overlaps), then 2 steps: drop into their line (y), slide into place (x), then `split.revert()`. Ember mesh is parked behind `MESH = false`.
+- **Hero gradient (parked):** a true mesh gradient (WebGL2, hero.js `startMesh`): 4×4 ember colour vertices, Catmull-Rom interpolated, vertices drifting via a smooth warp field. Canvas sits over the headline with `mix-blend-mode: lighten` inside an isolated `.hero` (paper bg), so colour only shows on the dark letters; all channels capped ≤0.95 so paper never tints. After ~1.7s the shader sweeps ink in (soft front, top line first, sine ease, 2.6s), then the canvas removes itself. No WebGL2 / reduced motion → plain ink. Parked idea: mesh bloom *behind* the hero.
 - **Nav:** transparent + backdrop blur only (no fill); `.is-on-dark` flips to light text when the footer is under it (IO band at top).
 - **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
 - **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.

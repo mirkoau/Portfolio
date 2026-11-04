@@ -146,44 +146,66 @@ function startMesh(hero, title) {
   requestAnimationFrame(frame);
 }
 
-// ── Line reveal ───────────────────────────────────────
-// Each rendered line slides up from behind a mask. Lines are measured after fonts
-// load, then the original markup is restored so wrapping stays live on resize.
-async function revealLines(title) {
-  if (reduceMotion.matches) return title.classList.add('is-ready');
+// ── Scramble reveal (GSAP SplitText) ──────────────────
+// Words start as a shuffled sentence (same words, wrong order). Step 1: every word drops
+// into its own line. Step 2: words slide along the line into place. Then the split is reverted
+// so the headline is plain, reflowable text again.
+const MESH = false; // ember mesh fill (startMesh): parked for now, flip to bring it back
+
+const shuffle = (n) => {
+  const order = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  // Never leave a word on its own slot, so every chunk visibly moves
+  for (let i = 0; i < n; i++) if (order[i] === i) { const k = (i + 1) % n; [order[i], order[k]] = [order[k], order[i]]; }
+  return order;
+};
+
+async function revealHeadline(title) {
+  const { gsap, SplitText } = window;
+  if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
+  gsap.registerPlugin(SplitText);
   await document.fonts.ready;
-  const html = title.innerHTML;
 
-  // Words as HTML strings; inline elements (footnote markers) stick to the preceding word
-  const words = [''];
-  title.childNodes.forEach(n => {
-    if (n.nodeType !== Node.TEXT_NODE) { words[words.length - 1] += n.outerHTML; return; }
-    n.textContent.split(/(\s+)/).forEach(part => {
-      if (!part) return;
-      if (/^\s+$/.test(part)) { if (words.at(-1)) words.push(''); }
-      else words[words.length - 1] += part;
-    });
+  const split = SplitText.create(title, { type: 'words', wordsClass: 'hero__word' });
+  const words = split.words;
+  const pos = (el, box) => { const r = el.getBoundingClientRect(); return { x: r.left - box.left, y: r.top - box.top }; };
+  const titleBox = title.getBoundingClientRect();
+  const home = words.map((w) => pos(w, titleBox));
+
+  // Lay the same words out in shuffled order (hidden clone, same width and type), so the
+  // scrambled state is a real, non-overlapping jumble rather than words piled on each other
+  const order = shuffle(words.length);
+  const ghost = document.createElement('p');
+  ghost.className = title.className;
+  ghost.setAttribute('aria-hidden', 'true');
+  Object.assign(ghost.style, {
+    position: 'absolute', visibility: 'hidden', pointerEvents: 'none',
+    left: `${title.offsetLeft}px`, top: `${title.offsetTop}px`, width: `${title.offsetWidth}px`, margin: '0',
   });
+  ghost.innerHTML = order.map((k) => `<span>${words[k].textContent}</span>`).join(' ');
+  title.after(ghost);
+  const ghostBox = ghost.getBoundingClientRect();
+  const slot = [];
+  [...ghost.children].forEach((span, n) => { slot[order[n]] = pos(span, ghostBox); });
+  ghost.remove();
 
-  title.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
-  const lines = [];
-  let top = null;
-  title.querySelectorAll('.word').forEach(w => {
-    if (w.offsetTop !== top) { lines.push([]); top = w.offsetTop; }
-    lines.at(-1).push(w.innerHTML);
+  // Scrambled: each word starts where it sits in the shuffled sentence
+  gsap.set(words, {
+    x: (i) => slot[i].x - home[i].x,
+    y: (i) => slot[i].y - home[i].y,
   });
-
-  title.innerHTML = lines
-    .map((ws, i) => `<span class="line"><span class="line__inner" style="--i:${i}">${ws.join(' ')}</span></span>`)
-    .join(' ');
   title.classList.add('is-ready');
-  startMesh(title.closest('.hero'), title);
+  if (MESH) startMesh(title.closest('.hero'), title);
 
-  const last = title.querySelectorAll('.line__inner')[lines.length - 1];
-  last.addEventListener('animationend', () => { title.innerHTML = html; }, { once: true });
+  gsap.timeline({ delay: 0.35, onComplete: () => split.revert() })
+    .to(words, { y: 0, duration: 0.45, ease: 'power3.inOut', stagger: { each: 0.02, from: 'random' } })
+    .to(words, { x: 0, duration: 0.5, ease: 'power3.inOut', stagger: { each: 0.02, from: 'random' } }, '-=0.15'); // overlap the steps: words barely meet mid-move
 }
 
 export function initHero() {
   const title = document.querySelector('.hero__title');
-  if (title) revealLines(title);
+  if (title) revealHeadline(title);
 }
