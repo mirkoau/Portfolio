@@ -1,13 +1,16 @@
 // Case study view: fetch content/{id}.json, render, wire interactions.
 
-import { caseStudies, todoNote, arrow, frameMedia } from './content.js';
+import { caseStudies, todoNote, arrow, frameMedia, img } from './content.js';
 import { openLightbox } from './gallery.js';
 
 const view = document.getElementById('project-view');
+const baseTitle = document.title;
 const cache = new Map();
 let cleanup = [];
 
-// Fetch + memoize; also used to prefetch on card hover
+export const heroEl = () => view.querySelector('.case__hero');
+
+// Memoized; also used to prefetch on card hover
 export function loadProject(id) {
   if (!cache.has(id)) {
     cache.set(id, fetch(`content/${id}.json`).then(r => {
@@ -18,23 +21,16 @@ export function loadProject(id) {
   return cache.get(id);
 }
 
-const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Prefixed so section ids can't collide with index ids (#work, #about) that stay in the DOM
+const slug = (s) => 'cs-' + s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-function figure(m, i) {
-  if (m.wide) {
-    return `
-      <figure class="case__figure">
-        <div class="case__pan" data-pan tabindex="0" aria-label="${m.alt}, scrollable">
-          <img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" />
-        </div>
-        ${m.caption ? `<figcaption>${m.caption}</figcaption>` : ''}
-      </figure>`;
-  }
+function figure(m, zoomIdx) {
+  const wrap = m.wide
+    ? `<div class="case__pan" data-pan tabindex="0" role="region" aria-label="${m.alt}, scrollable">${img(m)}</div>`
+    : `<button class="case__zoom" type="button" data-zoom="${zoomIdx}" aria-label="Enlarge: ${m.alt}">${img(m)}</button>`;
   return `
     <figure class="case__figure">
-      <button class="case__zoom" type="button" data-zoom="${i}" aria-label="Enlarge: ${m.alt}">
-        <img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" />
-      </button>
+      ${wrap}
       ${m.caption ? `<figcaption>${m.caption}</figcaption>` : ''}
     </figure>`;
 }
@@ -42,8 +38,8 @@ function figure(m, i) {
 function compare({ before, after }) {
   return `
     <div class="compare" data-compare>
-      <img src="${before.src}" alt="${before.alt}" loading="lazy" decoding="async" />
-      <img class="compare__after" src="${after.src}" alt="${after.alt}" loading="lazy" decoding="async" />
+      ${img(before)}
+      ${img(after, 'class="compare__after"')}
       <span class="compare__divider" aria-hidden="true"></span>
       <span class="compare__tag compare__tag--before" aria-hidden="true">Before</span>
       <span class="compare__tag compare__tag--after" aria-hidden="true">After</span>
@@ -52,7 +48,7 @@ function compare({ before, after }) {
 }
 
 function render(p) {
-  // Flat list of zoomable images → one lightbox sequence for the page
+  // One lightbox sequence across all zoomable images on the page
   const zoomables = [];
   const ids = new Map(p.sections.map(s => [s, slug(s.heading)]));
   const sections = p.sections.map(s => {
@@ -73,7 +69,7 @@ function render(p) {
       </section>`;
   }).join('');
 
-  // TOC grouped by stage (stages repeat across consecutive sections)
+  // Consecutive sections sharing a stage collapse into one TOC group
   const groups = [];
   p.sections.forEach(s => {
     const last = groups.at(-1);
@@ -89,16 +85,16 @@ function render(p) {
 
   view.innerHTML = `
     <article class="case">
-      <a class="case__back" href="#/" data-back>${arrow('left')} All work</a>
+      <a class="case__back" href="#/">${arrow('left')} All work</a>
       <header class="case__head">
         <p class="case__company">${p.company}, ${p.period}</p>
         <h1 class="case__title">${p.title}</h1>
         <p class="case__summary">${p.summary}</p>
       </header>
-      <dl class="case__meta">
+      <dl class="facts">
         ${p.meta.map(m => `<div><dt>${m.label}</dt><dd>${m.value}</dd></div>`).join('')}
       </dl>
-      <div class="case__hero" data-vt="media">
+      <div class="case__hero">
         <img src="${p.hero.src}" alt="${p.hero.alt}" decoding="async" fetchpriority="high" />
       </div>
       <div class="case__body">
@@ -118,7 +114,7 @@ function render(p) {
       <a class="case__next" href="#/work/${next.id}" data-project="${next.id}">
         <div>
           <p class="case__next-label">Next case study</p>
-          <p class="case__next-title">${next.title}</p>
+          <p class="section-title case__next-title">${next.title}</p>
         </div>
         ${frameMedia(next.cover)}
       </a>` : ''}
@@ -133,28 +129,33 @@ function wire(zoomables) {
     btn.addEventListener('click', () => openLightbox(zoomables, Number(btn.dataset.zoom)));
   });
 
-  // Before/after: range input drives --pos (keyboard accessible)
+  // Range input (not a custom drag) so the slider is keyboard + AT accessible
   view.querySelectorAll('[data-compare]').forEach(el => {
     const range = el.querySelector('input');
     range.addEventListener('input', () => el.style.setProperty('--pos', `${range.value}%`));
   });
 
-  // Wide flow: drag to pan with mouse (touch scrolls natively)
+  // Mouse drag-to-pan; touch already scrolls natively
   view.querySelectorAll('[data-pan]').forEach(el => {
-    let x0 = 0, s0 = 0, down = false;
     el.addEventListener('pointerdown', (e) => {
       if (e.pointerType !== 'mouse') return;
-      down = true; x0 = e.clientX; s0 = el.scrollLeft;
+      el.setPointerCapture(e.pointerId);
+      const x0 = e.clientX, s0 = el.scrollLeft;
       el.classList.add('is-dragging');
+      const drag = new AbortController();
+      const { signal } = drag;
+      const up = () => {
+        el.classList.remove('is-dragging');
+        drag.abort();
+      };
+      el.addEventListener('pointermove', (ev) => { el.scrollLeft = s0 - (ev.clientX - x0); }, { signal });
+      el.addEventListener('pointerup', up, { signal });
+      el.addEventListener('pointercancel', up, { signal });
     });
-    el.addEventListener('pointermove', (e) => { if (down) el.scrollLeft = s0 - (e.clientX - x0); });
-    const end = () => { down = false; el.classList.remove('is-dragging'); };
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointerleave', end);
     el.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
-  // TOC: in-page links scroll without touching the route hash
+  // Scroll without touching location.hash (it holds the route)
   const toc = view.querySelector('.case__toc');
   toc.addEventListener('click', (e) => {
     const a = e.target.closest('[data-toc]');
@@ -163,7 +164,6 @@ function wire(zoomables) {
     document.getElementById(a.dataset.toc).scrollIntoView({ block: 'start' });
   });
 
-  // TOC: highlight the section crossing the upper third of the viewport
   const links = new Map([...toc.querySelectorAll('[data-toc]')].map(a => [a.dataset.toc, a]));
   const io = new IntersectionObserver((entries) => {
     entries.forEach(en => {
@@ -176,19 +176,27 @@ function wire(zoomables) {
   cleanup.push(() => io.disconnect());
 }
 
+const NOT_FOUND = `
+  <div class="case case__error">
+    <h1 class="case__title">Case study not found</h1>
+    <p>This project doesn't have a case study yet.</p>
+    <a class="btn btn--primary" href="#/">Back to all work</a>
+  </div>`;
+
+// Resolves false if the route changed while the JSON was loading (caller should bail)
 export async function showProject(id) {
+  let p = null;
+  try {
+    p = await loadProject(id);
+  } catch (err) {
+    console.warn('[case]', err.message);
+  }
+  if (location.hash !== `#/work/${id}`) return false;
   hideProject();
   view.hidden = false;
-  try {
-    render(await loadProject(id));
-  } catch {
-    view.innerHTML = `
-      <div class="case case__error">
-        <h1 class="case__title">Case study not found</h1>
-        <p>This project doesn't have a case study yet.</p>
-        <a class="btn btn--primary" href="#/">Back to all work</a>
-      </div>`;
-  }
+  if (p) render(p);
+  else view.innerHTML = NOT_FOUND;
+  return true;
 }
 
 export function hideProject() {
@@ -196,5 +204,5 @@ export function hideProject() {
   cleanup = [];
   view.hidden = true;
   view.innerHTML = '';
-  document.title = 'Mirko Aus — Product & UX Designer';
+  document.title = baseTitle;
 }

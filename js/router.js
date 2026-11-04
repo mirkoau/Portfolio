@@ -1,48 +1,24 @@
-let _onRoute = null;
-let _currentRoute = null;
+// id restricted to [a-z0-9-]: stops path traversal + junk reaching fetch()/innerHTML.
+// Anything else (incl. in-page anchors like #work) is the index view.
+const PROJECT = /^#\/work\/([a-z0-9-]+)$/;
 
-const routes = {
-  index: { pattern: /^$|^#\/?$/ },
-  // id restricted to [a-z0-9-]: stops path traversal + junk reaching fetch()/innerHTML.
-  // Anything else falls through to the index view.
-  project: { pattern: /^#\/work\/([a-z0-9-]+)$/ },
-};
+let current = null;
 
-function parseHash(hash) {
-  const h = hash || '';
-  const projectMatch = h.match(routes.project.pattern);
-  if (projectMatch) return { view: 'project', projectId: projectMatch[1] };
-  return { view: 'index' };
-}
-
-function handleRoute() {
-  const route = parseHash(location.hash);
-  // Skip if same route
-  if (_currentRoute
-    && _currentRoute.view === route.view
-    && _currentRoute.projectId === route.projectId) return;
-  const prev = _currentRoute;
-  _currentRoute = route;
-  if (_onRoute) _onRoute(route, prev);
-}
-
-export function navigate(hash) {
-  history.pushState(null, '', hash);
-  handleRoute();
-}
-
-export function resetRoute() {
-  _currentRoute = parseHash(location.hash);
+export function parseHash(hash) {
+  const m = hash.match(PROJECT);
+  return m ? { view: 'project', projectId: m[1] } : { view: 'index' };
 }
 
 export function initRouter(onRoute) {
-  _onRoute = onRoute;
-  window.addEventListener('hashchange', () => {
-    handleRoute();
-    // Umami only hooks pushState/replaceState; hashchange fires only on
-    // browser back/forward here, so no double-count with programmatic navigate().
-    window.umami?.track();
-  });
-  // Parse initial hash on load
-  handleRoute();
+  const handle = () => {
+    const route = parseHash(location.hash);
+    if (current && current.view === route.view && current.projectId === route.projectId) return;
+    const prev = current;
+    current = route;
+    onRoute(route, prev);
+    // Umami auto-tracks pushState only; hash routes need a manual hit
+    if (prev) window.umami?.track();
+  };
+  addEventListener('hashchange', handle);
+  handle();
 }

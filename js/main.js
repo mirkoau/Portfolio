@@ -1,13 +1,15 @@
 import { initContent } from './content.js';
 import { initHero } from './hero.js';
 import { initGallery, openLightbox } from './gallery.js';
-import { initRouter } from './router.js';
-import { showProject, hideProject, loadProject } from './project-page.js';
+import { initRouter, parseHash } from './router.js';
+import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const live = document.querySelector('[data-live]');
-const nav = document.querySelector('[data-nav]');
-let email = '';
+const NAV_SCROLLED_AT = 8;
+
+// Deep link to a case study: start its fetch in parallel with data.json
+const initial = parseHash(location.hash);
+if (initial.view === 'project') loadProject(initial.projectId).catch(() => {});
 
 initHero();
 initGallery();
@@ -25,13 +27,16 @@ try {
 if (data) {
   initFreelance(data.freelance.items);
   initNavSpy();
+  // Browser tried to jump to #about etc. before sections above it were rendered
+  if (initial.view === 'index' && location.hash.length > 1) {
+    document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  }
 }
 
 // ── Email: obfuscated in markup, decoded at runtime ─────
 function decodeEmails() {
   document.querySelectorAll('[data-c][data-d]').forEach(a => {
-    email = `${atob(a.dataset.c)}@${atob(a.dataset.d)}`;
-    a.href = `mailto:${email}`;
+    a.href = `mailto:${atob(a.dataset.c)}@${atob(a.dataset.d)}`;
     a.removeAttribute('data-c');
     a.removeAttribute('data-d');
   });
@@ -39,7 +44,9 @@ function decodeEmails() {
 
 function initCopyEmail() {
   const btn = document.querySelector('[data-copy-email]');
-  if (!btn) return;
+  const live = document.querySelector('[data-live]');
+  const email = document.querySelector('a[href^="mailto:"]')?.href.slice('mailto:'.length);
+  if (!btn || !email) return;
   let timer;
   btn.addEventListener('click', async () => {
     try {
@@ -54,9 +61,10 @@ function initCopyEmail() {
   });
 }
 
-// ── Nav: hairline once scrolled; active link per section ─
+// ── Nav ─────────────────────────────────────────────────
 function initNavState() {
-  const onScroll = () => nav.classList.toggle('is-scrolled', scrollY > 8);
+  const nav = document.querySelector('[data-nav]');
+  const onScroll = () => nav.classList.toggle('is-scrolled', scrollY > NAV_SCROLLED_AT);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 }
@@ -65,10 +73,7 @@ function initNavSpy() {
   const links = [...document.querySelectorAll('.nav__link')];
   const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
   const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      const link = byId.get(en.target.id);
-      if (link) link.classList.toggle('is-active', en.isIntersecting);
-    });
+    entries.forEach(en => byId.get(en.target.id)?.classList.toggle('is-active', en.isIntersecting));
   }, { rootMargin: '-45% 0px -50% 0px' });
   byId.forEach((_, id) => {
     const el = document.getElementById(id);
@@ -83,23 +88,32 @@ function initFreelance(items) {
   });
 }
 
-// ── Prefetch case study JSON on intent ──────────────────
+// Brand link on index: route is unchanged, so the router won't act
+document.querySelector('[data-home]').addEventListener('click', (e) => {
+  if (document.body.classList.contains('is-project')) return;
+  e.preventDefault();
+  window.scrollTo({ top: 0 });
+});
+
 document.addEventListener('pointerover', (e) => {
   const card = e.target.closest?.('[data-project]');
   if (card) loadProject(card.dataset.project).catch(() => {});
 });
 
 // ── Views + view transitions ────────────────────────────
-// Clicked card's image morphs into the case study hero (and back).
+// The clicked card's image morphs into the case study hero (and back).
 let indexScroll = 0;
-let lastProjectId = null;
+let morphEl = null;
+let pendingSource = null;
 
 const jump = (y) => window.scrollTo({ top: y, behavior: 'instant' });
 
+const cardMedia = (id) =>
+  document.querySelector(`#index-view [data-project="${id}"] [data-vt="media"]`);
+
 function setMorph(el) {
-  document.querySelectorAll('[style*="view-transition-name"]').forEach(n => {
-    n.style.removeProperty('view-transition-name');
-  });
+  morphEl?.style.removeProperty('view-transition-name');
+  morphEl = el;
   if (el) el.style.viewTransitionName = 'project-media';
 }
 
@@ -108,48 +122,41 @@ function transition(update) {
     return Promise.resolve(update());
   }
   const vt = document.startViewTransition(update);
+  vt.ready.catch(() => {}); // rejects when a newer transition skips this one; expected on fast back
   vt.finished.finally(() => setMorph(null));
   return vt.updateCallbackDone;
 }
 
-const cardMedia = (id) =>
-  document.querySelector(`#index-view [data-project="${id}"] [data-vt="media"]`);
-
-async function toProject(id, fromProject, sourceEl) {
+function toProject(id, sourceEl) {
+  const fromProject = document.body.classList.contains('is-project');
   setMorph(sourceEl);
-  await transition(async () => {
+  return transition(async () => {
+    if (!(await showProject(id))) return; // route changed mid-fetch
     if (!fromProject) indexScroll = scrollY;
     document.body.classList.add('is-project');
-    await showProject(id);
-    setMorph(document.querySelector('.case__hero'));
+    setMorph(heroEl());
     jump(0);
   });
-  lastProjectId = id;
 }
 
-async function toIndex() {
-  setMorph(document.querySelector('.case__hero'));
-  const id = lastProjectId;
-  await transition(() => {
+function toIndex(fromId) {
+  setMorph(heroEl());
+  return transition(() => {
     hideProject();
     document.body.classList.remove('is-project');
     jump(indexScroll);
-    setMorph(id ? cardMedia(id) : null);
+    // After "next case study" hops, the card for fromId may be far from indexScroll
+    const card = fromId && cardMedia(fromId);
+    if (!card) return setMorph(null);
+    const r = card.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) card.scrollIntoView({ block: 'center', behavior: 'instant' });
+    setMorph(card);
   });
-  lastProjectId = null;
 }
 
-// Brand link on index: back to top (route unchanged, so router skips it)
-document.querySelector('[data-home]').addEventListener('click', (e) => {
-  if (document.body.classList.contains('is-project')) return;
-  e.preventDefault();
-  window.scrollTo({ top: 0 });
-});
-
-// Remember which element was clicked so the morph starts from it
-let pendingSource = null;
 document.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-project]');
+  const plain = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+  const card = plain && e.target.closest('[data-project]');
   pendingSource = card ? card.querySelector('[data-vt="media"]') : null;
 });
 
@@ -157,9 +164,9 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 initRouter((route, prev) => {
   if (route.view === 'project') {
-    toProject(route.projectId, prev?.view === 'project', pendingSource);
+    toProject(route.projectId, pendingSource);
     pendingSource = null;
   } else if (prev?.view === 'project') {
-    toIndex();
+    toIndex(prev.projectId);
   }
 });

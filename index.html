@@ -15,6 +15,13 @@
   <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-medium.otf" as="font" type="font/otf" crossorigin />
   <link rel="preload" href="assets/fonts/pp-neue-montreal/ppneuemontreal-book.otf" as="font" type="font/otf" crossorigin />
 
+  <link rel="preload" href="content/data.json" as="fetch" crossorigin />
+  <link rel="modulepreload" href="js/content.js" />
+  <link rel="modulepreload" href="js/project-page.js" />
+  <link rel="modulepreload" href="js/hero.js" />
+  <link rel="modulepreload" href="js/gallery.js" />
+  <link rel="modulepreload" href="js/router.js" />
+
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/project-page.css" />
 </head>
@@ -24,9 +31,9 @@
   <header class="nav" data-nav>
     <a class="nav__brand" href="#/" data-home>Mirko Aus</a>
     <nav class="nav__links" aria-label="Main">
-      <a class="nav__link" href="#work" data-scroll>Work</a>
-      <a class="nav__link" href="#approach" data-scroll>Approach</a>
-      <a class="nav__link" href="#about" data-scroll>About</a>
+      <a class="nav__link" href="#work">Work</a>
+      <a class="nav__link" href="#approach">Approach</a>
+      <a class="nav__link" href="#about">About</a>
     </nav>
     <a class="btn btn--primary nav__cta" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Contact</a>
   </header>
@@ -40,16 +47,16 @@
           <span class="hero__frame-name" aria-hidden="true">Intro</span>
           <h1 class="hero__title" id="hero-title">I design complex products so they explain themselves.</h1>
           <span class="hero__size" aria-hidden="true" data-frame-size></span>
-          <button class="hero__handle hero__handle--nw" type="button" tabindex="-1" aria-hidden="true" data-handle="-1"></button>
-          <button class="hero__handle hero__handle--ne" type="button" aria-label="Resize headline frame. Use left and right arrow keys." data-handle="1"></button>
-          <button class="hero__handle hero__handle--sw" type="button" tabindex="-1" aria-hidden="true" data-handle="-1"></button>
-          <button class="hero__handle hero__handle--se" type="button" tabindex="-1" aria-hidden="true" data-handle="1"></button>
+          <span class="hero__handle hero__handle--nw" aria-hidden="true" data-handle="-1"></span>
+          <span class="hero__handle hero__handle--ne" role="slider" tabindex="0" aria-label="Headline frame width" aria-valuemin="220" aria-valuemax="1200" aria-valuenow="0" data-handle="1"></span>
+          <span class="hero__handle hero__handle--sw" aria-hidden="true" data-handle="-1"></span>
+          <span class="hero__handle hero__handle--se" aria-hidden="true" data-handle="1"></span>
         </div>
         <p class="hero__lede">
           Product-minded UX designer with seven years across manufacturing SaaS,
           robotic logistics and AAA games. Currently Senior UX Designer at Remedy Entertainment.
         </p>
-        <dl class="hero__facts">
+        <dl class="facts hero__facts">
           <div><dt>Currently</dt><dd>Senior UX Designer, Remedy Entertainment</dd></div>
           <div><dt>Previously</dt><dd>Cleveron, Evocon</dd></div>
           <div><dt>Based in</dt><dd>Helsinki, Finland</dd></div>
@@ -99,10 +106,10 @@
 
   <footer class="footer" id="contact">
     <div class="footer__inner">
-      <p class="footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
+      <p class="section-title footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
       <div class="footer__actions">
-        <a class="btn btn--primary" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l" data-email-label>Email me</a>
-        <button class="btn btn--ghost" type="button" data-copy-email>
+        <a class="btn btn--primary" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Email me</a>
+        <button class="btn btn--ghost copy" type="button" data-copy-email>
           <span class="copy__label">Copy address</span>
           <span class="copy__done" aria-hidden="true">Copied</span>
         </button>
@@ -114,7 +121,7 @@
   </footer>
 
   <dialog class="lightbox" data-lightbox aria-label="Image viewer">
-    <button class="lightbox__close btn btn--ghost" type="button" data-lightbox-close>Close</button>
+    <button class="lightbox__close btn btn--ghost" type="button">Close</button>
     <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image" data-lightbox-step="-1"></button>
     <figure class="lightbox__figure">
       <img class="lightbox__img" alt="" data-lightbox-img />

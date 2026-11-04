@@ -4,6 +4,8 @@ const dialog = document.querySelector('[data-lightbox]');
 const img = dialog.querySelector('[data-lightbox-img]');
 const caption = dialog.querySelector('[data-lightbox-caption]');
 
+const SWIPE_PX = 50;
+
 let list = [];
 let index = 0;
 
@@ -12,7 +14,7 @@ function show(i) {
   const item = list[index];
   img.src = item.src;
   img.alt = item.alt;
-  caption.textContent = item.caption || item.alt;
+  caption.textContent = item.caption || '';
 }
 
 export function openLightbox(items, start = 0) {
@@ -26,7 +28,7 @@ export function initGallery() {
   dialog.addEventListener('click', (e) => {
     const step = e.target.closest('[data-lightbox-step]');
     if (step) return show(index + Number(step.dataset.lightboxStep));
-    // Anything outside the image closes
+    // Close button and backdrop both land here: anything but the image closes
     if (e.target !== img) dialog.close();
   });
 
@@ -39,7 +41,7 @@ export function initGallery() {
   dialog.addEventListener('touchstart', (e) => { x0 = e.changedTouches[0].clientX; }, { passive: true });
   dialog.addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - x0;
-    if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > SWIPE_PX) show(index + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
   dialog.addEventListener('close', () => { img.removeAttribute('src'); });
