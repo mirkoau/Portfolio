@@ -23,7 +23,7 @@ npx serve .
 ```
 **Caching gotcha:** `python -m http.server` sends no Cache-Control, so browsers heuristically cache ES modules and can mix a new `main.js` with a stale `router.js` etc. → import error → nothing JS-rendered (work, matrix, about, images). After JS edits, hard-reload (Ctrl+Shift+R), or use a server that sends `Cache-Control: no-cache`. Same risk for ~10 min after a GitHub Pages deploy (max-age=600) when module exports change.
 
-No runtime deps (Three.js/GSAP/Lenis from v1 removed). PP Neue Montreal is self-hosted in `assets/fonts/`. TODO notes in content JSON (`todo` fields) render only on localhost.
+No runtime deps (Three.js/GSAP/Lenis from v1 removed). Font: Geist (Vercel, OFL; variable 100–900 + italic) self-hosted as WOFF2 in `assets/fonts/geist/` with OFL.txt. Old PP Neue Montreal OTFs remain in `assets/fonts/pp-neue-montreal/` unused. TODO notes in content JSON (`todo` fields) render only on localhost.
 
 ## Stack
 - Pure HTML5 + CSS3 + Vanilla JS (ES modules)
@@ -100,7 +100,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 - **Index sections:** sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button (underline + 'Click to copy' on hover). Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
 - **Cards:** frame label (title + period) above image; hover = label tint + slight image zoom. No outlines/handles.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
-- **Hero gradient:** hero.js paints a silk texture once on a canvas (4-colour ember mesh base + blurred bezier folds: multiply shadows, soft-light amber sheen, one screen specular glint; slightly random per load) → data URL in `--silk`. Each headline line shows its slice (background-clip:text), drifts (`--drift`), then a soft-edged ink wave (`--wave`) sweeps each line, cascading (~4.5s total). Plain markup restored on last line's `ink-wave` end. Parked idea to test later: mesh bloom *behind* the hero.
+- **Hero gradient:** a true mesh gradient (WebGL2, hero.js `startMesh`): 4×4 ember colour vertices, Catmull-Rom interpolated, vertices drifting via a smooth warp field. Canvas sits over the headline with `mix-blend-mode: lighten` inside an isolated `.hero` (paper bg), so colour only shows on the dark letters; all channels capped ≤0.95 so paper never tints. After ~1.7s the shader sweeps ink in (soft front, top line first, sine ease, 2.6s), then the canvas removes itself. No WebGL2 / reduced motion → plain ink. Parked idea: mesh bloom *behind* the hero.
 - **Nav:** transparent + backdrop blur only (no fill); `.is-on-dark` flips to light text when the footer is under it (IO band at top).
 - **Motion:** hero headline lines rise from masks (hero.js `revealLines`, measured after fonts load, original markup restored after; title is a flex column while revealing so collapsed margins don't shift spacing), then notes + facts rise; section titles reveal via scroll-driven CSS (`animation-timeline: view()`, progressive). No per-letter effects (user found them cheap). All off under reduced motion.
 - **Video:** former GIFs are MP4 + `-poster.webp` (`video`/`poster` fields in JSON). `media()` helper in content.js; IO plays only on-screen loops, never with reduced motion. Lightbox handles video.
@@ -112,7 +112,7 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 
 ### Design Tokens (`css/style.css :root`)
 - Color: `--paper`, `--surface`, `--ink`, `--ink-2/-3`, `--line`. Accent = Ember: `--accent #e2452b` (fills, rules, large text), `--accent-ink #b8321c` (small text, AA). Gradient palette `--ember-oxblood/-amber/-blush`. No blue (user: "feels Facebook").
-- Type: `--font` PP Neue Montreal only; scale `--text-sm` … `--text-display`
+- Type: `--font` Geist only; scale `--text-sm` … `--text-display`
 - Space: 8px base `--space-2xs` … `--space-2xl`; layout `--max 1280px`, `--gutter`, `--nav-height`
 - Motion: `--ease-out`, `--ease-spring`, `--duration-fast/base/slow`
 
