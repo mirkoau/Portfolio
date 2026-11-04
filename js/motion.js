@@ -50,23 +50,24 @@ export const scrollToEl = (el, { smooth = true, center = false } = {}) => {
 export const refresh = () => { if (enabled) ScrollTrigger.refresh(); };
 
 // ── Scroll in / out ──
-// Rise 12px and fade in on entry; ease out the same way past the top. Reverse on the way back.
-const IN = { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, overwrite: true };
-const out = (y) => ({ autoAlpha: 0, y, duration: 0.6, ease: 'power2.in', overwrite: true });
+// Rise 6px and fade in on entry; ease out the same way past the top. Reverse on the way back.
+const SHIFT = 6;
+const IN = { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.04, overwrite: true };
+const out = (y) => ({ autoAlpha: 0, y, duration: 0.35, ease: 'power1.in', overwrite: true });
 
 export function reveal(root = document) {
   if (!enabled) return;
   const els = [...root.querySelectorAll(REVEAL)].filter((el) => !el.dataset.reveal);
   if (!els.length) return;
   els.forEach((el) => { el.dataset.reveal = ''; });
-  gsap.set(els, { autoAlpha: 0, y: 12 });
+  gsap.set(els, { autoAlpha: 0, y: SHIFT });
   ScrollTrigger.batch(els, {
     start: 'top 94%',
     end: 'bottom 6%',
     onEnter: (b) => gsap.to(b, IN),
     onEnterBack: (b) => gsap.to(b, IN),
-    onLeave: (b) => gsap.to(b, out(-12)),
-    onLeaveBack: (b) => gsap.to(b, out(12)),
+    onLeave: (b) => gsap.to(b, out(-SHIFT)),
+    onLeaveBack: (b) => gsap.to(b, out(SHIFT)),
   });
 }
 
