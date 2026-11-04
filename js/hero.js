@@ -147,20 +147,21 @@ function startMesh(hero, title) {
 }
 
 // ── Scramble reveal (GSAP SplitText) ──────────────────
-// Partial scramble: most of the sentence starts in place. About a third of the words start
-// nudged off their spot, about half of the longer words have their 2–3 letter chunks
-// shuffled, and one or two pieces start much further away and fly home last. Everything
-// lands on a quick-start / long-soft-landing curve, then the split is reverted.
+// Restrained, staged scramble: a few words nudged sideways, one or two words with their
+// letter chunks shuffled, and one piece (occasionally two) starting further out. The first
+// word never moves. Order: chunks resolve, nudges settle, the far piece lands last.
+//
+// No end jitter: splitting into letters drops the font's kerning, so the split text sits a
+// few px off the real text. We measure every glyph in the real text first and make the
+// split letters land exactly there, so reverting to plain text changes nothing visible.
 const MESH = false; // ember mesh fill (startMesh): parked for now, flip to bring it back
 
-const WORD_SHARE = 0.35;  // share of words nudged off their spot
-const CHUNK_SHARE = 0.5;  // share of longer words whose chunks get shuffled
-const NUDGE = 0.45;       // em: max sideways nudge for ordinary words
-const FAR = [1.6, 2.8];   // em: distance range for the 1–2 outliers
+const NUDGE = [0.12, 0.3]; // em: sideways nudge range
+const FAR = [1.2, 2];      // em: distance range for the far piece
 
 const rand = (a, b) => a + Math.random() * (b - a);
 const sign = () => (Math.random() < 0.5 ? -1 : 1);
-const pick = (list, n) => [...list].sort(() => Math.random() - 0.5).slice(0, n);
+const pick = (list, n) => [...list].sort(() => Math.random() - 0.5).slice(0, Math.max(0, n));
 
 const shuffle = (n) => {
   const order = [...Array(n).keys()];
@@ -172,9 +173,8 @@ const shuffle = (n) => {
   return order;
 };
 
-// Cut a word's chars into chunks of 2–3 (words of ≤3 chars stay whole)
+// Cut a word's chars into chunks of 2–3
 const chunk = (chars) => {
-  if (chars.length <= 3) return [chars];
   const out = [];
   for (let i = 0; i < chars.length;) {
     const left = chars.length - i;
@@ -185,70 +185,97 @@ const chunk = (chars) => {
   return out;
 };
 
+// Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
+function glyphLefts(title) {
+  const base = title.getBoundingClientRect().left;
+  const range = document.createRange();
+  const out = [];
+  const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    for (let k = 0; k < n.length; k++) {
+      if (/\s/.test(n.data[k])) continue;
+      range.setStart(n, k);
+      range.setEnd(n, k + 1);
+      const r = range.getBoundingClientRect();
+      out.push({ x: r.left - base, y: r.top });
+    }
+  }
+  return out;
+}
+
 async function revealHeadline(title) {
   const { gsap, SplitText } = window;
   if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
   gsap.registerPlugin(SplitText);
   await document.fonts.ready;
 
+  const plain = glyphLefts(title);
   const split = SplitText.create(title, { type: 'words,chars', wordsClass: 'hero__word', charsClass: 'hero__char' });
-  const words = split.words;
+  const { words, chars } = split;
   const em = parseFloat(getComputedStyle(title).fontSize);
-  const lineH = words[0].getBoundingClientRect().height;
 
-  // Movers: [element(s), start {x, y}, isOutlier]
-  const movers = [];
+  // Kerning correction per letter (falls back to 0 if wrapping somehow differs)
+  const base = title.getBoundingClientRect().left;
+  const kern = new Map();
+  const sameLayout = plain.length === chars.length;
+  chars.forEach((c, k) => {
+    const r = c.getBoundingClientRect();
+    const dx = sameLayout ? plain[k].x - (r.left - base) : 0;
+    kern.set(c, Math.abs(dx) < em * 0.5 ? dx : 0);
+  });
+  const charsOf = (w) => [...w.querySelectorAll('.hero__char')];
 
-  // Some words nudged: a little sideways, sometimes a third of a line up/down
-  const nudged = pick(words, Math.max(2, Math.round(words.length * WORD_SHARE)));
-  nudged.forEach((w) => movers.push([w, {
-    x: sign() * rand(0.15, NUDGE) * em,
-    y: Math.random() < 0.5 ? sign() * lineH * 0.33 : 0,
-  }, false]));
+  // Pick the moving parts. The first word ("I") and one-letter words never move.
+  const eligible = words.filter((w, k) => k > 0 && w.textContent.trim().length > 1);
+  const chunked = pick(eligible.filter((w) => w.textContent.length > 4), Math.random() < 0.5 ? 1 : 2);
+  const rest = eligible.filter((w) => !chunked.includes(w));
+  const far = pick(rest, Math.random() < 0.7 ? 1 : 2);
+  const nudged = pick(rest.filter((w) => !far.includes(w)), Math.min(3, Math.max(1, Math.round(words.length * 0.25))));
 
-  // Some longer words: chunks laid out in shuffled order (chars of a chunk move together)
-  const long = words.filter((w) => w.textContent.length > 3);
-  pick(long, Math.max(1, Math.round(long.length * CHUNK_SHARE))).forEach((word) => {
-    const chunks = chunk([...word.querySelectorAll('.hero__char')]);
+  // Groups of letters that move together (horizontal only): { chars, x, kind }
+  const groups = [];
+  chunked.forEach((word) => {
+    const chunks = chunk(charsOf(word));
     if (chunks.length < 2) return;
     const left = word.getBoundingClientRect().left;
     const start = chunks.map((c) => c[0].getBoundingClientRect().left - left);
     const width = (c) => c.reduce((sum, ch) => sum + ch.getBoundingClientRect().width, 0);
     let x = 0;
     shuffle(chunks.length).forEach((k) => {
-      movers.push([chunks[k], { x: x - start[k], y: 0 }, false]);
+      groups.push({ chars: chunks[k], x: x - start[k], kind: 'chunk' });
       x += width(chunks[k]);
     });
   });
+  nudged.forEach((w) => groups.push({ chars: charsOf(w), x: sign() * rand(...NUDGE) * em, kind: 'nudge' }));
 
-  // One or two pieces (a word, or a chunk of one) start much further out — toward the side
-  // with room, so they never start beyond the sheet
+  // Far piece(s): slide in along their own line from the open space beside the headline
+  // (never across other lines), staying inside the sheet
   const sheet = (title.closest('.sheet') || document.body).getBoundingClientRect();
-  const pool = movers.filter(([, , far]) => !far);
-  pick(pool, Math.random() < 0.5 ? 1 : 2).forEach((m) => {
-    const els = [m[0]].flat();
-    const l = els[0].getBoundingClientRect().left;
-    const r = els.at(-1).getBoundingClientRect().right;
+  far.forEach((w) => {
+    const r = w.getBoundingClientRect();
     const dist = rand(...FAR) * em;
-    const roomLeft = l - sheet.left - em * 0.5;
-    const roomRight = sheet.right - r - em * 0.5;
-    const x = roomRight >= dist || roomRight > roomLeft ? Math.min(dist, roomRight) : -Math.min(dist, roomLeft);
-    m[1] = { x, y: sign() * rand(1, 2) * lineH };
-    m[2] = true;
+    const roomR = sheet.right - r.right - em * 0.5;
+    const roomL = r.left - sheet.left - em * 0.5;
+    const x = roomR >= em * 0.6 ? Math.min(dist, roomR) : -Math.min(dist, Math.max(roomL, 0));
+    groups.push({ chars: charsOf(w), x, kind: 'far' });
   });
 
-  movers.forEach(([el, from]) => gsap.set(el, from));
+  // Resting state for every letter = its kerned spot; movers start offset from it
+  gsap.set(chars, { x: (k, c) => kern.get(c) });
+  groups.forEach((g) => gsap.set(g.chars, {
+    x: (k, c) => kern.get(c) + g.x,
+    opacity: g.kind === 'far' ? 0.35 : 1,
+  }));
   title.classList.add('is-ready');
   if (MESH) startMesh(title.closest('.hero'), title);
 
-  // Quick, decisive start; long soft landing. Ordinary pieces settle within ~1s;
-  // the outliers leave a touch later and arrive last.
-  const tl = gsap.timeline({ delay: 0.25, onComplete: () => split.revert() });
-  movers.forEach(([el, , far]) => {
-    tl.to(el, far
-      ? { x: 0, y: 0, duration: 1.15, ease: 'expo.inOut' }
-      : { x: 0, y: 0, duration: rand(0.7, 0.9), ease: 'expo.out' },
-    far ? rand(0.2, 0.3) : rand(0, 0.35));
+  const land = (k, c) => kern.get(c);
+  // Hold the scrambled state for a beat so it reads, then resolve
+  const tl = gsap.timeline({ delay: 0.45, onComplete: () => split.revert() });
+  groups.forEach((g) => {
+    if (g.kind === 'chunk') tl.to(g.chars, { x: land, duration: 0.65, ease: 'expo.out' }, rand(0, 0.12));
+    if (g.kind === 'nudge') tl.to(g.chars, { x: land, duration: 0.8, ease: 'expo.out' }, rand(0.08, 0.22));
+    if (g.kind === 'far') tl.to(g.chars, { x: land, opacity: 1, duration: 1, ease: 'power4.inOut' }, rand(0.15, 0.25));
   });
 }
 
