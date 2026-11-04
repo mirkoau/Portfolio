@@ -216,29 +216,32 @@
 }
 .compare:has(.compare__range:focus-visible) { outline: 2px solid var(--select); outline-offset: 3px; }
 
-/* Results */
+/* Results: typographic list, no box. Each result is a statement, not a stat tile. */
 .case__results {
   margin-top: var(--space-2xl);
-  padding: var(--space-lg);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--ink);
 }
-.case__results-title { font-size: var(--text-xl); font-weight: 500; letter-spacing: -0.015em; }
-.case__results-list {
+.case__results-title { font-size: var(--text-sm); font-weight: 400; color: var(--ink-3); }
+.case__results-list { margin-top: var(--space-sm); list-style: none; }
+.case__result {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-  margin-top: var(--space-md);
-  list-style: none;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding-block: var(--space-md);
+  border-bottom: 1px solid var(--line);
 }
-.case__result { padding-top: var(--space-sm); border-top: 1.5px solid var(--select); }
-.case__result strong { display: block; font-weight: 500; line-height: 1.3; }
-.case__result span { display: block; margin-top: 4px; font-size: var(--text-sm); color: var(--ink-2); }
+.case__result strong {
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.case__result span { font-size: var(--text-sm); color: var(--ink-2); }
 
 @media (max-width: 800px) {
-  .case__results { padding: var(--space-md); }
-  .case__results-list { grid-template-columns: 1fr; }
+  .case__result { grid-template-columns: 1fr; gap: 4px; }
 }
 
 /* Next project */

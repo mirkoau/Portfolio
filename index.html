@@ -35,7 +35,7 @@
       <a class="nav__link" href="#approach">Approach</a>
       <a class="nav__link" href="#about">About</a>
     </nav>
-    <a class="btn btn--primary nav__cta" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Contact</a>
+    <a class="btn btn--primary nav__cta" href="#contact" data-to-contact>Contact</a>
   </header>
 
   <main id="main">
@@ -66,8 +66,11 @@
 
       <!-- Overview: what, how, with what -->
       <section class="overview" id="overview" aria-labelledby="overview-title">
-        <h2 class="section-title" id="overview-title">At a glance</h2>
-        <div class="overview__grid" data-overview></div>
+        <header class="section-head">
+          <h2 class="section-title" id="overview-title">At a glance</h2>
+          <p class="section-sub">What I did on each product. Hover to trace a row or column.</p>
+        </header>
+        <div data-overview></div>
       </section>
 
       <section class="work" id="work" aria-labelledby="work-title">
@@ -75,7 +78,7 @@
           <h2 class="section-title" id="work-title">Work</h2>
           <p class="section-sub">Newest first. Open a project for the full case study.</p>
         </header>
-        <div class="work__list" data-work></div>
+        <div class="work__layout" data-work></div>
       </section>
 
       <section class="approach" id="approach" aria-labelledby="approach-title">
@@ -106,16 +109,23 @@
 
   <footer class="footer" id="contact">
     <div class="footer__inner">
-      <p class="section-title footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
-      <div class="footer__actions">
-        <a class="btn btn--primary" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Email me</a>
-        <button class="btn btn--ghost copy" type="button" data-copy-email>
-          <span class="copy__label">Copy address</span>
+      <p class="footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
+      <button class="footer__email" type="button" data-copy-email aria-describedby="email-hint">
+        <span class="footer__email-text" data-email-text>Email</span>
+        <span class="footer__corner" aria-hidden="true"></span>
+        <span class="footer__corner" aria-hidden="true"></span>
+        <span class="footer__corner" aria-hidden="true"></span>
+        <span class="footer__corner" aria-hidden="true"></span>
+        <span class="footer__tag copy-swap" id="email-hint">
+          <span class="copy__label">Click to copy</span>
           <span class="copy__done" aria-hidden="true">Copied</span>
-        </button>
-        <a class="btn btn--ghost" href="https://linkedin.com/in/mirko-aus/" target="_blank" rel="noopener">LinkedIn</a>
+        </span>
+      </button>
+      <div class="footer__links">
+        <a class="footer__link" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Open in mail app</a>
+        <a class="footer__link" href="https://linkedin.com/in/mirko-aus/" target="_blank" rel="noopener">LinkedIn</a>
       </div>
-      <p class="footer__copy">&copy; Mirko Aus 2026</p>
+      <p class="footer__copy">&copy; Mirko Aus 2026. Helsinki, Finland.</p>
     </div>
     <p class="sr-only" role="status" aria-live="polite" data-live></p>
   </footer>

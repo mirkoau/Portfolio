@@ -33,19 +33,50 @@ export async function initContent() {
 export const caseStudies = () =>
   data.work.flatMap(c => c.projects.filter(p => !p.comingSoon));
 
-function renderOverview({ columns }) {
-  $('[data-overview]').innerHTML = columns.map(col => `
-    <div class="overview__col">
-      <h3 class="overview__col-title">${col.title}</h3>
-      <ul class="overview__list">
-        ${col.items.map(i => `
-          <li class="overview__item">
-            <span class="overview__name">${i.name}</span>
-            <span class="overview__detail">${i.detail}</span>
-          </li>`).join('')}
-      </ul>
-      ${todoNote(col.todo)}
-    </div>`).join('');
+// Capability matrix: projects × skills. A <table> so rows/cols stay navigable for AT.
+function renderOverview({ skills, rows, tools, todo }) {
+  const el = $('[data-overview]');
+  el.innerHTML = `
+    <div class="matrix__scroll">
+      <table class="matrix">
+        <caption class="sr-only">What I did on each project</caption>
+        <thead>
+          <tr>
+            <td></td>
+            ${skills.map((s, c) => `<th scope="col" data-col="${c}"><span>${s}</span></th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((r, ri) => `
+            <tr data-row="${ri}">
+              <th scope="row"><span class="matrix__name">${r.name}</span><span class="matrix__kind">${r.kind}</span></th>
+              ${skills.map((_, c) => r.marks.includes(c)
+                ? `<td data-col="${c}"><span class="matrix__dot" role="img" aria-label="Yes"></span></td>`
+                : `<td data-col="${c}"><span class="sr-only">No</span></td>`).join('')}
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p class="matrix__tools"><span>Tools</span> ${tools.join(', ')}</p>
+    ${todoNote(todo)}`;
+
+  // Crosshair highlight: hovered row + column
+  const table = el.querySelector('.matrix');
+  let lit = [];
+  const clear = () => { lit.forEach(c => c.classList.remove('is-hl')); lit = []; };
+  table.addEventListener('pointerover', (e) => {
+    const cell = e.target.closest('td, th');
+    clear();
+    if (!cell) return;
+    const row = cell.closest('tbody tr');
+    const col = cell.dataset.col;
+    lit = [
+      ...(row ? row.cells : []),
+      ...(col ? table.querySelectorAll(`[data-col="${col}"]`) : []),
+    ];
+    lit.forEach(c => c.classList.add('is-hl'));
+  });
+  table.addEventListener('pointerleave', clear);
 }
 
 export const frameMedia = (m) => `<span class="frame__media" data-vt="media">${img(m)}</span>`;
@@ -59,7 +90,7 @@ function projectCard(p) {
     ? '<span class="project-card__cta project-card__cta--soon">Case study after launch</span>'
     : `<span class="project-card__cta">Read case study ${arrow()}</span>`;
   return `
-    <${tag} class="project-card"${href}>
+    <${tag} class="project-card"${href} data-years="${yearsOf(p.period).join('-')}">
       <div class="frame">
         <span class="frame__label" aria-hidden="true"><span>${p.title}</span><span>${p.period}</span></span>
         ${frameMedia(p.cover)}
@@ -69,22 +100,54 @@ function projectCard(p) {
         <h4 class="project-card__title">${p.title}</h4>
         <p class="project-card__role">${p.role}</p>
         <p class="project-card__summary">${p.summary}</p>
-        <ul class="tags">${p.did.map(d => `<li class="tag">${d}</li>`).join('')}</ul>
+        <p class="project-card__scope">${p.did.join(', ')}</p>
         ${cta}
       </div>
     </${tag}>`;
 }
 
+const NOW = new Date().getFullYear();
+const yearsOf = (period) => {
+  const ys = (period.match(/\d{4}/g) || []).map(Number);
+  return [ys[0], /present/i.test(period) ? NOW : (ys[1] ?? ys[0])];
+};
+
 function renderWork(work) {
-  $('[data-work]').innerHTML = work.map(c => `
-    <article class="work__company" id="${c.id}">
-      <header class="work__company-head">
-        <h3 class="work__company-name">${c.company}</h3>
-        <p class="work__company-period">${c.period}</p>
-        <p class="work__company-about">${c.about}</p>
-      </header>
-      <div class="work__projects">${c.projects.map(projectCard).join('')}</div>
-    </article>`).join('');
+  const all = work.flatMap(c => c.projects.flatMap(p => yearsOf(p.period)));
+  const years = [];
+  for (let y = Math.max(...all); y >= Math.min(...all); y--) years.push(y);
+
+  $('[data-work]').innerHTML = `
+    <ol class="timeline" aria-hidden="true">
+      ${years.map(y => `<li data-year="${y}">${y}</li>`).join('')}
+    </ol>
+    <div class="work__companies">
+      ${work.map(c => `
+        <article class="work__company" id="${c.id}">
+          <header class="work__company-head">
+            <h3 class="work__company-name">${c.company}</h3>
+            <p class="work__company-meta">${c.period}. ${c.about}</p>
+          </header>
+          <div class="work__projects">${c.projects.map(projectCard).join('')}</div>
+        </article>`).join('')}
+    </div>`;
+  initTimeline();
+}
+
+// Light up the year range of the project crossing the viewport middle
+function initTimeline() {
+  const ticks = [...document.querySelectorAll('.timeline [data-year]')];
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const [from, to] = en.target.dataset.years.split('-').map(Number);
+      ticks.forEach(t => {
+        const y = Number(t.dataset.year);
+        t.classList.toggle('is-on', y >= from && y <= to);
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('.project-card[data-years]').forEach(c => io.observe(c));
 }
 
 function renderApproach(items) {

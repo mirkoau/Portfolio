@@ -47,6 +47,7 @@ function initCopyEmail() {
   const live = document.querySelector('[data-live]');
   const email = document.querySelector('a[href^="mailto:"]')?.href.slice('mailto:'.length);
   if (!btn || !email) return;
+  btn.querySelector('[data-email-text]').textContent = email;
   let timer;
   btn.addEventListener('click', async () => {
     try {
@@ -93,6 +94,13 @@ document.querySelector('[data-home]').addEventListener('click', (e) => {
   if (document.body.classList.contains('is-project')) return;
   e.preventDefault();
   window.scrollTo({ top: 0 });
+});
+
+// #contact would be parsed as a route change; scroll instead, from any view
+document.querySelector('[data-to-contact]').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('contact').scrollIntoView();
+  document.querySelector('[data-copy-email]').focus({ preventScroll: true });
 });
 
 document.addEventListener('pointerover', (e) => {

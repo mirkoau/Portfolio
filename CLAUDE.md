@@ -94,7 +94,9 @@ content/{id}.json       — Case study: meta, hero, sections[{stage, heading, bo
 ```
 
 ### Key Patterns
-- **Design motif:** Figma selection frame. Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
+- **Design motif:** the page is a design file. Faint canvas dot grid behind hero; Figma selection frame (hero headline resizable, footer email, card hovers); handle squares as matrix marks.
+- **Index sections:** capability matrix (`overview.rows × skills`, crosshair hover via `.is-hl`), sticky year timeline in Work (IO lights the visible card's `data-years` range), dark footer where the email itself is the copy button. Nav Contact scrolls to footer (no hash; `#contact` would be parsed as a route).
+- **Selection frame (legacy note):** Hero headline frame is resizable; project cards show frame label + selection outline/handles on hover.
 - **Case study structure:** stages Context → Challenge → Approach → Outcome, sticky TOC grouped by stage, Results block, next-project link.
 - **Media:** `media` array renders count-aware grid (n1–n4). `wide: true` = horizontal pan strip. `compare: {before, after}` = range-driven slider.
 - **Transitions:** View Transitions API morphs clicked card image → case hero (`view-transition-name: project-media`) and back. Falls back to instant swap; skipped on reduced motion.

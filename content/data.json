@@ -1,41 +1,76 @@
 {
   "overview": {
-    "columns": [
+    "skills": [
+      "UX and flows",
+      "UI and interaction",
+      "Design systems",
+      "Design lead",
+      "Prototyping",
+      "Brand and motion"
+    ],
+    "rows": [
       {
-        "title": "Worked on",
-        "items": [
-          { "name": "AAA games", "detail": "Control Resonant, FBC: Firebreak, Alan Wake 2" },
-          { "name": "Robotic parcel lockers", "detail": "Kiosk touchscreens, mobile app, back office, AR assembly tooling" },
-          { "name": "Manufacturing analytics SaaS", "detail": "Web dashboards for managers, tablet app for operators" },
-          { "name": "Festival branding", "detail": "Identity and marketing for Estonian music festivals" }
+        "name": "Control Resonant",
+        "kind": "AAA game",
+        "marks": [
+          0,
+          1
         ]
       },
       {
-        "title": "What I did",
-        "items": [
-          { "name": "UX and flows", "detail": "Information architecture, user flows, edge cases" },
-          { "name": "UI and interaction", "detail": "Menus, HUDs, dashboards, touch interfaces" },
-          { "name": "Design systems", "detail": "Component libraries, specs, handoff" },
-          { "name": "Design lead", "detail": "Team planning, roadmaps, stakeholder alignment" },
-          { "name": "Prototyping", "detail": "Interactive prototypes and front-end builds" },
-          { "name": "Brand and motion", "detail": "Rebrand, illustration, animated icons" }
+        "name": "FBC: Firebreak",
+        "kind": "AAA game",
+        "marks": [
+          0,
+          1,
+          3
         ]
       },
       {
-        "title": "Tools",
-        "items": [
-          { "name": "Figma", "detail": "Design, prototyping, component libraries" },
-          { "name": "After Effects and Lottie", "detail": "UI motion and animated icons" },
-          { "name": "Illustrator and Photoshop", "detail": "Illustration, brand assets" },
-          { "name": "HTML, CSS, JavaScript", "detail": "Prototypes and production front-end" },
-          { "name": "Claude Code and AI tools", "detail": "Building and testing ideas in the real product" },
-          { "name": "Jira and Confluence", "detail": "Planning, specs, documentation" }
-        ],
-        "todo": "Confirm tools list. After Effects, Illustrator/Photoshop, Jira/Confluence are inferred. Add engine/editor tools if shareable (e.g. Northlight)."
+        "name": "Alan Wake 2",
+        "kind": "AAA game",
+        "marks": [
+          0,
+          1,
+          4
+        ]
+      },
+      {
+        "name": "Cleveron",
+        "kind": "Robotic parcel lockers",
+        "marks": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Evocon",
+        "kind": "Manufacturing SaaS",
+        "marks": [
+          0,
+          1,
+          5
+        ]
+      },
+      {
+        "name": "Freelance",
+        "kind": "Festival branding",
+        "marks": [
+          5
+        ]
       }
-    ]
+    ],
+    "tools": [
+      "Figma",
+      "After Effects and Lottie",
+      "Illustrator and Photoshop",
+      "HTML, CSS, JavaScript",
+      "Claude Code and AI tools",
+      "Jira and Confluence"
+    ],
+    "todo": "Confirm matrix marks (derived from case study text) and tools list (After Effects, Illustrator/Photoshop, Jira/Confluence are inferred)."
   },
-
   "work": [
     {
       "id": "remedy",
@@ -51,8 +86,15 @@
           "period": "2026",
           "comingSoon": true,
           "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
-          "did": ["Interaction design", "UI design", "Game design"],
-          "cover": { "src": "assets/images/control-resonant_cover.webp", "alt": "Control Resonant key art" }
+          "did": [
+            "Interaction design",
+            "UI design",
+            "Game design"
+          ],
+          "cover": {
+            "src": "assets/images/control-resonant_cover.webp",
+            "alt": "Control Resonant key art"
+          }
         },
         {
           "id": "fbc-firebreak",
@@ -60,8 +102,16 @@
           "role": "Lead UI/UX Designer",
           "period": "2023–2026",
           "summary": "Owned the full UI of a co-op multiplayer game from preproduction to post-launch: structure, flows, HUD, menus, visual style and the production plan behind them.",
-          "did": ["Design lead", "Information architecture", "UI design", "Production planning"],
-          "cover": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" }
+          "did": [
+            "Design lead",
+            "Information architecture",
+            "UI design",
+            "Production planning"
+          ],
+          "cover": {
+            "src": "assets/images/fbc-cover.webp",
+            "alt": "FBC: Firebreak main menu inside a 3D environment"
+          }
         },
         {
           "id": "alan-wake-2",
@@ -69,8 +119,15 @@
           "role": "UX Designer",
           "period": "2022–2023",
           "summary": "Designed core systems for a narrative survival-horror game: maps, case board, inventory, weapon quick-select and an award-winning photo mode.",
-          "did": ["Interaction design", "UI design", "Usability research"],
-          "cover": { "src": "assets/images/alanwake-cover.webp", "alt": "Alan Wake 2 case board" }
+          "did": [
+            "Interaction design",
+            "UI design",
+            "Usability research"
+          ],
+          "cover": {
+            "src": "assets/images/alanwake-cover.webp",
+            "alt": "Alan Wake 2 case board"
+          }
         }
       ]
     },
@@ -87,8 +144,15 @@
           "role": "UI/UX Designer",
           "period": "2020–2022",
           "summary": "Designed across the whole parcel journey, built the team's first Figma component library, and redesigned back-office software that used to need a 40-page manual.",
-          "did": ["Product design", "Design system", "Enterprise UX"],
-          "cover": { "src": "assets/images/cleveron-cover.webp", "alt": "Cleveron parcel locker interfaces" }
+          "did": [
+            "Product design",
+            "Design system",
+            "Enterprise UX"
+          ],
+          "cover": {
+            "src": "assets/images/cleveron-cover.webp",
+            "alt": "Cleveron parcel locker interfaces"
+          }
         }
       ]
     },
@@ -105,13 +169,19 @@
           "role": "UI/UX and Visual Designer",
           "period": "2019–2020",
           "summary": "Turned factory data into clear answers for managers, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
-          "did": ["Data UX", "UI design", "Brand and motion"],
-          "cover": { "src": "assets/images/evocon-cover.webp", "alt": "Evocon production dashboard" }
+          "did": [
+            "Data UX",
+            "UI design",
+            "Brand and motion"
+          ],
+          "cover": {
+            "src": "assets/images/evocon-cover.webp",
+            "alt": "Evocon production dashboard"
+          }
         }
       ]
     }
   ],
-
   "approach": [
     {
       "title": "Structure before pixels",
@@ -126,29 +196,70 @@
       "body": "I prototype in code and use AI tools daily. When a working build answers the question faster than a mockup, I skip the mockup."
     }
   ],
-
   "freelance": {
     "intro": "Branding and marketing for up-and-coming Estonian music festivals, plus digital painting and vector art from roughly eight years of art school.",
     "items": [
-      { "src": "assets/images/funkfest-1.webp", "alt": "Funkfest festival poster", "caption": "Funkfest" },
-      { "src": "assets/images/indiefest-2.png", "alt": "Indiefest festival artwork", "caption": "Indiefest" },
-      { "src": "assets/images/personal-3.webp", "alt": "Digital painting", "caption": "Personal work" },
-      { "src": "assets/images/funkfest-2.webp", "alt": "Funkfest festival artwork", "caption": "Funkfest" },
-      { "src": "assets/images/iwe.gif", "alt": "Indiefest animated artwork", "caption": "Indiefest" },
-      { "src": "assets/images/personal-1.webp", "alt": "Digital painting", "caption": "Personal work" },
-      { "src": "assets/images/delfi_illustration.webp", "alt": "Editorial illustration for Delfi", "caption": "Delfi illustration" },
-      { "src": "assets/images/personal-5.webp", "alt": "Vector artwork", "caption": "Personal work" },
-      { "src": "assets/images/personal-2.webp", "alt": "Digital painting", "caption": "Personal work" },
-      { "src": "assets/images/personal-4.webp", "alt": "Digital painting", "caption": "Personal work" }
+      {
+        "src": "assets/images/funkfest-1.webp",
+        "alt": "Funkfest festival poster",
+        "caption": "Funkfest"
+      },
+      {
+        "src": "assets/images/indiefest-2.png",
+        "alt": "Indiefest festival artwork",
+        "caption": "Indiefest"
+      },
+      {
+        "src": "assets/images/personal-3.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/funkfest-2.webp",
+        "alt": "Funkfest festival artwork",
+        "caption": "Funkfest"
+      },
+      {
+        "src": "assets/images/iwe.gif",
+        "alt": "Indiefest animated artwork",
+        "caption": "Indiefest"
+      },
+      {
+        "src": "assets/images/personal-1.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/delfi_illustration.webp",
+        "alt": "Editorial illustration for Delfi",
+        "caption": "Delfi illustration"
+      },
+      {
+        "src": "assets/images/personal-5.webp",
+        "alt": "Vector artwork",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/personal-2.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/personal-4.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      }
     ]
   },
-
   "about": {
     "body": [
       "I'm a designer from Pärnu, Estonia, based in Helsinki. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI. The common thread is taking something complex and making it feel obvious to the person using it.",
       "I work across UX, UI, interaction and visual design, and I like understanding the full stack, from wireframes to motion to front-end, so my designs hold up against real constraints.",
       "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making games, museums, travel and cooking."
     ],
-    "portrait": { "src": "assets/images/mirko_profile.webp", "alt": "Portrait of Mirko Aus" }
+    "portrait": {
+      "src": "assets/images/mirko_profile.webp",
+      "alt": "Portrait of Mirko Aus"
+    }
   }
 }
