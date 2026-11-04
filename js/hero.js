@@ -149,7 +149,7 @@ function startMesh(hero, title) {
 // ── Headline reveal (GSAP SplitText) ──────────────────
 // One fixed, scripted sequence (no randomness). Everything else stays put:
 //   "ex" (of "complex") slides in from the right, "products" slides in from the left,
-//   "design" drops in from far above and lands last.
+//   "design" drops in from far above and lands last. No fades: all text is visible throughout.
 //
 // No end jitter: splitting into letters drops the font's kerning, so the split text sits a
 // few px off the real text. We measure every glyph in the real text first and make the
@@ -161,7 +161,7 @@ const MESH = false; // ember mesh fill (startMesh): parked for now, flip to brin
 const SCRIPT = [
   { word: 'complex', from: 5, x: 1.4, at: 0, dur: 0.8, ease: 'expo.out' },
   { word: 'products', x: -1.2, at: 0.1, dur: 0.85, ease: 'expo.out' },
-  { word: 'design', y: -2.4, fade: true, at: 0.2, dur: 1.05, ease: 'power4.inOut' },
+  { word: 'design', y: -2.4, at: 0.2, dur: 1.05, ease: 'power4.inOut' },
 ];
 
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
@@ -218,14 +218,13 @@ async function revealHeadline(title) {
   steps.forEach((st) => gsap.set(st.letters, {
     x: (k, c) => rest.get(c) + st.x,
     y: st.y,
-    opacity: st.fade ? 0 : 1,
   }));
   title.classList.add('is-ready');
   if (MESH) startMesh(title.closest('.hero'), title);
 
   const tl = gsap.timeline({ delay: 0.35, onComplete: () => split.revert() });
   steps.forEach((st) => tl.to(st.letters, {
-    x: (k, c) => rest.get(c), y: 0, opacity: 1, duration: st.dur, ease: st.ease,
+    x: (k, c) => rest.get(c), y: 0, duration: st.dur, ease: st.ease,
   }, st.at));
 }
 

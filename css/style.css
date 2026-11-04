@@ -349,9 +349,8 @@ body.is-project .nav__links { visibility: hidden; }
   .hero { min-height: auto; gap: clamp(96px, 18vh, 200px); }
 }
 
-/* Load: headline words unscramble (hero.js, GSAP SplitText); dateline settles in */
+/* Load: headline words unscramble (hero.js, GSAP SplitText); dateline is static */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__dateline { animation: rise 800ms var(--ease-out) both 200ms; }
 
   /* Hidden until the split is set up; 1.5s fallback if JS fails */
   .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
