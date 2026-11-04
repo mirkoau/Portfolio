@@ -284,6 +284,7 @@ body.is-project .nav__links { visibility: hidden; }
   margin-inline: auto;
   padding-top: var(--nav-height); /* nav is fixed above it */
   background: var(--paper);
+  display: flow-root; /* keep the footer's bottom margin inside, so the smoother can scroll to it */
 }
 #index-view { overflow-x: clip; } /* full-bleed strip uses 100vw, which includes the scrollbar */
 
@@ -596,13 +597,16 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   .about__portrait { max-width: 320px; }
 }
 
-/* ── Footer: inverted, the email is the CTA ───────── */
+/* ── Footer: floating black card, the email is the CTA ── */
+/* Floating black card, inset from the page edges (no shadow) */
 .footer {
-  margin-top: var(--space-2xl);
+  margin: var(--space-2xl) var(--gutter); /* equal white space above and below */
   padding-block: var(--space-2xl) var(--space-lg);
   background: var(--ink);
   color: var(--paper);
 }
+.footer .footer__inner { padding-inline: var(--space-xl); }
+@media (max-width: 720px) { .footer .footer__inner { padding-inline: var(--space-md); } }
 .footer__pitch {
   max-width: 24ch;
   font-size: var(--text-xl);

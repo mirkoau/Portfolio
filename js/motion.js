@@ -25,8 +25,8 @@ const REVEAL = [
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 56;   // px of travel at the very edge
-const EDGE = 0.18;  // share of the viewport over which a unit enters / leaves
+const SHIFT = 48;   // px of travel at the very edge
+const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
@@ -67,9 +67,13 @@ export const refresh = () => { if (enabled) ScrollTrigger.refresh(); };
 export function reveal(root = document) {
   if (!enabled) return;
   const els = [...root.querySelectorAll(REVEAL)].filter((el) => !el.dataset.reveal);
-  const inStart = 'top bottom';
-  const inEnd = `top ${(1 - EDGE) * 100}%`;
+  // Entrances are clamp()ed so units at the very end of the page still finish arriving at
+  // max scroll (the footer's last lines stayed half-faded otherwise). Exits are NOT clamped:
+  // a unit that can never reach the top edge must simply never leave.
+  const inStart = 'clamp(top bottom)';
+  const inEnd = `clamp(top ${(1 - EDGE) * 100}%)`;
   const outStart = `bottom ${EDGE * 100}%`;
+  const outEnd = 'bottom top';
   els.forEach((el) => {
     el.dataset.reveal = '';
     gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
@@ -78,7 +82,7 @@ export function reveal(root = document) {
     });
     gsap.fromTo(el, { y: 0, autoAlpha: 1 }, {
       y: -SHIFT, autoAlpha: 0, ease: 'power1.in', immediateRender: false,
-      scrollTrigger: { trigger: el, start: outStart, end: 'bottom top', scrub: true },
+      scrollTrigger: { trigger: el, start: outStart, end: outEnd, scrub: true },
     });
   });
 }
