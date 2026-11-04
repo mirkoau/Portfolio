@@ -131,7 +131,6 @@
   margin-top: var(--space-xl);
   max-width: 26ch;
   font-size: clamp(1.75rem, 1rem + 2.4vw, 3rem);
-  font-style: italic;
   font-weight: 400;
   line-height: 1.12;
   letter-spacing: -0.02em;
