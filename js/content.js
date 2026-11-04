@@ -56,9 +56,9 @@ function projectCard(p) {
   const href = p.comingSoon ? '' : ` href="#/work/${p.id}" data-project="${p.id}" aria-label="${p.title} case study"`;
   const cta = p.comingSoon
     ? '<span class="project-card__cta project-card__cta--soon">Case study after launch</span>'
-    : `<span class="project-card__cta">Read case study ${arrow()}</span>`;
+    : `<span class="project-card__cta"><span class="project-card__cta-label" data-draw-line>Read case study</span> ${arrow()}</span>`;
   return `
-    <${tag} class="project-card"${href}>
+    <${tag} class="project-card"${href}${p.comingSoon ? '' : ' data-draw-trigger'}>
       <header class="project-card__head" aria-hidden="true"><span>${p.role}</span><span>${p.period}</span></header>
       <div class="project-card__body">
         <div class="frame">${frameMedia(p.cover)}</div>

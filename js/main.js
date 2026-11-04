@@ -4,6 +4,7 @@ import { initGallery, openLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
 import { initMotion, reveal, refresh, prune, getScrollY, scrollToY, scrollToEl } from './motion.js';
+import { initDrawLines } from './drawline.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const NAV_SCROLLED_AT = 8;
@@ -31,6 +32,7 @@ if (data) {
   initNavSpy();
   reveal();
   refresh();
+  initDrawLines();
   // Browser tried to jump to #about etc. before sections above it were rendered
   if (initial.view === 'index' && location.hash.length > 1) {
     scrollToEl(document.getElementById(location.hash.slice(1)), { smooth: false });

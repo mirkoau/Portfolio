@@ -221,17 +221,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   text-decoration: none;
   transition: color var(--duration-fast) ease;
 }
-.nav__link::after {
-  content: '';
-  position: absolute; left: 0; right: 0; bottom: -4px;
-  height: 1.5px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--duration-base) var(--ease-out);
-}
 .nav__link:hover, .nav__link.is-active { color: var(--ink); }
-.nav__link:hover::after, .nav__link.is-active::after { transform: scaleX(1); transform-origin: left; }
 
 body.is-project .nav__links { visibility: hidden; }
 
@@ -246,19 +236,31 @@ body.is-project .nav__links { visibility: hidden; }
 /* Contact: editorial text link, not a pill */
 .nav__cta {
   font-size: var(--text-sm);
+  position: relative;
   font-weight: 500;
-  text-decoration: underline;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 5px;
+  text-decoration: none;
   transition: color var(--duration-fast) ease;
 }
-.nav__cta:hover { color: var(--accent-ink); }
 
 @media (max-width: 640px) {
   /* blur re-rasterizes every scroll frame; too costly on low-end phones */
   .nav__links { display: none; }
   .nav__cta { margin-left: auto; }
 }
+
+/* Hand-drawn hover underline (js/drawline.js): sits just under the text, ember orange */
+[data-draw-line] { position: relative; }
+.draw-line {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -0.45em;
+  height: 0.5em;
+  color: var(--accent);
+  pointer-events: none;
+}
+.draw-line svg { display: block; overflow: visible; }
+.project-card__cta-label { display: inline-block; }
 
 /* ── Layout helpers ────────────────────────────────── */
 /* The folio: one sheet, hairline edges, on a slightly darker surround */
@@ -465,8 +467,6 @@ a.project-card:focus-visible { outline: none; }
   font-size: var(--text-sm);
   font-weight: 500;
 }
-.project-card__cta svg { transition: transform var(--duration-base) var(--ease-out); }
-a.project-card:hover .project-card__cta svg { transform: translateX(4px); }
 
 /* Hovering a project dims the rest of the list; the hovered title steps forward */
 .project-card__title { transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) ease; }
@@ -620,17 +620,11 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   overflow-wrap: anywhere;
   color: var(--paper);
 }
-.footer__email {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.12em;
-  transition: text-decoration-color var(--duration-base) ease;
-}
-.footer__email:hover,
-.footer__email:focus-visible,
-.footer__email.is-copied { text-decoration-color: var(--accent); }
-.footer__email:focus-visible { outline: none; }
+.footer__email:focus-visible { outline: none; } /* the drawn line + Copy label show focus */
+.footer__email-text { position: relative; }
+.footer__email .draw-line { bottom: -0.04em; height: 0.16em; }
+.footer__tag-icon { flex: none; }
+.footer__tag { font-family: var(--font); } /* the email above is serif; UI labels stay Geist */
 
 .footer__tag {
   position: absolute;

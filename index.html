@@ -32,11 +32,11 @@
   <header class="nav" data-nav>
     <a class="nav__brand" href="#/" data-home>Mirko Aus</a>
     <nav class="nav__links" aria-label="Main">
-      <a class="nav__link" href="#work">Work</a>
-      <a class="nav__link" href="#approach">Approach</a>
-      <a class="nav__link" href="#about">About</a>
+      <a class="nav__link" href="#work" data-draw-line>Work</a>
+      <a class="nav__link" href="#approach" data-draw-line>Approach</a>
+      <a class="nav__link" href="#about" data-draw-line>About</a>
     </nav>
-    <a class="nav__cta" href="#contact" data-to-contact>Contact</a>
+    <a class="nav__cta" href="#contact" data-to-contact data-draw-line>Contact</a>
   </header>
 
   <!-- ScrollSmoother eases the scroll (js/motion.js); fixed UI (nav, lightbox) stays outside -->
@@ -94,11 +94,13 @@
         <footer class="footer" id="contact">
           <div class="footer__inner">
             <p class="footer__pitch">Have a product that needs to feel simpler? Let&rsquo;s talk.</p>
-            <button class="footer__email" type="button" data-copy-email aria-describedby="email-hint">
-              <span class="footer__email-text" data-email-text>Email</span>
+            <button class="footer__email" type="button" data-copy-email data-draw-trigger aria-describedby="email-hint">
+              <span class="footer__email-text" data-email-text data-draw-line>Email</span>
               <span class="footer__tag" id="email-hint">
+                <!-- Copy icon: Lucide (ISC license, lucide.dev) -->
+                <svg class="footer__tag-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                 <span class="copy-swap">
-                  <span class="copy__label">Click to copy</span>
+                  <span class="copy__label">Copy</span>
                   <span class="copy__done" aria-hidden="true">Copied</span>
                 </span>
               </span>
@@ -131,6 +133,7 @@
   <script defer src="js/vendor/ScrollTrigger.min.js"></script>
   <script defer src="js/vendor/ScrollSmoother.min.js"></script>
   <script defer src="js/vendor/SplitText.min.js"></script>
+  <script defer src="js/vendor/DrawSVGPlugin.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="140dc33f-ffa1-40a7-b902-d80009bcab99" data-domains="mirkoaus.com"></script>
 </body>
