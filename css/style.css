@@ -236,6 +236,8 @@ body.is-project .nav__links { visibility: hidden; }
 }
 
 /* ── Layout helpers ────────────────────────────────── */
+#index-view { overflow-x: clip; } /* full-bleed strip uses 100vw, which includes the scrollbar */
+
 .hero, .work, .approach, .freelance, .about, .footer__inner {
   max-width: var(--max);
   margin-inline: auto;
@@ -557,15 +559,22 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 }
 
 /* ── Freelance: natural aspect ratios, one height ─── */
+/* Bleeds past the content column to the window's right edge, so cut-off items signal more.
+   (100% - 100vw) / 2 = distance from column edge to viewport edge, negated. */
 .freelance__strip {
   display: flex;
   gap: var(--space-sm);
+  margin-right: calc((100% - 100vw) / 2);
+  padding: 6px var(--gutter) var(--space-md) 0; /* top: room for hover lift; right: end breathing room */
   overflow-x: auto;
-  padding-bottom: var(--space-sm);
   scroll-snap-type: x proximity;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
+  /* Visible scrollbar: Chrome/Firefox use these; Safari falls back to ::-webkit-scrollbar below */
+  scrollbar-width: auto;
+  scrollbar-color: var(--ink) var(--line);
 }
+.freelance__strip::-webkit-scrollbar { height: 8px; }
+.freelance__strip::-webkit-scrollbar-track { background: var(--line); }
+.freelance__strip::-webkit-scrollbar-thumb { background: var(--ink); }
 .freelance__item {
   flex: none;
   height: clamp(220px, 24vw, 320px);
