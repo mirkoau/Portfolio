@@ -14,7 +14,7 @@ const NAV_OFFSET = 88; // px: nav height + breathing room, where scroll targets 
 // on these units). Hero headline, dateline, fixed nav and pinned TOC are left out.
 const REVEAL = [
   // index
-  '.section-title', '.section-sub', '.work__company-head',
+  '.section-title', '.section-sub', '.work__company-head', '.stats__item',
   // cards: each part moves on its own; the card frame stays put
   '.project-card .frame', '.project-card__meta', '.project-card__title', '.project-card__summary',
   '.project-card__cta',
@@ -25,8 +25,8 @@ const REVEAL = [
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 40;   // px of travel at the very edge
-const EDGE = 0.15;  // share of the viewport over which a unit enters / leaves
+const SHIFT = 30;  // px of travel at the very edge
+const EDGE = 0.12; // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
@@ -40,6 +40,7 @@ export function initMotion() {
     smooth: 0.8,        // seconds to catch up: eased, but still feels direct
     smoothTouch: false, // touch keeps native momentum
     effects: false,
+    wholePixels: true,  // round the content's translate: no sub-pixel text shimmer while it eases to rest
   });
 }
 
@@ -76,12 +77,17 @@ export function reveal(root = document) {
   const outEnd = 'bottom top';
   els.forEach((el) => {
     el.dataset.reveal = '';
-    gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
-      y: 0, autoAlpha: 1, ease: 'power1.out',
-      scrollTrigger: { trigger: el, start: inStart, end: inEnd, scrub: true },
-    });
+    // Already in view at scroll 0 (case study intro): nothing to enter. Its entrance range would
+    // clamp to a zero-length span at scroll 0, which leaves it stuck hidden until you scroll.
+    const pageTop = el.getBoundingClientRect().top + getScrollY();
+    if (pageTop >= innerHeight * (1 - EDGE)) {
+      gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, ease: 'power1.out', snap: { y: 1 },
+        scrollTrigger: { trigger: el, start: inStart, end: inEnd, scrub: true },
+      });
+    }
     gsap.fromTo(el, { y: 0, autoAlpha: 1 }, {
-      y: -SHIFT, autoAlpha: 0, ease: 'power1.in', immediateRender: false,
+      y: -SHIFT, autoAlpha: 0, ease: 'power1.in', immediateRender: false, snap: { y: 1 },
       scrollTrigger: { trigger: el, start: outStart, end: outEnd, scrub: true },
     });
   });

@@ -117,10 +117,10 @@ function render(p) {
         </div>
       </div>
       ${next ? `
-      <a class="case__next" href="#/work/${next.id}" data-project="${next.id}">
+      <a class="case__next" href="#/work/${next.id}" data-project="${next.id}" data-draw-trigger>
         <div>
           <p class="case__next-label">Next case study</p>
-          <p class="section-title case__next-title">${next.title}</p>
+          <p class="section-title case__next-title"><span data-draw-line>${next.title}</span></p>
         </div>
         ${frameMedia(next.cover)}
       </a>` : ''}
@@ -134,8 +134,10 @@ function wire(zoomables) {
   observeVideos(view);
   cleanup.push(() => unobserveVideos(view));
 
+  // Thumbnail of image i, for the lightbox morph
+  const thumbOf = (i) => view.querySelector(`[data-zoom="${i}"] :is(img, video)`);
   view.querySelectorAll('[data-zoom]').forEach(btn => {
-    btn.addEventListener('click', () => openLightbox(zoomables, Number(btn.dataset.zoom)));
+    btn.addEventListener('click', () => openLightbox(zoomables, Number(btn.dataset.zoom), thumbOf));
   });
 
   // Range input (not a custom drag) so the slider is keyboard + AT accessible

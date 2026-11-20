@@ -52,14 +52,21 @@
             <!-- Hero: type-led; line reveal in js/hero.js -->
             <section class="hero" aria-labelledby="hero-title">
               <p class="hero__dateline"><span>Folio 2026</span><span>Updated November 2026</span></p>
-              <h1 class="hero__title" id="hero-title">I design complex products so they explain themselves.</h1>
+              <h1 class="hero__title" id="hero-title"><span class="hero__line">I design complex products</span> <span class="hero__line">people understand and enjoy.</span></h1>
+            </section>
+
+            <section class="stats" aria-label="At a glance">
+              <dl class="stats__list">
+                <div class="stats__item"><dd>3</dd><dt>Games shipped</dt></div>
+                <div class="stats__item"><dd>5</dd><dt>SaaS products</dt></div>
+                <div class="stats__item"><dd>7</dd><dt>Years in product design</dt></div>
+                <div class="stats__item"><dd>3</dd><dt>Design awards</dt></div>
+              </dl>
             </section>
 
             <section class="work" id="work" aria-labelledby="work-title">
               <header class="section-head">
-                <h2 class="section-title" id="work-title">Work</h2>
-                <p class="section-sub">Newest first. Open a project for the full case study.</p>
-              </header>
+                <h2 class="section-title" id="work-title">Work</h2>              </header>
               <div data-work></div>
             </section>
 
@@ -120,7 +127,7 @@
   </div>
 
   <dialog class="lightbox" data-lightbox aria-label="Image viewer">
-    <button class="lightbox__close btn btn--ghost" type="button">Close</button>
+    <button class="lightbox__close btn btn--ghost" type="button">Close<svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9"/></svg></button>
     <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image" data-lightbox-step="-1"></button>
     <figure class="lightbox__figure">
       <img class="lightbox__img" alt="" data-lightbox-img />

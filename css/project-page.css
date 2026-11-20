@@ -281,16 +281,20 @@
   gap: var(--space-lg);
   align-items: center;
   margin-top: var(--space-2xl);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--line);
+  padding: var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--line); /* same frame + hover as .project-card */
   text-decoration: none;
+  transition: border-color var(--duration-base) ease, background-color var(--duration-base) ease;
+}
+.case__next:hover,
+.case__next:focus-visible {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, var(--surface));
 }
 .case__next-label { font-size: var(--text-sm); color: var(--ink-2); }
-.case__next-title {
-  margin-top: 4px;
-  transition: color var(--duration-fast) ease;
-}
-.case__next:hover .case__next-title { color: var(--accent); }
+.case__next-title { margin-top: 4px; }
+.case__next-title [data-draw-line] { display: inline-block; } /* underline spans the title, not the column */
 .case__next .frame__media { aspect-ratio: 16 / 9; }
 
 @media (max-width: 640px) { .case__next { grid-template-columns: 1fr; } }

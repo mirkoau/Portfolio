@@ -15,6 +15,13 @@ export function dragScroll(el, { glide = false } = {}) {
     el.classList.remove('is-free');
   };
   el.addEventListener('dragstart', (e) => e.preventDefault()); // no native image drag
+  // Pressing here must not start a text selection that the drag then sweeps across the page
+  // (pointerdown can't cancel it; mousedown can, and clicks still fire). Clears an old one too.
+  el.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    getSelection()?.removeAllRanges();
+  });
 
   el.addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;

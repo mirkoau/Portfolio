@@ -8,7 +8,8 @@
     { "label": "Role", "value": "Lead UI/UX Designer" },
     { "label": "Team", "value": "Me and a UI artist, with 3 UI programmers" },
     { "label": "Timeline", "value": "2023–2026, preproduction to post-launch" },
-    { "label": "Scope", "value": "Information architecture, flows, HUD, menus, visual style, production planning" }
+    { "label": "Scope", "value": "Information architecture, flows, HUD, menus, visual style, production planning" },
+    { "label": "Tools", "value": "Figma, Claude AI, Photoshop, After Effects, JS/HTML/CSS, Jira, Confluence, pen and paper" }
   ],
   "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" },
   "sections": [
@@ -25,19 +26,33 @@
     },
     {
       "stage": "Challenge",
-      "heading": "Live-service scope on a tight schedule",
+      "heading": "Cognitive overload, on a tight schedule",
       "body": [
-        "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking, parties and a HUD that reads under pressure. All of it had to ship together, on a schedule that left little room for rework."
+        "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking, parties and a HUD that reads under pressure. All of it had to ship together, on a schedule that left little room for rework.",
+        "The hardest part was the HUD. Every new feature asked for its own feedback on screen, and in the middle of a co-op fight it piled up. Playtests pointed the same way: most issues came from a gameplay loop that felt confusing, and from UI requests that made the game look more complex than it was."
       ],
+      "pull": "Not too big, not too small. Not too flashy, not completely mute.",
       "media": [
         { "src": "assets/images/fbc-anomaly-interaction.webp", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
       ]
     },
     {
       "stage": "Approach",
+      "heading": "Less HUD, clearer goals",
+      "body": [
+        "I pushed back on game design when feedback didn't earn its place. Where players needed to know something, I looked for diegetic ways to show it in the world.",
+        "What stayed on screen was a balancing act between readable and intrusive. For the confusing loop, I pushed for a simple mission tracker that always makes the player's next big goal clear."
+      ],
+      "media": [
+        { "src": "assets/images/fbc-frost-anomalies.webp", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
+      ]
+    },
+    {
+      "stage": "Approach",
       "heading": "Own the structure and the plan",
       "body": [
-        "I owned the UI end to end: structure, flows, HUD, menus and overall visual style. I also ran the production side, breaking the work into tasks for design and programming and keeping both the short- and long-term timeline realistic."
+        "I owned the UI end to end: structure, flows, HUD, menus and overall visual style. I also owned the plan. The producer ran the meetings, but the UI programming lead and I built the schedule together in Jira, sprint by sprint and screen by screen.",
+        "We started development on screens that were safe to build early, and grouped screens that shared components so each piece was built once and reused. That kept the short- and long-term timeline realistic."
       ],
       "media": [
         { "src": "assets/images/fbc-customization.webp", "alt": "Customization screen", "caption": "Customization" }
@@ -47,9 +62,10 @@
       "stage": "Approach",
       "heading": "A main menu that lives in the world",
       "body": [
-        "With the art director, I designed Remedy's first main menu set inside a 3D environment. Each menu item has its own corner of the space and the camera glides there on selection. Pick a loadout and you watch your gear change on the table in front of you."
+        "With the art director, I designed Remedy's first main menu set inside a 3D environment. Nobody at the studio had built one before, so the idea met early pushback. I worked out the technical approach that made it possible.",
+        "The point wasn't spectacle. The player's state no longer lived only in the UI but in the game world: pick a loadout and you watch the actual game meshes change on the table in front of you. Each menu item has its own corner of the space and the camera glides there on selection. The setup also opened the door to seasonal and event environments."
       ],
-      "pull": "Remedy's first menu that lives inside a 3D world.",
+      "pull": "Your loadout isn't a list in a menu. It's the gear on the table in front of you.",
       "media": [
         { "src": "assets/images/fbc-loadout.webp", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
         { "src": "assets/images/fbc-crisis-select.webp", "alt": "Crisis select menu", "caption": "Crisis select" }
@@ -71,19 +87,22 @@
       "heading": "Shipped complete and functional",
       "body": [
         "The game didn't find the commercial success we hoped for, and we didn't hit every goal we set for the craft team. But on a very tight schedule, the team shipped a complete, polished and functional UI, and I'm proud of what we built together."
-      ],
-      "media": [
-        { "src": "assets/images/fbc-frost-anomalies.webp", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
+      ]
+    },
+    {
+      "stage": "Outcome",
+      "heading": "What I'd do differently",
+      "body": [
+        "This was my first time leading a project of this scale. More than once I had a gut feeling that a proposed feature or change wouldn't work, and let it through anyway. Next time I'd trust that expertise sooner, push back harder on requests from design and direction, say no when the answer is no, and push for the design I feel would work the best."
       ]
     }
   ],
   "results": [
     { "title": "Full UI shipped", "detail": "Menus, metagame, matchmaking and HUD at launch, with a two-person design team." },
-    { "title": "First 3D main menu at Remedy", "detail": "Built with art direction and UI programming." },
-    { "title": "Queue without waiting", "detail": "Modular matchmaking lets players customize while queued." }
+    { "title": "First 3D main menu at Remedy", "detail": "My technical approach, built with art direction and UI programming." },
+    { "title": "A HUD that holds back", "detail": "Diegetic or no feedback where it didn't matter, and one clear next goal." }
   ],
   "todo": [
-    "Add any UI-related review quotes, player feedback or usability test findings.",
-    "Add team-size numbers for the wider project if useful."
+    "Add any UI-related review quotes or player feedback, if shareable."
   ]
 }

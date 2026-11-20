@@ -29,7 +29,7 @@
           "title": "FBC: Firebreak",
           "role": "Lead UI/UX Designer",
           "period": "2023–2026",
-          "summary": "Owned the full UI of a co-op multiplayer game from preproduction to post-launch: structure, flows, HUD, menus, visual style and the production plan behind them.",
+          "summary": "Led the full UI of a co-op multiplayer game from preproduction to post-launch: cut HUD overload, planned the build with UI programming, and put Remedy's first main menu inside a 3D world.",
           "did": [
             "Design lead",
             "Information architecture",
@@ -157,30 +157,9 @@
     "intro": "Branding and marketing for up-and-coming Estonian music festivals, plus digital painting and vector art from roughly eight years of art school.",
     "items": [
       {
-        "src": "assets/images/funkfest-1.webp",
-        "alt": "Funkfest festival poster",
-        "caption": "Funkfest"
-      },
-      {
-        "src": "assets/images/indiefest-2.png",
-        "alt": "Indiefest festival artwork",
-        "caption": "Indiefest"
-      },
-      {
         "src": "assets/images/personal-3.webp",
         "alt": "Digital painting",
         "caption": "Personal work"
-      },
-      {
-        "src": "assets/images/funkfest-2.webp",
-        "alt": "Funkfest festival artwork",
-        "caption": "Funkfest"
-      },
-      {
-        "alt": "Indiefest animated artwork",
-        "caption": "Indiefest",
-        "video": "assets/images/iwe.mp4",
-        "poster": "assets/images/iwe-poster.webp"
       },
       {
         "src": "assets/images/personal-1.webp",
@@ -206,14 +185,35 @@
         "src": "assets/images/personal-4.webp",
         "alt": "Digital painting",
         "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/indiefest-2.png",
+        "alt": "Indiefest festival artwork",
+        "caption": "Indiefest"
+      },
+      {
+        "src": "assets/images/funkfest-2.webp",
+        "alt": "Funkfest festival artwork",
+        "caption": "Funkfest"
+      },
+      {
+        "src": "assets/images/funkfest-1.webp",
+        "alt": "Funkfest festival poster",
+        "caption": "Funkfest"
+      },
+      {
+        "alt": "Indiefest animated artwork",
+        "caption": "Indiefest",
+        "video": "assets/images/iwe.mp4",
+        "poster": "assets/images/iwe-poster.webp"
       }
     ]
   },
   "about": {
     "body": [
-      "I'm a designer from Pärnu, Estonia, based in Helsinki. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI. The common thread is taking something complex and making it feel obvious to the person using it.",
+      "I'm a designer based in Helsinki, Finland. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI. I care about making complex things feel simple and intuitive, without losing the personality.",
       "I work across UX, UI, interaction and visual design, and I like understanding the full stack, from wireframes to motion to front-end, so my designs hold up against real constraints.",
-      "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making games, museums, travel and cooking."
+      "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making video games, trading card games, museums, travel and cooking."
     ],
     "portrait": {
       "src": "assets/images/mirko_profile.webp",

@@ -150,7 +150,9 @@ function startMesh(hero, title) {
 // One fixed, hand-set sequence (no randomness). Every piece except "I" starts nudged off
 // its spot and travels home in two steps: first it resolves one axis, then the other.
 // Each piece has its own start time and durations, so nothing moves in sync. Bigger
-// entrances: "ex" from the right, "products" from the left, "design" from far above.
+// entrances: "ex", "products" and "design" drop in from above (never sideways: ex and products
+// sit next to each other on one line, so sideways starts collided); "people" slides in from
+// the left (stays on screen); "under" and "enjoy." rise from below the screen (edge: 'left' | 'bottom').
 // No fades: all text is visible throughout.
 //
 // No end jitter: splitting into letters drops the font's kerning, so the split text sits a
@@ -162,15 +164,15 @@ const MESH = false; // ember mesh fill (startMesh): parked for now, flip to brin
 // x in em, y in line heights; first: axis resolved in step 1 ('x' | 'y')
 // at: start (s); d1/d2: step durations; gap: pause between steps
 const SCRIPT = [
-  { word: 'complex', to: 5, x: 0.1, y: -0.2, first: 'y', at: 0.0, d1: 0.42, d2: 0.5, gap: 0.04 },        // "compl"
-  { word: 'complex', from: 5, x: 1.4, y: 0.18, first: 'y', at: 0.06, d1: 0.38, d2: 0.62, gap: 0.06 },    // "ex"
-  { word: 'products', x: -1.2, y: 0.16, first: 'y', at: 0.11, d1: 0.44, d2: 0.6, gap: 0.03 },
-  { word: 'so', x: -0.16, y: 0.24, first: 'y', at: 0.17, d1: 0.36, d2: 0.48, gap: 0.08 },
-  { word: 'they', x: 0.2, y: -0.2, first: 'x', at: 0.22, d1: 0.4, d2: 0.52, gap: 0.05 },
-  { word: 'design', x: 0.18, y: -2.4, first: 'x', at: 0.26, d1: 0.4, d2: 0.66, gap: 0.03 },  // left first, then swoops down
-  { word: 'explain', x: -0.24, y: 0.2, first: 'x', at: 0.31, d1: 0.38, d2: 0.5, gap: 0.07 },
-  { word: 'themselves.', to: 4, x: 0.22, y: -0.16, first: 'x', at: 0.35, d1: 0.4, d2: 0.54, gap: 0.05 },   // "them"
-  { word: 'themselves.', from: 4, x: 0.34, y: 0.14, first: 'y', at: 0.41, d1: 0.36, d2: 0.58, gap: 0.03 },  // "selves."
+  { word: 'complex', to: 5, x: 0.06, y: -0.12, first: 'y', at: 0.0, d1: 0.42, d2: 0.5, gap: 0.04 },        // "compl"
+  { word: 'complex', from: 5, x: 0, y: -0.6, first: 'y', at: 0.06, d1: 0.38, d2: 0.62, gap: 0.06 },    // "ex"
+  { word: 'products', x: 0, y: -1.6, first: 'y', at: 0.2, d1: 0.5, d2: 0.6, gap: 0.03 },
+  { word: 'people', edge: 'left', x: 0, y: 0, first: 'x', at: 0.17, d1: 0.55, d2: 0.5, gap: 0.04 },  // slides in from the left, on screen
+  { word: 'design', x: 0.1, y: -2.4, first: 'x', at: 0.22, d1: 0.4, d2: 0.66, gap: 0.03 },  // left first, then swoops down
+  { word: 'understand', to: 5, edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.27, d1: 0.8, d2: 0.5, gap: 0.04 },    // "under"
+  { word: 'understand', from: 5, x: 0.13, y: -0.1, first: 'y', at: 0.32, d1: 0.4, d2: 0.54, gap: 0.05 }, // "stand"
+  { word: 'and', x: -0.1, y: 0.14, first: 'y', at: 0.36, d1: 0.36, d2: 0.48, gap: 0.08 },
+  { word: 'enjoy.', edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.41, d1: 0.8, d2: 0.5, gap: 0.04 },
 ];
 
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
@@ -221,7 +223,11 @@ async function revealHeadline(title) {
     let x = step.x * em;
     if (x < 0) x = -Math.min(-x, r.left - sheet.left - em * 0.3);
     if (x > 0) x = Math.min(x, sheet.right - r.right - em * 0.3);
-    return { ...step, letters, x, y: step.y * lineH };
+    let y = step.y * lineH;
+    // Edge entrances: 'left' starts up to 1em left, kept on screen; 'bottom' starts below the viewport
+    if (step.edge === 'left') x = -Math.max(0, Math.min(r.left - 12, em));
+    if (step.edge === 'bottom') y = innerHeight - r.top + lineH * 0.2;
+    return { ...step, letters, x, y };
   }).filter(Boolean);
 
   steps.forEach((st) => gsap.set(st.letters, { x: (k, c) => rest.get(c) + st.x, y: st.y }));

@@ -98,8 +98,18 @@ function initFreelance(items) {
   const strip = document.querySelector('[data-freelance]');
   strip.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-freelance-idx]');
-    if (btn) openLightbox(items, Number(btn.dataset.freelanceIdx));
+    if (btn) openLightbox(items, Number(btn.dataset.freelanceIdx), thumbOf);
   });
+  // Thumbnail of item i for the lightbox morph; scrolls the strip so it's in view when closing
+  const thumbOf = (i) => {
+    const el = strip.querySelector(`[data-freelance-idx="${i}"]`);
+    if (!el) return null;
+    const s = strip.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.left < s.left) strip.scrollLeft -= s.left - r.left;
+    else if (r.right > s.right) strip.scrollLeft += r.right - s.right;
+    return el.querySelector('img, video');
+  };
   const stopGlide = dragScroll(strip, { glide: true });
   initStripBar(strip, document.querySelector('[data-freelance-bar]'), stopGlide);
 }
@@ -135,6 +145,7 @@ function initStripBar(strip, bar, stopGlide) {
     strip.scrollLeft = (Math.min(Math.max(x, 0), travel) / travel) * maxScroll();
   };
 
+  bar.addEventListener('mousedown', (e) => e.preventDefault()); // dragging the thumb must not select text
   bar.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
     stopGlide();
@@ -233,6 +244,7 @@ function toProject(id, sourceEl) {
     jump(0);
     undock = dockBack(document.querySelector('.case__dock'));
     reveal(document.getElementById('project-view'));
+    initDrawLines(document.getElementById('project-view'));
     settleVisible(document.getElementById('project-view'));
   });
 }
