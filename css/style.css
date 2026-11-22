@@ -370,7 +370,7 @@ body.is-project .nav__links { visibility: hidden; }
 
 /* Two set lines; line 2 spans the measure at any width. Wraps freely below 900px */
 .hero__title {
-  font-size: max(2.75rem, 8.6cqi);
+  font-size: max(2.75rem, 7.64cqi);
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.03em;

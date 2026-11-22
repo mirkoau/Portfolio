@@ -151,8 +151,9 @@ function startMesh(hero, title) {
 // its spot and travels home in two steps: first it resolves one axis, then the other.
 // Each piece has its own start time and durations, so nothing moves in sync. Bigger
 // entrances: "ex", "products" and "design" drop in from above (never sideways: ex and products
-// sit next to each other on one line, so sideways starts collided); "people" slides in from
-// the left (stays on screen); "under" and "enjoy." rise from below the screen (edge: 'left' | 'bottom').
+// sit next to each other on one line, so sideways starts collided); "that" slides in from
+// the left as one piece (stays on screen); "under" and "enjoy." rise from below the screen
+// (edge: 'left' | 'bottom').
 // No fades: all text is visible throughout.
 //
 // No end jitter: splitting into letters drops the font's kerning, so the split text sits a
@@ -167,7 +168,8 @@ const SCRIPT = [
   { word: 'complex', to: 5, x: -0.35, y: -1.2, first: 'y', at: 0.0, d1: 0.5, d2: 0.52, gap: 0.0 },        // "compl": drops in from above, then slides right to meet "ex"
   { word: 'complex', from: 5, x: 0, y: -0.6, first: 'y', at: 0.3, d1: 0.72, d2: 0.01, gap: 0.0 },    // "ex": own drop timing, lands exactly when compl's slide ends (t = 1.02)
   { word: 'products', x: 0, y: -1.6, first: 'y', at: 0.2, d1: 0.5, d2: 0.6, gap: 0.03 },
-  { word: 'people', edge: 'left', x: 0, y: 0, first: 'x', at: 0.17, d1: 0.55, d2: 0.5, gap: 0.04 },  // slides in from the left, on screen
+  { word: 'that', edge: 'left', x: 0, y: 0, first: 'x', at: 0.12, d1: 0.55, d2: 0.5, gap: 0.04 },  // one piece, slides in from the left, on screen
+  { word: 'people', x: 0.1, y: 0.45, first: 'x', at: 0.2, d1: 0.42, d2: 0.5, gap: 0.05 },  // small nudge from below right: clear of "that" sliding in
   { word: 'design', x: 0.1, y: -2.4, first: 'x', at: 0.22, d1: 0.4, d2: 0.66, gap: 0.03 },  // left first, then swoops down
   { word: 'understand', to: 5, edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.27, d1: 0.8, d2: 0.5, gap: 0.04 },    // "under"
   { word: 'understand', from: 5, x: 0.13, y: -0.2, first: 'y', at: 0.32, d1: 0.4, d2: 0.54, gap: 0.05 }, // "stand"
@@ -215,7 +217,7 @@ async function revealHeadline(title) {
   const rest = new Map();
   chars.forEach((c, k) => {
     const dx = plain.length === chars.length ? plain[k] - (c.getBoundingClientRect().left - base) : 0;
-    rest.set(c, Math.abs(dx) < em * 0.5 ? dx : 0);
+    rest.set(c, Math.abs(dx) < em ? dx : 0); // drift builds along a line: ~0.5em by the end of line 2
   });
   gsap.set(chars, { x: (k, c) => rest.get(c) });
 
