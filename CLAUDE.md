@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Context
 Senior UX Designer @ Remedy Entertainment. v2 = product-centered, corporate redesign of the live portfolio (`../portfoolio`, mirkoaus.com). Audience: product/SaaS hiring managers. `PLAN.md` describes v1 and is historical.
 
-**Git: `origin` is the LIVE site repo. Commit locally only — never push** until a separate remote is set up. This overrides the auto-push rule below.
+**Git: v2 is live.** `origin/main` deploys to mirkoaus.com via GitHub Pages. Work on `wip`; going live = fast-forward `main` to `wip` and push. Push `wip` freely; push `main` only when the user says to go live. Git has no stored creds: push with `git -c "credential.helper=" -c "credential.helper=!gh auth git-credential" push`.
 
 ## Site Goals
 - Editorial + product-designer feel, NOT SaaS: square corners, no pills, big type, italic pull quotes, numbered figures. Tasteful motion: one hero moment, nothing gratuitous
