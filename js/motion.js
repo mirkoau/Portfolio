@@ -30,6 +30,7 @@ const REVEAL = [
 const small = matchMedia('(max-width: 899px)').matches;
 const SHIFT = small ? 12 : 30;    // px of travel at the very edge
 const EDGE = small ? 0.06 : 0.12; // share of the viewport over which a unit enters / leaves
+const MOBILE_LEAD = 0.08; // mobile: entrance starts this share of the viewport before the unit enters
 
 let smoother = null;
 
@@ -95,9 +96,11 @@ export function reveal(root = document) {
     // once the unit crosses the edge band (reversed if you scroll back); no exits.
     if (small) {
       if (pageTop < innerHeight * (1 - EDGE)) return;
+      // Fires just BEFORE the unit enters (top still MOBILE_LEAD below the screen), so it's
+      // mostly in place by the time it's seen; reverses only once it's back off screen
       gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
-        y: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: `top ${(1 - EDGE) * 100}%`, toggleActions: 'play none none reverse' },
+        y: 0, autoAlpha: 1, duration: 0.4, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: `top ${(1 + MOBILE_LEAD) * 100}%`, toggleActions: 'play none none reverse' },
       });
       return;
     }
