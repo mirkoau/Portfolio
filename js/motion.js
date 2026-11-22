@@ -25,14 +25,19 @@ const REVEAL = [
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
 
-const SHIFT = 30;  // px of travel at the very edge
-const EDGE = 0.12; // share of the viewport over which a unit enters / leaves
+// Mobile (< 900px) is gentler: shorter travel over a thinner band, or tall units on a short
+// screen spend most of their time half-faded and drifting
+const small = matchMedia('(max-width: 899px)').matches;
+const SHIFT = small ? 12 : 30;    // px of travel at the very edge
+const EDGE = small ? 0.06 : 0.12; // share of the viewport over which a unit enters / leaves
 
 let smoother = null;
 
 export function initMotion() {
   if (!enabled) return;
   gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  // iOS address bar show/hide resizes the viewport: don't recompute every trigger mid-scroll
+  ScrollTrigger.config({ ignoreMobileResize: true });
   document.documentElement.classList.add('has-smoother');
   smoother = ScrollSmoother.create({
     wrapper: '#smooth-wrapper',
@@ -85,6 +90,17 @@ export function reveal(root = document) {
     // Already in view at scroll 0 (case study intro): nothing to enter. Its entrance range would
     // clamp to a zero-length span at scroll 0, which leaves it stuck hidden until you scroll.
     const pageTop = el.getBoundingClientRect().top + getScrollY();
+    // Mobile: touch scroll runs on the compositor while scrubbed tweens update on the main
+    // thread, so scroll-linked units trail and stutter (iPhone). Timed entrance instead, played
+    // once the unit crosses the edge band (reversed if you scroll back); no exits.
+    if (small) {
+      if (pageTop < innerHeight * (1 - EDGE)) return;
+      gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: `top ${(1 - EDGE) * 100}%`, toggleActions: 'play none none reverse' },
+      });
+      return;
+    }
     if (pageTop >= innerHeight * (1 - EDGE)) {
       gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
         y: 0, autoAlpha: 1, ease: 'power1.out', snap: { y: 1 },

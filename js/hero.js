@@ -177,6 +177,23 @@ const SCRIPT = [
   { word: 'enjoy.', edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.41, d1: 0.8, d2: 0.5, gap: 0.04 },
 ];
 
+// Wrapped headline (< 900px): rows depend on the width, so moves come from each piece's spot
+// in its row, all short. Row start: in from the left; row end: in from the right (both start
+// 0.8em out, clipped by #smooth-content); middle: small vertical nudge, script direction kept.
+const SIDE = 0.8;    // em
+const NUDGE_Y = 0.3; // line heights; vertical only, so middle pieces never run into neighbours
+
+function wrappedMove(step, word, r, words, em, lineH) {
+  const row = words.filter((w) => Math.abs(w.getBoundingClientRect().top - r.top) < lineH * 0.5);
+  const lefts = row.map((w) => w.getBoundingClientRect().left);
+  const start = r.left <= Math.min(...lefts) && !step.from;
+  const end = r.left >= Math.max(...lefts) && step.to == null;
+  if (start) return { x: -SIDE * em, y: 0, first: 'x', edge: null };
+  if (end) return { x: SIDE * em, y: 0, first: 'x', edge: null };
+  const dir = step.edge === 'bottom' || step.y > 0 || (!step.y && !step.x) ? 1 : -1;
+  return { x: 0, y: dir * NUDGE_Y * lineH, first: 'y', edge: null };
+}
+
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
 function glyphLefts(title) {
   const base = title.getBoundingClientRect().left;
@@ -223,11 +240,13 @@ async function revealHeadline(title) {
 
   // Keep sideways starts inside the sheet
   const sheet = (title.closest('.sheet') || document.body).getBoundingClientRect();
+  const wrapped = !matchMedia('(min-width: 900px)').matches; // lines wrap freely (no set lines)
   const steps = SCRIPT.map((step) => {
     const word = words.find((w) => w.textContent.trim() === step.word);
     if (!word) return null;
     const letters = [...word.querySelectorAll('.hero__char')].slice(step.from ?? 0, step.to);
     const r = word.getBoundingClientRect();
+    if (wrapped) return { ...step, letters, ...wrappedMove(step, word, r, words, em, lineH) };
     let x = step.x * em;
     if (x < 0) x = -Math.min(-x, r.left - sheet.left - em * 0.3);
     if (x > 0) x = Math.min(x, sheet.right - r.right - em * 0.3);
