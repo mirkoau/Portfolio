@@ -113,6 +113,17 @@ export const unobserveVideos = (root) =>
 
 const $ = (sel) => document.querySelector(sel);
 
+// Native lazy loading starts too late on mobile (Firefox's margin is small): pictures were
+// still arriving as they scrolled in. Keep lazy for first paint (fonts + hero go first),
+// then load every index image in page order once the page is in and the main thread idles.
+function loadAllWhenIdle() {
+  const go = () => document.querySelectorAll('#index-view img[loading="lazy"]')
+    .forEach((im) => { im.loading = 'eager'; });
+  const idle = () => (window.requestIdleCallback ? requestIdleCallback(go, { timeout: 2000 }) : setTimeout(go, 200));
+  if (document.readyState === 'complete') idle();
+  else addEventListener('load', idle, { once: true });
+}
+
 let data = null;
 
 export async function initContent() {
@@ -124,6 +135,7 @@ export async function initContent() {
   renderToolkit(data.toolkit);
   renderFreelance(data.freelance);
   renderAbout(data.about);
+  loadAllWhenIdle();
   return data;
 }
 
