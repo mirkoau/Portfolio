@@ -182,16 +182,19 @@ const SCRIPT = [
 // 0.8em out, clipped by #smooth-content); middle: small vertical nudge, script direction kept.
 const SIDE = 0.8;    // em
 const NUDGE_Y = 0.3; // line heights; vertical only, so middle pieces never run into neighbours
+// Bigger accents: side = em for row-edge slides, nudge = line heights for middle pieces
+const ACCENT = { design: { nudge: 1.2 }, that: { side: 1.5 }, and: { side: 1.8 } };
 
 function wrappedMove(step, word, r, words, em, lineH) {
   const row = words.filter((w) => Math.abs(w.getBoundingClientRect().top - r.top) < lineH * 0.5);
   const lefts = row.map((w) => w.getBoundingClientRect().left);
   const start = r.left <= Math.min(...lefts) && !step.from;
   const end = r.left >= Math.max(...lefts) && step.to == null;
-  if (start) return { x: -SIDE * em, y: 0, first: 'x', edge: null };
-  if (end) return { x: SIDE * em, y: 0, first: 'x', edge: null };
+  const side = (ACCENT[step.word]?.side ?? SIDE) * em;
+  if (start) return { x: -side, y: 0, first: 'x', edge: null };
+  if (end) return { x: side, y: 0, first: 'x', edge: null };
   const dir = step.edge === 'bottom' || step.y > 0 || (!step.y && !step.x) ? 1 : -1;
-  return { x: 0, y: dir * NUDGE_Y * lineH, first: 'y', edge: null };
+  return { x: 0, y: dir * (ACCENT[step.word]?.nudge ?? NUDGE_Y) * lineH, first: 'y', edge: null };
 }
 
 // Left edge of every non-space glyph in the unsplit text, relative to the title (kerned)
