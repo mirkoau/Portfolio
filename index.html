@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- CSP: no third-party scripts besides analytics. No inline scripts. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://cloud.umami.is https://gateway.umami.is; base-uri 'self'; object-src 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <title>Mirko Aus — Product &amp; UX Designer</title>
+  <meta name="description" content="Mirko Aus, product-minded UX designer. Senior UX Designer at Remedy Entertainment. Previously B2B SaaS and logistics products at Evocon and Cleveron." />
+  <link rel="canonical" href="https://mirkoaus.com/" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preload" href="assets/fonts/geist/geist-variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/serif/serif-variable.woff" as="font" type="font/woff" crossorigin />
+
+  <link rel="preload" href="content/data.json" as="fetch" crossorigin />
+  <link rel="modulepreload" href="js/content.js" />
+  <link rel="modulepreload" href="js/project-page.js" />
+  <link rel="modulepreload" href="js/hero.js" />
+  <link rel="modulepreload" href="js/gallery.js" />
+  <link rel="modulepreload" href="js/router.js" />
+  <link rel="modulepreload" href="js/motion.js" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/project-page.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" data-nav>
+    <!-- Project view only: "All work" docks left of the name (both move in the view transition) -->
+    <a class="nav__back" href="#/"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8 5L4 9l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-draw-line>All work</span></a>
+    <a class="nav__brand" href="#/" data-home>Mirko Aus</a>
+    <nav class="nav__links" aria-label="Main">
+      <a class="nav__link" href="#work" data-draw-line>Work</a>
+      <a class="nav__link" href="#approach" data-draw-line>Approach</a>
+      <a class="nav__link" href="#about" data-draw-line>About</a>
+    </nav>
+    <a class="nav__cta" href="#contact" data-to-contact data-draw-line>Contact</a>
+  </header>
+
+  <!-- ScrollSmoother eases the scroll (js/motion.js); fixed UI (nav, lightbox) stays outside -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <!-- The whole folio sits on one sheet -->
+      <div class="sheet">
+        <main id="main">
+          <div id="index-view">
+
+            <!-- Hero: type-led; line reveal in js/hero.js -->
+            <section class="hero" aria-labelledby="hero-title">
+              <p class="hero__dateline"><span>Folio 2026</span><span>Updated November 2026</span></p>
+              <h1 class="hero__title" id="hero-title"><span class="hero__line">I design complex products</span> <span class="hero__line">people understand and enjoy.</span></h1>
+            </section>
+
+            <section class="stats" aria-label="At a glance">
+              <dl class="stats__list">
+                <div class="stats__item"><dd>3</dd><dt>Games shipped</dt></div>
+                <div class="stats__item"><dd>5</dd><dt>SaaS products</dt></div>
+                <div class="stats__item"><dd>7</dd><dt>Years in product design</dt></div>
+                <div class="stats__item"><dd>3</dd><dt>Design awards</dt></div>
+              </dl>
+            </section>
+
+            <section class="work" id="work" aria-labelledby="work-title">
+              <header class="section-head">
+                <h2 class="section-title" id="work-title">Work</h2>              </header>
+              <div data-work></div>
+            </section>
+
+            <section class="approach" id="approach" aria-labelledby="approach-title">
+              <h2 class="section-title" id="approach-title">Across projects</h2>
+              <div class="approach__rows" data-approach></div>
+            </section>
+
+            <section class="toolkit" id="skills" aria-labelledby="toolkit-title">
+              <h2 class="section-title" id="toolkit-title">Tools and skills</h2>
+              <div class="toolkit__body" data-toolkit></div>
+            </section>
+
+            <section class="freelance" id="freelance" aria-labelledby="freelance-title">
+              <header class="section-head">
+                <h2 class="section-title" id="freelance-title">Freelance and personal</h2>
+                <p class="section-sub" data-freelance-intro></p>
+              </header>
+              <div class="freelance__strip" data-freelance tabindex="0" role="region" aria-label="Freelance and personal work, scrollable"></div>
+              <div class="freelance__bar" aria-hidden="true" data-freelance-bar><span class="freelance__thumb"></span></div>
+            </section>
+
+            <section class="about" id="about" aria-labelledby="about-title">
+              <div class="frame about__frame">
+                <span class="frame__label" aria-hidden="true"><span>Mirko Aus</span><span>Helsinki</span></span>
+                <div class="about__portrait" data-portrait></div>
+              </div>
+              <div class="about__text">
+                <h2 class="section-title" id="about-title">About</h2>
+                <div data-about></div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Case study view (hash-routed: #/work/{id}) -->
+          <div id="project-view" hidden></div>
+        </main>
+
+        <footer class="footer" id="contact">
+          <div class="footer__inner">
+            <p class="footer__pitch">Hiring a product designer? Let's talk.</p>
+            <button class="footer__email" type="button" data-copy-email data-draw-trigger aria-describedby="email-hint">
+              <span class="footer__email-text" data-email-text data-draw-line>Email</span>
+              <span class="footer__tag" id="email-hint">
+                <!-- Copy icon: Lucide (ISC license, lucide.dev) -->
+                <svg class="footer__tag-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span class="copy-swap">
+                  <span class="copy__label">Copy</span>
+                  <span class="copy__done" aria-hidden="true">Copied</span>
+                </span>
+              </span>
+            </button>
+            <div class="footer__links">
+              <a class="footer__link" data-c="bWlya28uYXVz" data-d="cHJvdG9uLm1l">Open in mail app</a>
+              <a class="footer__link" href="https://linkedin.com/in/mirko-aus/" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+            <p class="footer__copy">&copy; Mirko Aus 2026. Helsinki, Finland.</p>
+          </div>
+          <p class="sr-only" role="status" aria-live="polite" data-live></p>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Image viewer">
+    <button class="lightbox__close btn btn--ghost" type="button">Close<svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9"/></svg></button>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image" data-lightbox-step="-1"></button>
+    <figure class="lightbox__figure">
+      <img class="lightbox__img" alt="" data-lightbox-img />
+      <video class="lightbox__img" muted loop playsinline controls hidden data-lightbox-video></video>
+      <figcaption class="lightbox__caption" data-lightbox-caption></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next image" data-lightbox-step="1"></button>
+  </dialog>
+
+  <!-- GSAP 3.15 (GreenSock standard no-charge license), self-hosted -->
+  <script defer src="js/vendor/gsap.min.js"></script>
+  <script defer src="js/vendor/ScrollTrigger.min.js"></script>
+  <script defer src="js/vendor/ScrollSmoother.min.js"></script>
+  <script defer src="js/vendor/SplitText.min.js"></script>
+  <script defer src="js/vendor/DrawSVGPlugin.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="140dc33f-ffa1-40a7-b902-d80009bcab99" data-domains="mirkoaus.com"></script>
+</body>
+</html>
