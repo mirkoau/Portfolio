@@ -444,6 +444,11 @@ body.is-project .nav__links { visibility: hidden; }
 
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
+/* Lazy images (content.js img()): hidden until loaded, then fade in rather than pop.
+   An animation, not a transition, so it doesn't clobber the hover-zoom transitions */
+img[data-fade]:not(.is-loaded) { opacity: 0; }
+img[data-fade].is-loaded { animation: fade-in 400ms ease-out; }
+
 /* ── Work: company groups ──────────────────────────── */
 .work__company { padding-bottom: var(--space-xl); }
 .work__company-head {

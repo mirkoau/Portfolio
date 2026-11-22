@@ -86,7 +86,14 @@ export const arrow = (dir = 'right') =>
   `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="${ARROW_PATHS[dir]}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 export const img = (m, attrs = '') =>
-  `<img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" ${attrs}/>`;
+  `<img src="${m.src}" alt="${m.alt}" loading="lazy" decoding="async" data-fade ${attrs}/>`;
+
+// Lazy images often arrive after their frame has already been revealed (mobile, fast scroll)
+// and popped in at full strength. Hidden until loaded, then faded in (css: img[data-fade]).
+// Capture phase: load doesn't bubble. Registered before anything renders.
+const loaded = (e) => { if (e.target.matches?.('img[data-fade]')) e.target.classList.add('is-loaded'); };
+document.addEventListener('load', loaded, true);
+document.addEventListener('error', loaded, true);
 
 // Former GIFs: muted loops. preload=metadata so the box sizes from the video before playback.
 export const media = (m, attrs = '') => m.video

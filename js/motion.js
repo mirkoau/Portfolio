@@ -24,6 +24,8 @@ const REVEAL = [
   '.case__head > *', '.case__inspect > div',
   '.case__section > *', '.case__results', '.case__next',
 ].join(', ');
+// Reveal units that are mostly picture
+const MEDIA = '.project-card .frame, .freelance__strip, .about__frame, .case__media, .compare, .case__next';
 
 // Mobile (< 900px) is gentler: shorter travel over a thinner band, or tall units on a short
 // screen spend most of their time half-faded and drifting
@@ -98,8 +100,10 @@ export function reveal(root = document) {
       if (pageTop < innerHeight * (1 - EDGE)) return;
       // Fires just BEFORE the unit enters (top still MOBILE_LEAD below the screen), so it's
       // mostly in place by the time it's seen; reverses only once it's back off screen
+      // Big image blocks need longer than text: a whole-width picture fading in 240ms flashes
+      const big = el.matches(MEDIA);
       gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
-        y: 0, autoAlpha: 1, duration: 0.24, ease: 'power2.out',
+        y: 0, autoAlpha: 1, duration: big ? 0.5 : 0.24, ease: big ? 'sine.out' : 'power2.out',
         scrollTrigger: { trigger: el, start: `top ${(1 + MOBILE_LEAD) * 100}%`, toggleActions: 'play none none reverse' },
       });
       return;
