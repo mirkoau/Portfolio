@@ -1,0 +1,855 @@
+/* ── Fonts: Geist (Vercel, OFL — assets/fonts/geist/OFL.txt), variable weight ── */
+@font-face {
+  font-family: 'Geist';
+  src: url('../assets/fonts/geist/geist-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('../assets/fonts/geist/geist-italic-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Headlines use --font-display: hero, section/case titles, case headings, pull quotes,
+   card titles, results, approach titles, tools list, footer email */
+:is(.hero__title, .section-title, .case__title, .case__heading, .case__pull,
+    .project-card__title, .case__result strong, .approach__title, .toolkit__tools, .footer__email) {
+  font-family: var(--font-display);
+}
+
+/* Headline serif (licensed), variable weight */
+@font-face {
+  font-family: 'Serif';
+  src: url('../assets/fonts/serif/serif-variable.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Tokens ────────────────────────────────────────── */
+:root {
+  /* Color */
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4a505c;
+  --ink-3: #6b7180;
+  --line: #dfe2e7;
+  --line-strong: #c9cdd5;
+  --canvas: #ffffff; /* page background around the container */
+  /* Ember: accent for fills/rules/large text; accent-ink for small text (AA on paper) */
+  --accent: #e2452b;
+  --accent-ink: #b8321c;
+  --ember-oxblood: #7a1f1a;
+  --ember-amber: #f2a541;
+  --ember-blush: #f6c9bc;
+  --ink-hover: #2b2f38;
+  --on-ink-2: #a9afba;
+  --on-ink-3: #8a909c;
+  --paper-veil: rgba(255, 255, 255, 0.97);
+
+  /* Type */
+  --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Headline serif (quoted name, not the generic keyword); body stays Geist */
+  --font-display: 'Serif', var(--font);
+  --text-2xs: 0.75rem;   /* 12, frame labels */
+  --text-xs: 0.8125rem;  /* 13 */
+  --text-sm: 0.875rem;   /* 14 */
+  --text-base: 1.0625rem; /* 17 */
+  --text-lg: 1.25rem;    /* 20 */
+  --text-xl: 1.625rem;   /* 26 */
+  --text-list: clamp(1.75rem, 1.1rem + 2.2vw, 3rem); /* tools list */
+  --text-2xl: clamp(2.25rem, 1.1rem + 3.6vw, 4.25rem);
+  --text-display: clamp(2.75rem, 1.2rem + 5.6vw, 6.25rem);
+
+  /* Space (8px base) */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 120px;
+  --space-3xl: clamp(140px, 15vw, 240px); /* between index sections */
+
+  /* Layout */
+  --max: 1280px;
+  --gutter: 40px;
+  --nav-height: 64px;
+  --sticky-top: calc(var(--nav-height) + var(--space-md));
+  --radius-sm: 0;
+  --radius: 0;
+  --radius-tag: 2px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 600ms;
+}
+
+@media (max-width: 900px) { :root { --gutter: 24px; --space-2xl: 88px; } }
+@media (max-width: 560px) { :root { --gutter: 20px; --space-2xl: 72px; } }
+
+/* ── Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-padding-top: var(--sticky-top);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { display: block; max-width: 100%; height: auto; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed; top: var(--space-xs); left: var(--space-xs); z-index: 100;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--ink); color: var(--surface);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.skip-link:focus { transform: none; }
+
+/* Dev-only TODO notes (rendered on localhost only, see content.js) */
+.todo {
+  margin-top: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+  color: #6a4b00;
+  background: #fff6d6;
+  border: 1px dashed #e0b000;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Buttons ───────────────────────────────────────── */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 40px;
+  padding: 0 18px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 0;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+
+.btn--primary { background: var(--ink); color: var(--surface); }
+.btn--primary:hover { background: var(--ink-hover); }
+
+.btn--ghost { border-color: var(--line-strong); background: var(--surface); }
+.btn--ghost:hover { border-color: var(--ink); }
+
+/* Copy confirmation: label swaps in place, width held by grid stack */
+.copy-swap { display: inline-grid; }
+.copy-swap > span {
+  grid-area: 1 / 1;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+}
+.copy__done { opacity: 0; transform: translateY(6px); }
+.is-copied .copy__label { opacity: 0; transform: translateY(-6px); }
+.is-copied .copy__done { opacity: 1; transform: none; }
+
+/* ── Nav ───────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  height: var(--nav-height);
+  /* align with the centered content column */
+  --nav-pad: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+  padding-inline: var(--nav-pad);
+  background: transparent; /* the blur alone separates it from content */
+  backdrop-filter: saturate(1.4) blur(16px);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration-base) ease, opacity var(--duration-base) ease;
+  view-transition-name: nav; /* out of the page crossfade: stays put across view swaps */
+}
+
+/* Back link: project view only. Lives in the fixed nav layer at the content's left edge;
+   motion.js (dockBack) starts it down in the page and docks it as you scroll. */
+.nav__back {
+  position: absolute;
+  left: var(--nav-pad);
+  top: 50%;
+  margin-top: -10px;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+body.is-project .nav__back { display: inline-flex; }
+/* Without GSAP: no scroll dock, so keep it in the bar and move the name over */
+html:not(.has-smoother) body.is-project .nav__brand { margin-left: 104px; }
+
+
+.nav__brand {
+  view-transition-name: nav-brand; /* glides right when the back link docks in */
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.nav__links { display: flex; gap: var(--space-md); margin-left: auto; }
+
+.nav__link {
+  position: relative;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+}
+.nav__link:hover, .nav__link.is-active { color: var(--ink); }
+
+body.is-project .nav__links { visibility: hidden; }
+
+/* Over the dark footer the transparent nav would vanish: flip to light text */
+.nav { transition: border-color var(--duration-base) ease, color var(--duration-base) ease; }
+.nav.is-on-dark { color: var(--paper); border-bottom-color: transparent; }
+.nav.is-on-dark .nav__link { color: var(--on-ink-2); }
+.nav.is-on-dark .nav__link:hover,
+.nav.is-on-dark .nav__link.is-active,
+.nav.is-on-dark .nav__cta:hover { color: var(--paper); }
+
+/* Contact: editorial text link, not a pill */
+.nav__cta {
+  font-size: var(--text-sm);
+  position: relative;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+}
+
+@media (max-width: 640px) {
+  /* blur re-rasterizes every scroll frame; too costly on low-end phones */
+  .nav__links { display: none; }
+  .nav__cta { margin-left: auto; }
+}
+
+/* Hand-drawn hover underline (js/drawline.js): sits just under the text, ember orange */
+[data-draw-line] { position: relative; }
+.draw-line {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -0.45em;
+  height: 0.5em;
+  color: var(--accent);
+  pointer-events: none;
+}
+.draw-line svg { display: block; overflow: visible; }
+.project-card__cta-label { display: inline-block; }
+
+/* ── Layout helpers ────────────────────────────────── */
+/* The folio: one centred container on a plain white page */
+.sheet {
+  max-width: calc(var(--max) + var(--gutter) * 2);
+  min-height: 100vh;
+  margin-inline: auto;
+  padding-top: var(--nav-height); /* nav is fixed above it */
+  background: var(--paper);
+  display: flow-root; /* keep the footer's bottom margin inside, so the smoother can scroll to it */
+}
+/* Clip at viewport width (not the sheet) so the freelance strip can bleed to the screen edge;
+   100vw includes the scrollbar, so the bleed overshoots slightly */
+#smooth-content { overflow-x: clip; }
+
+.hero, .stats, .work, .approach, .toolkit, .freelance, .about, .footer__inner {
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.stats, .work, .approach, .toolkit, .freelance, .about { padding-top: var(--space-3xl); }
+.stats { padding-top: var(--space-lg); }
+.stats + .work { padding-top: var(--space-2xl); }
+
+/* At a glance: four equal cells in one hairline grid (borders overlap by 1px, so shared edges stay single) */
+.stats__list { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0 1px 1px 0; }
+.stats__item {
+  display: flex; align-items: baseline; gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--line); margin: 0 -1px -1px 0;
+}
+.stats__item dd { margin: 0; font-size: var(--text-base); font-weight: 500; font-variant-numeric: tabular-nums; }
+.stats__item dt { order: 1; font-size: var(--text-sm); color: var(--ink-3); }
+@media (max-width: 700px) { .stats__list { grid-template-columns: 1fr 1fr; } .stats__item { padding: var(--space-sm); } }
+
+.section-head { margin-bottom: var(--space-xl); }
+@media (min-width: 900px) {
+  .section-head {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    column-gap: var(--space-xl);
+    align-items: end;
+  }
+  .section-head .section-sub { margin-top: 0; padding-bottom: 0.35em; justify-self: end; text-align: right; }
+}
+
+.section-title {
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.section-sub {
+  margin-top: var(--space-xs);
+  max-width: 60ch;
+  color: var(--ink-2);
+}
+
+/* ── Hero: dateline + headline, whitespace does the rest ── */
+.hero {
+  position: relative;
+  isolation: isolate; /* blend group for the mesh canvas: opaque paper behind it */
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100svh - var(--nav-height));
+  padding-bottom: var(--space-xl);
+  container-type: inline-size; /* headline sizes to the measure (cqi) */
+}
+
+.hero__dateline {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Two set lines; line 2 spans the measure at any width. Wraps freely below 900px */
+.hero__title {
+  font-size: max(2.75rem, 8.6cqi);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+@media (min-width: 900px) { .hero__line { display: block; white-space: nowrap; } }
+
+/* Mesh gradient canvas (hero.js): lighten-blended, so colour shows only on the dark letters */
+.hero__mesh {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+}
+
+@media (max-width: 1023px) {
+  .hero { min-height: auto; gap: clamp(96px, 18vh, 200px); }
+}
+
+/* Load: headline words unscramble (hero.js, GSAP SplitText); dateline is static */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Hidden until the split is set up; 1.5s fallback if JS fails */
+  .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
+  .hero__title.is-ready { opacity: 1; animation: none; }
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Work: company groups ──────────────────────────── */
+.work__company { padding-bottom: var(--space-xl); }
+.work__company-head {
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--ink); /* the company rule moves with its head */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.work__company-name { font-size: var(--text-lg); font-weight: 500; line-height: 1.25; }
+.work__company-meta { font-size: var(--text-sm); color: var(--ink-3); }
+
+.work__projects { display: grid; gap: var(--space-md); }
+
+/* Card: hairline frame. Image runs edge to edge on the left; the text is a compact panel
+   the height of the image: meta + title anchor the top, the CTA sits on the bottom edge. */
+.project-card {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); /* minmax: images can't widen a column */
+  background: var(--surface);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  transition: border-color var(--duration-base) ease, background-color var(--duration-base) ease;
+}
+a.project-card:hover,
+a.project-card:focus-visible {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, var(--surface)); /* barely-there grey */
+}
+.project-card .frame__media { border-radius: 0; } /* sets the card height; the text panel stretches to match */
+.project-card__text {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md) var(--space-lg) var(--space-md) var(--space-md);
+  border-left: 1px solid var(--line);
+}
+.project-card__text .project-card__cta { margin-top: auto; padding-top: var(--space-md); align-self: flex-start; }
+@media (max-width: 900px) {
+  .project-card { grid-template-columns: 1fr; }
+  .project-card__text { padding: var(--space-md); border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* Figma-style frame: name label above, selection outline on hover */
+.frame {
+  position: relative;
+  display: block;
+}
+.frame__label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: var(--text-2xs);
+  line-height: 16px; /* label + margin = 22px; top corners sit at 22 - 4 */
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--duration-fast) ease;
+}
+.frame__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: var(--radius-sm);
+}
+.frame__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+/* Hairline edge on images; turns into a selection outline on hover */
+.frame__media::after,
+.case__zoom::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(22, 24, 29, 0.06);
+  transition: box-shadow var(--duration-fast) ease;
+}
+
+a.project-card:hover .frame__label,
+a.project-card:focus-visible .frame__label { color: var(--accent-ink); }
+a.project-card:focus-visible .frame__media::after { box-shadow: inset 0 0 0 2px var(--accent); }
+a.project-card:hover .frame__media img { transform: scale(1.025); }
+a.project-card:focus-visible { outline: none; }
+
+.project-card__title {
+  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.375rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.project-card__meta { margin-bottom: var(--space-xs); font-size: var(--text-sm); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.project-card__summary { margin-top: var(--space-sm); color: var(--ink-2); max-width: 44ch; transition: color var(--duration-base) ease; }
+a.project-card:hover .project-card__summary { color: var(--ink); }
+
+.project-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--space-lg);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.frame__media img { transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-base) ease; }
+.project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
+
+/* Coming-soon cards aren't links; muted cover signals that */
+div.project-card .frame__media img { filter: saturate(0.85); }
+
+
+/* ── Approach: recurring problem → what I do → where, with the result ── */
+.approach__rows { margin-top: var(--space-lg); }
+.approach__row:first-child { border-top: 1px solid var(--ink); } /* rule moves with the row */
+.approach__row {
+  display: grid;
+  grid-template-columns: 4fr 5fr 4fr;
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding-block: var(--space-lg);
+  border-bottom: 1px solid var(--line);
+}
+.approach__title {
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.approach__body { color: var(--ink-2); max-width: 46ch; }
+.approach__proof { font-size: var(--text-sm); }
+.approach__proof-label { color: var(--ink-3); }
+.approach__proof ul { margin-top: 4px; list-style: none; }
+.approach__proof li { padding-block: 2px; }
+.approach__proof li + li { margin-top: var(--space-xs); }
+.approach__proof .approach__note { display: block; color: var(--ink-3); }
+.approach__link {
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+  transition: color var(--duration-fast) ease, text-decoration-color var(--duration-fast) ease;
+}
+.approach__link:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+.approach__proof span { color: var(--ink-2); }
+
+@media (max-width: 900px) {
+  .approach__row { grid-template-columns: 1fr; gap: var(--space-xs); }
+  .approach__proof { margin-top: var(--space-xs); }
+}
+
+/* ── Tools and skills: no rules, just air. Title left; tools set big in the serif from the
+   approach body column; skills flow the same way at body size, just below ── */
+.toolkit {
+  display: grid;
+  grid-template-columns: 4fr 5fr 4fr; /* approach grid: tools line up with the approach bodies */
+  column-gap: var(--space-lg);
+  align-items: start;
+  padding-bottom: var(--space-2xl);
+}
+.toolkit__body { grid-column: 2 / -1; }
+.toolkit__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em 0.8em;
+  max-width: 18em;
+  list-style: none;
+  font-size: var(--text-list);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.toolkit__skills {
+  display: flex; /* same flow as the tools, at body size */
+  flex-wrap: wrap;
+  gap: 0.5em 1.4em;
+  max-width: 40em;
+  margin-top: var(--space-lg);
+  list-style: none;
+  color: var(--ink-2);
+}
+
+@media (max-width: 900px) {
+  .toolkit { grid-template-columns: 1fr; padding-bottom: 0; }
+  .toolkit__body { grid-column: auto; padding-top: var(--space-xl); }
+  .toolkit__skills { margin-top: var(--space-md); }
+}
+
+/* ── Freelance: natural aspect ratios, one height ─── */
+/* Bleeds past the content column to the screen edge, so cut-off items signal more.
+   Mouse drag on the strip scrolls it (content.js dragScroll) */
+.freelance__strip {
+  display: flex;
+  gap: var(--space-sm);
+  margin-right: calc((100% - 100vw) / 2);
+  padding: 6px calc((100vw - 100%) / 2) 0 0; /* top: room for hover lift; right: equals the bleed, so the last image ends flush with the content's right edge at full scroll */
+  overflow-x: auto;
+  /* Native bar would span the bleed to the screen edge; a custom bar spans the column instead */
+  scrollbar-width: none;
+}
+.freelance__strip::-webkit-scrollbar { display: none; }
+@media (pointer: fine) { .freelance__strip { cursor: grab; } }
+.freelance__strip.is-dragging { cursor: grabbing; user-select: none; }
+.freelance__strip:focus-visible { outline-offset: 4px; }
+
+/* Custom scrollbar, content-column width. Thumb size/offset set by main.js */
+.freelance__bar {
+  position: relative;
+  height: 3px;
+  margin-top: var(--space-md);
+  background: var(--line);
+  cursor: grab;
+  isolation: isolate;
+  touch-action: none;
+  transition: height var(--duration-fast) var(--ease-out), margin var(--duration-fast) var(--ease-out);
+}
+/* Hit area (arrow cursor): same distance on all four sides, so the grow zone is easy to find */
+.freelance__bar::before { content: ''; position: absolute; inset: -20px; z-index: -1; cursor: default; } /* behind the bar: line itself keeps the drag cursor */
+/* Grows from the centre; half-growth margins keep layout around it from shifting */
+.freelance__bar:hover,
+.freelance__bar.is-dragging { height: 8px; margin-block: calc(var(--space-md) - 2.5px) -2.5px; }
+.freelance__thumb {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--thumb-w, 30%);
+  background: var(--ink);
+  transform: translateX(var(--thumb-x, 0px));
+  cursor: grab;
+  transition: background-color var(--duration-fast) ease;
+}
+.freelance__bar:hover .freelance__thumb,
+.freelance__bar.is-dragging .freelance__thumb { background: var(--accent); }
+.freelance__bar.is-dragging .freelance__thumb { cursor: grabbing; }
+.freelance__item {
+  flex: none;
+  height: clamp(220px, 24vw, 320px);
+  min-width: 120px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--line);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.freelance__item > img, .freelance__item > video { width: auto; height: 100%; }
+.freelance__item:hover { transform: translateY(-4px); }
+.freelance__item:focus-visible { outline-offset: 2px; }
+
+/* ── About ─────────────────────────────────────────── */
+.about {
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+.about__frame { position: relative; }
+.about__portrait {
+  overflow: hidden;
+  aspect-ratio: 750 / 824;
+  border-radius: var(--radius);
+  background: var(--line);
+}
+.about__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.about__text p { margin-top: var(--space-sm); max-width: 62ch; color: var(--ink-2); }
+.about__text p:first-of-type { margin-top: var(--space-md); font-size: var(--text-lg); line-height: 1.5; color: var(--ink); }
+
+@media (max-width: 800px) {
+  .about { grid-template-columns: 1fr; gap: var(--space-lg); }
+  .about__portrait { max-width: 320px; }
+}
+
+/* ── Footer: floating black card, the email is the CTA ── */
+/* Floating black card, inset from the page edges (no shadow) */
+.footer {
+  margin: var(--space-2xl) var(--gutter); /* equal white space above and below */
+  padding-block: var(--space-2xl) var(--space-lg);
+  background: var(--ink);
+  color: var(--paper);
+}
+.footer .footer__inner { padding-inline: var(--space-xl); }
+@media (max-width: 720px) { .footer .footer__inner { padding-inline: var(--space-md); } }
+.footer__pitch {
+  max-width: 24ch;
+  font-size: var(--text-xl);
+  line-height: 1.3;
+  color: var(--on-ink-2);
+}
+
+.footer__email {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: var(--space-lg) 0 0 -12px;
+  padding: 2px 12px 10px;
+  font-size: clamp(2rem, 0.6rem + 6vw, 6.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  text-align: left;
+  overflow-wrap: anywhere;
+  color: var(--paper);
+}
+.footer__email:focus-visible { outline: none; } /* the drawn line + Copy label show focus */
+.footer__email-text { position: relative; }
+.footer__email .draw-line { bottom: -0.04em; height: 0.16em; }
+.footer__tag-icon { flex: none; }
+.footer__tag { font-family: var(--font); } /* the email above is serif; UI labels stay Geist */
+
+.footer__tag {
+  position: absolute;
+  left: 12px;
+  top: calc(100% + 12px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--on-ink-2);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-out);
+}
+.footer__email.is-copied .copy__done { color: var(--paper); }
+.footer__email:hover .footer__tag,
+.footer__email:focus-visible .footer__tag,
+.footer__email.is-copied .footer__tag { opacity: 1; transform: none; }
+
+.footer__links { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xl); }
+.footer__link {
+  font-size: var(--text-sm);
+  color: var(--on-ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--on-ink-3);
+  text-underline-offset: 4px;
+  transition: color var(--duration-fast) ease;
+}
+.footer__link:hover { color: var(--paper); }
+.footer__copy { margin-top: var(--space-2xl); font-size: var(--text-sm); color: var(--on-ink-3); }
+
+/* ── Lightbox ──────────────────────────────────────── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  border: 0;
+  background: var(--paper-veil);
+  color: var(--ink);
+}
+.lightbox[open] { display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: minmax(0, 1fr); align-items: center; gap: var(--space-sm); }
+.lightbox::backdrop { background: transparent; }
+
+.lightbox__figure {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  justify-content: center;
+}
+.lightbox__img {
+  position: relative;
+  z-index: 1; /* below the outgoing ghost (gallery.js step) */
+  view-transition-name: lightbox-media; /* thumbnail ↔ lightbox morph (gallery.js) */
+  max-width: 100%;
+  max-height: calc(100% - 40px);
+  min-height: 0;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 30px 80px -30px rgba(22, 24, 29, 0.35);
+}
+/* Outgoing picture during prev/next (gallery.js step): on top, fades out over the incoming image */
+.lightbox__ghost {
+  position: absolute;
+  z-index: 2; /* above the incoming image, which is already in place underneath */
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  box-shadow: 0 30px 80px -30px rgba(22, 24, 29, 0.35);
+}
+.lightbox__caption { font-size: var(--text-sm); color: var(--ink-2); }
+
+.lightbox__nav {
+  width: 44px; height: 44px;
+  border-radius: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--surface) no-repeat center / 18px;
+  transition: border-color var(--duration-fast) ease, background-color var(--duration-fast) ease;
+}
+.lightbox__nav:hover,
+.lightbox__close:hover { border-color: var(--ink); background-color: rgba(22, 24, 29, 0.04); }
+.lightbox__nav--prev { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9H4M8 5L4 9l4 4'/%3E%3C/svg%3E"); }
+.lightbox__nav--next { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h10M10 5l4 4-4 4'/%3E%3C/svg%3E"); }
+.lightbox__close { position: absolute; top: var(--space-sm); right: var(--space-sm); display: inline-flex; align-items: center; gap: 8px; }
+.lightbox.is-single .lightbox__nav { visibility: hidden; }
+
+/* Image morphs to/from its thumbnail via view transitions (gallery.js); the root crossfade
+   handles the veil. Without view-transition support, fall back to fade + zoom */
+@supports not (view-transition-name: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lightbox[open] { animation: fade-in var(--duration-base) ease; }
+    .lightbox[open] .lightbox__img { animation: zoom-in 420ms var(--ease-out); }
+  }
+}
+@keyframes zoom-in { from { transform: scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 640px) {
+  .lightbox { padding: var(--space-xl) var(--space-sm) var(--space-md); }
+  .lightbox[open] { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .lightbox__figure { grid-column: 1; grid-row: 1; }
+  .lightbox__nav { grid-row: 2; justify-self: center; }
+  .lightbox__nav--prev { grid-column: 1; margin-right: 60px; }
+  .lightbox__nav--next { grid-column: 1; margin-left: 60px; }
+}
+
+/* ── View switching ────────────────────────────────── */
+body.is-project #index-view { display: none; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 320ms; }
+::view-transition-group(project-media),
+::view-transition-group(lightbox-media) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+/* Nav stays constant across view swaps: during a transition the page is replaced by snapshots,
+   which don't carry backdrop-filter, so the blur is re-applied live on the nav's own group */
+::view-transition-group(nav) {
+  animation-duration: 0s;
+  backdrop-filter: saturate(1.4) blur(16px);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+}
+/* Nav: name glides back when leaving a project with "All work" docked */
+::view-transition-group(nav-brand) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+/* Lightbox: nav is hidden while it's open, so the transition's default crossfade fades it out
+   on open and back in on close; same duration/ease as the image morph (data-lbvt set in gallery.js) */
+html:has(.lightbox[open]) :is(.nav, .nav__brand) { opacity: 0; }
+html[data-lbvt]::view-transition-group(nav) { animation-duration: 520ms; animation-timing-function: var(--ease-out); }
+
+/* Smoother active (js/motion.js): GSAP pins replace sticky */
+html.has-smoother .case__toc { position: static; top: auto; }
+
+/* ── Reduced motion ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "work": [
+    {
+      "id": "remedy",
+      "company": "Remedy Entertainment",
+      "role": "UX Designer to Lead UI/UX Designer",
+      "period": "2022–present",
+      "about": "Finnish AAA studio behind Alan Wake and Control.",
+      "projects": [
+        {
+          "id": "control-resonant",
+          "title": "Control Resonant",
+          "role": "Senior UX Designer",
+          "period": "2026",
+          "comingSoon": true,
+          "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
+          "did": [
+            "Interaction design",
+            "UI design",
+            "Game design"
+          ],
+          "cover": {
+            "src": "assets/images/control-resonant_cover.webp",
+            "alt": "Control Resonant key art"
+          }
+        },
+        {
+          "id": "fbc-firebreak",
+          "title": "FBC: Firebreak",
+          "role": "Lead UI/UX Designer",
+          "period": "2023–2026",
+          "summary": "Led the full UI of a co-op multiplayer game from preproduction to post-launch: cut HUD overload, planned the build with UI programming, and put Remedy's first main menu inside a 3D world.",
+          "did": [
+            "Design lead",
+            "Information architecture",
+            "UI design",
+            "Production planning"
+          ],
+          "cover": {
+            "src": "assets/images/fbc-cover-1920.webp",
+            "alt": "FBC: Firebreak main menu inside a 3D environment"
+          }
+        },
+        {
+          "id": "alan-wake-2",
+          "title": "Alan Wake 2",
+          "role": "UX Designer",
+          "period": "2022–2023",
+          "summary": "Designed the maps, case board, inventory, weapon quick-select and photo mode for a narrative survival-horror game. Photo mode won Best Photo Mode at the Virtual Photography Awards 2024.",
+          "did": [
+            "Interaction design",
+            "UI design",
+            "Usability research"
+          ],
+          "cover": {
+            "src": "assets/images/alanwake-cover.webp",
+            "alt": "Alan Wake 2 case board"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cleveron",
+      "company": "Cleveron",
+      "role": "UI/UX Designer",
+      "period": "2020–2022",
+      "about": "Robotic parcel lockers, warehouse to doorstep.",
+      "projects": [
+        {
+          "id": "cleveron-main",
+          "title": "Parcel locker platform",
+          "role": "UI/UX Designer",
+          "period": "2020–2022",
+          "summary": "Designed across the whole parcel journey, built the team's first Figma component library, and redesigned back-office software that used to need a 40-page manual.",
+          "did": [
+            "Product design",
+            "Design system",
+            "Enterprise UX"
+          ],
+          "cover": {
+            "src": "assets/images/cleveron-cover.webp",
+            "alt": "Cleveron parcel locker interfaces"
+          }
+        }
+      ]
+    },
+    {
+      "id": "evocon",
+      "company": "Evocon",
+      "role": "UI/UX and Visual Designer",
+      "period": "2019–2020",
+      "about": "Production-monitoring SaaS for manufacturers.",
+      "projects": [
+        {
+          "id": "evocon-main",
+          "title": "Production analytics",
+          "role": "UI/UX and Visual Designer",
+          "period": "2019–2020",
+          "summary": "Designed views that show managers what is holding production back, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
+          "did": [
+            "Data UX",
+            "UI design",
+            "Brand and motion"
+          ],
+          "cover": {
+            "src": "assets/images/evocon-cover.webp",
+            "alt": "Evocon production dashboard"
+          }
+        }
+      ]
+    }
+  ],
+  "approach": [
+    {
+      "title": "Too much on screen",
+      "body": "On FBC: Firebreak, every new feature asked for its own HUD feedback. I argued against what players didn't need and looked for ways to show the rest in the game world.",
+      "proof": [
+        {
+          "label": "FBC: Firebreak HUD",
+          "note": "Teammate visibility easy for 72% of players, up from 11%",
+          "href": "#/work/fbc-firebreak"
+        },
+        {
+          "label": "Alan Wake 2 case board",
+          "note": "Evidence players arrange by hand, inside the game world",
+          "href": "#/work/alan-wake-2"
+        }
+      ]
+    },
+    {
+      "title": "Hard to follow",
+      "body": "Players missed FBC's mission objectives, and Cleveron's office software came with a 40-page manual. Both got shorter text and a structure built around the task.",
+      "proof": [
+        {
+          "label": "FBC: Firebreak missions",
+          "note": "Objectives understood by 63% of players, up from 17%",
+          "href": "#/work/fbc-firebreak"
+        },
+        {
+          "label": "Cleveron office software",
+          "note": "Rebuilt around slot allocation and other daily tasks",
+          "href": "#/work/cleveron-main"
+        }
+      ]
+    },
+    {
+      "title": "A lot of UI, a small team",
+      "body": "Two of us designed FBC's whole UI, and I planned the build with the UI programming lead around shared components. At Cleveron I set up the team's first component library.",
+      "proof": [
+        {
+          "label": "FBC: Firebreak production plan",
+          "note": "UI shipped complete at launch",
+          "href": "#/work/fbc-firebreak"
+        },
+        {
+          "label": "Cleveron component library",
+          "note": "Hundreds of components, built from scratch in Figma",
+          "href": "#/work/cleveron-main"
+        }
+      ]
+    }
+  ],
+  "toolkit": {
+    "tools": [
+      "Figma",
+      "Claude AI",
+      "Photoshop",
+      "After Effects",
+      "Lottie",
+      "HTML/CSS/JS",
+      "Jira",
+      "Confluence",
+      "Pen and paper"
+    ],
+    "skills": [
+      "Product design",
+      "UX design",
+      "Interaction design",
+      "UI design",
+      "Information architecture",
+      "Prototyping",
+      "User research",
+      "Design systems",
+      "Data UX",
+      "Game design",
+      "Design leadership",
+      "Production planning",
+      "Branding",
+      "Illustration",
+      "Motion design"
+    ]
+  },
+  "freelance": {
+    "intro": "Branding and marketing for the Estonian music festivals Indiefest and Funkfest, plus digital painting and vector art from roughly eight years of art school.",
+    "items": [
+      {
+        "src": "assets/images/personal-3.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/personal-1.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/delfi_illustration.webp",
+        "alt": "Editorial illustration for Delfi",
+        "caption": "Delfi illustration"
+      },
+      {
+        "src": "assets/images/personal-5.webp",
+        "alt": "Vector artwork",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/personal-2.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/personal-4.webp",
+        "alt": "Digital painting",
+        "caption": "Personal work"
+      },
+      {
+        "src": "assets/images/indiefest-2.png",
+        "alt": "Indiefest festival artwork",
+        "caption": "Indiefest"
+      },
+      {
+        "src": "assets/images/funkfest-2.webp",
+        "alt": "Funkfest festival artwork",
+        "caption": "Funkfest"
+      },
+      {
+        "src": "assets/images/funkfest-1.webp",
+        "alt": "Funkfest festival poster",
+        "caption": "Funkfest"
+      },
+      {
+        "alt": "Indiefest animated artwork",
+        "caption": "Indiefest",
+        "video": "assets/images/iwe.mp4",
+        "poster": "assets/images/iwe-poster.webp"
+      }
+    ]
+  },
+  "about": {
+    "body": [
+      "I'm a designer based in Helsinki, Finland. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI.",
+      "I work across UX, UI, interaction and visual design. I also animate and write front-end code, which helps me design things engineers can build.",
+      "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making video games, trading card games, museums, travel and cooking."
+    ],
+    "portrait": {
+      "src": "assets/images/mirko_profile.webp",
+      "alt": "Portrait of Mirko Aus"
+    }
+  }
+}

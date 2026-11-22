@@ -1,0 +1,77 @@
+{
+  "id": "cleveron-main",
+  "title": "Parcel locker platform",
+  "company": "Cleveron",
+  "period": "2020–2022",
+  "summary": "Product design for robotic parcel lockers, from kiosk touchscreens to the back office that runs the network.",
+  "meta": [
+    { "label": "Role", "value": "UI/UX Designer, in-house" },
+    { "label": "Timeline", "value": "2020–2022" },
+    { "label": "Platforms", "value": "Kiosk touchscreens, mobile app, web back office, AR tooling" },
+    { "label": "Scope", "value": "UX, UI, design system, enterprise software redesign" }
+  ],
+  "hero": { "src": "assets/images/cleveron-cover.webp", "alt": "Cleveron parcel locker interfaces" },
+  "sections": [
+    {
+      "stage": "Context",
+      "heading": "Parcel lockers",
+      "body": [
+        "Cleveron builds robotic parcel lockers that carry packages from the warehouse to the customer's hands. My work covered that whole journey: the touchscreens people use to send and receive parcels, the courier app, the mobile app for home-locker owners, the office software companies use to manage parcels, lockers, invoices and allocations, and internal AR tooling that showed assembly workers which parts to pick next."
+      ]
+    },
+    {
+      "stage": "Challenge",
+      "heading": "Office software and design files",
+      "body": [
+        "The office software expected people to read a 40-page PDF manual before they could use it. Design work had no shared component library, so the same interface pieces were rebuilt for every project."
+      ],
+      "pull": "The goal: office software that explains itself."
+    },
+    {
+      "stage": "Approach",
+      "heading": "Design system",
+      "body": [
+        "One of my first moves was getting the team onto Figma and building a component library from scratch for the existing software. Shared components let us build and ship changes quickly, since each piece was designed once. It also freed up my time for a proper redesign of the office software."
+      ],
+      "media": [
+        { "src": "assets/images/cleveron_component-library-1920.webp", "alt": "Figma component library", "caption": "Component library" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Office software",
+      "body": [
+        "Many of its features were too complicated to understand, and some had no explanation at all. I rebuilt it around the tasks people actually do, like slot allocation, with a more logical page structure and labels that walk them through each step. The other goal was a more contemporary, premium look."
+      ],
+      "media": [
+        { "src": "assets/images/cleveron_office-software-1920.webp", "alt": "Office software with slot layout and allocation management", "caption": "Office software, slot allocation" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Courier app",
+      "body": [
+        "Couriers pick up and deliver parcels between lockers and the robots inside them. I mapped that flow and prototyped the app they use on the route."
+      ],
+      "media": [
+        { "src": "assets/images/cleveron_home-locker-flow-1920.webp", "alt": "Courier app user flow", "caption": "Courier app flow. Scroll sideways to follow it.", "wide": true },
+        { "src": "assets/images/cleveron_home-locker_wireframes.webp", "alt": "Courier app prototype screens", "caption": "Courier app prototype" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Home locker app",
+      "body": [
+        "Cleveron also sold a home locker, a parcel locker for a private house, and I designed the app that came with it. The main screen was one large button to lock and unlock the locker. Notifications told the owner when a parcel was delivered or picked up, and a history listed every parcel movement with the service provider that handled it."
+      ]
+    }
+  ],
+  "results": [
+    { "title": "Component library", "detail": "Hundreds of components, thousands of variants." },
+    { "title": "Office software redesigned", "detail": "Parcels, lockers, invoices and slot allocation." }
+  ],
+  "todo": [
+    "Add a metric if you have one: onboarding time, support tickets, task completion, or design delivery speed.",
+    "Add a kiosk touchscreen image if available."
+  ]
+}
