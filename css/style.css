@@ -379,10 +379,13 @@ body.is-project .nav__links { visibility: hidden; }
   color: var(--ink-2);
 }
 
-/* Mobile: one gap from every section title (or title + intro) to the content below it.
-   Was 64 (work, freelance, tools) / 40 (approach) / 24 (about) */
+/* Mobile: one 40px gap below every section title to whatever follows it.
+   Was 64 (work, freelance, tools) / 40 (approach) / 24 (about) / 8 (freelance title → intro) */
 @media (max-width: 899px) {
   .section-head { margin-bottom: var(--space-lg); }
+  .section-head .section-sub { margin-top: var(--space-lg); }
+  /* the strip's 6px top padding (hover-lift room) would add to the gap */
+  .freelance .section-head { margin-bottom: calc(var(--space-lg) - 6px); }
   .approach .approach__rows { margin-top: var(--space-lg); }
   .toolkit .toolkit__body { padding-top: var(--space-lg); }
   .about .about__text p:first-of-type { margin-top: var(--space-lg); }
