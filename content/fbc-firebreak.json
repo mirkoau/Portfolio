@@ -11,96 +11,127 @@
     { "label": "Scope", "value": "Information architecture, flows, HUD, menus, visual style, production planning" },
     { "label": "Tools", "value": "Figma, Claude AI, Photoshop, After Effects, JS/HTML/CSS, Jira, Confluence, pen and paper" }
   ],
-  "hero": { "src": "assets/images/fbc-cover.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" },
+  "hero": { "src": "assets/images/fbc-cover-1920.webp", "alt": "FBC: Firebreak main menu inside a 3D environment" },
   "sections": [
     {
       "stage": "Context",
-      "heading": "A full game UI, owned by a team of two",
+      "heading": "Role",
       "body": [
-        "I joined FBC: Firebreak in preproduction as the lead UI/UX designer. A UI artist and I were the entire design side of the UI, working day to day with a three-person UI programming team.",
-        "Beyond the interface, I worked with art direction, the game director, game design, audio and VFX, and helped shape mission design and the core gameplay loop."
+        "I joined FBC: Firebreak in preproduction as the lead UI/UX designer. Firebreak is a three-player co-op shooter set in the world of Control.",
+        "A UI artist and I were the whole design side of the UI, working day to day with three UI programmers. Beyond the interface, I worked with art direction, the game director, game design, audio and VFX, and helped shape mission design and the gameplay loop."
       ],
       "media": [
-        { "src": "assets/images/fbc-character-select.webp", "alt": "Character select screen", "caption": "Character select" }
+        { "src": "assets/images/fbc-character-select-1920.webp", "alt": "Character select screen", "caption": "Character select" }
       ]
     },
     {
       "stage": "Challenge",
-      "heading": "Cognitive overload, on a tight schedule",
+      "heading": "Early playtests",
       "body": [
-        "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking, parties and a HUD that reads under pressure. All of it had to ship together, on a schedule that left little room for rework.",
-        "The hardest part was the HUD. Every new feature asked for its own feedback on screen, and in the middle of a co-op fight it piled up. Playtests pointed the same way: most issues came from a gameplay loop that felt confusing, and from UI requests that made the game look more complex than it was."
+        "Early playtests showed players couldn't read the game. Only 17% understood the mission objectives, and teammate visibility scored 1 out of 10.",
+        "Most issues came from a gameplay loop that felt confusing. The HUD made it worse: every new feature asked for its own on-screen feedback, and in a co-op fight it piled up until the game looked more complex than it was."
       ],
-      "pull": "Not too big, not too small. Not too flashy, not completely mute.",
       "media": [
-        { "src": "assets/images/fbc-anomaly-interaction.webp", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
+        { "src": "assets/images/fbc-anomaly-interaction-1920.webp", "alt": "In-game HUD during an anomaly interaction", "caption": "In-game HUD" }
+      ]
+    },
+    {
+      "stage": "Challenge",
+      "heading": "Scope",
+      "body": [
+        "A multiplayer game needs far more UI than its gameplay suggests: onboarding, a metagame, loadouts, cosmetics, matchmaking and parties, on top of the HUD. All of it had to ship together, designed by two people, on a schedule with little room for rework."
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Less HUD, clearer goals",
+      "heading": "HUD",
       "body": [
-        "I pushed back on game design when feedback didn't earn its place. Where players needed to know something, I looked for diegetic ways to show it in the world.",
-        "What stayed on screen was a balancing act between readable and intrusive. For the confusing loop, I pushed for a simple mission tracker that always makes the player's next big goal clear."
+        "I argued against new on-screen feedback when players didn't need it. When they did, I looked for less intrusive ways to show it in the world, with VFX, animation or other diegetic cues. What stayed on screen had to be readable mid-fight."
       ],
       "media": [
-        { "src": "assets/images/fbc-frost-anomalies.webp", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
+        { "src": "assets/images/fbc-frost-anomalies-1920.webp", "alt": "In-game HUD in a frost anomaly mission", "caption": "HUD in a live mission" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Own the structure and the plan",
+      "heading": "Mission flow",
       "body": [
-        "I owned the UI end to end: structure, flows, HUD, menus and overall visual style. I also owned the plan. The producer ran the meetings, but the UI programming lead and I built the schedule together in Jira, sprint by sprint and screen by screen.",
-        "We started development on screens that were safe to build early, and grouped screens that shared components so each piece was built once and reused. That kept the short- and long-term timeline realistic."
+        "For the confusing loop, I pushed for a simple mission tracker that always shows the player's next big goal. I also did a pass on the mission flow and cut the mission texts down, with less made-up jargon. Understanding of the objectives rose to 63%.",
+        "I didn't aim for 100%. Part of the fun is working out what needs to be done."
       ],
       "media": [
-        { "src": "assets/images/fbc-customization.webp", "alt": "Customization screen", "caption": "Customization" }
+        { "src": "assets/images/fbc-containment-board-1920.webp", "alt": "Containment mission board", "caption": "Mission case board" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "A main menu that lives in the world",
+      "heading": "Teammate visibility",
+      "body": [
+        "In a three-player game, you need to know where your teammates are at all times, with as little on screen as possible. I designed a colored silhouette for each player that shows through all terrain and meshes.",
+        "The visibility score rose to 7 out of 10, and 72% of players found it easy and intuitive, up from 11%."
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "3D main menu",
       "body": [
         "With the art director, I designed Remedy's first main menu set inside a 3D environment. Nobody at the studio had built one before, so the idea met early pushback. I worked out the technical approach that made it possible.",
-        "The point wasn't spectacle. The player's state no longer lived only in the UI but in the game world: pick a loadout and you watch the actual game meshes change on the table in front of you. Each menu item has its own corner of the space and the camera glides there on selection. The setup also opened the door to seasonal and event environments."
+        "The menu shows the player's state in the game world with the actual game meshes. Each menu item has its own corner of the space, and the camera glides there on selection. The same setup supports seasonal and event environments."
       ],
-      "pull": "Your loadout isn't a list in a menu. It's the gear on the table in front of you.",
+      "pull": "Your loadout is the gear on the table in front of you.",
       "media": [
-        { "src": "assets/images/fbc-loadout.webp", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
-        { "src": "assets/images/fbc-crisis-select.webp", "alt": "Crisis select menu", "caption": "Crisis select" }
+        { "src": "assets/images/fbc-loadout-1920.webp", "alt": "Loadout selection in the 3D menu space", "caption": "Loadout, shown on the table in the 3D menu" },
+        { "src": "assets/images/fbc-crisis-select-1920.webp", "alt": "Crisis select menu", "caption": "Crisis select" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Modular flows instead of waiting screens",
+      "heading": "Matchmaking",
       "body": [
-        "I designed onboarding for the metagame and made matchmaking and the into-game flow fully modular. Players can sit in a queue while still browsing and swapping equipment and cosmetics, instead of staring at a spinner."
+        "I designed onboarding for the metagame and made matchmaking and the into-game flow modular, so players can browse and swap equipment and cosmetics while they wait in the queue."
       ],
       "media": [
-        { "src": "assets/images/fbc-party.webp", "alt": "Party and matchmaking flow", "caption": "Party and matchmaking" },
-        { "src": "assets/images/fbc-containment-board.webp", "alt": "Containment mission board", "caption": "Mission board" }
+        { "src": "assets/images/fbc-party-1920.webp", "alt": "Party and matchmaking flow", "caption": "Party and matchmaking" },
+        { "src": "assets/images/fbc-customization-1920.webp", "alt": "Customization screen", "caption": "Customization" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Production planning",
+      "body": [
+        "With two designers and that much UI, I also owned the UI plan. The producer ran the meetings, but the UI programming lead and I built the schedule together in Jira, sprint by sprint and screen by screen.",
+        "We started with screens that were safe to build early, and grouped screens that shared components so each piece was built once and reused."
       ]
     },
     {
       "stage": "Outcome",
-      "heading": "Shipped complete and functional",
+      "heading": "User research",
       "body": [
-        "The game didn't find the commercial success we hoped for, and we didn't hit every goal we set for the craft team. But on a very tight schedule, the team shipped a complete, polished and functional UI, and I'm proud of what we built together."
+        "We tested the game with players throughout development, from 9 to 1,400 players per test.",
+        "Between 70% and 93% of players found the major UI features easy to use: the mission case board, where every match starts, plus upgrades and progression.",
+        "The share of players rating overall satisfaction 8 to 10 out of 10 rose from 31% to 51%. Part of that came from the added feedback and teammate visibility."
+      ]
+    },
+    {
+      "stage": "Outcome",
+      "heading": "Launch",
+      "body": [
+        "The game didn't find the commercial success we hoped for, and we didn't hit every goal we set for the craft team. The UI still shipped complete and working, on a very tight schedule."
       ]
     },
     {
       "stage": "Outcome",
       "heading": "What I'd do differently",
       "body": [
-        "This was my first time leading a project of this scale. More than once I had a gut feeling that a proposed feature or change wouldn't work, and let it through anyway. Next time I'd trust that expertise sooner, push back harder on requests from design and direction, say no when the answer is no, and push for the design I feel would work the best."
+        "This was my first time leading a project of this scale. More than once I had a gut feeling that a proposed feature or change wouldn't work, and let it through anyway. Next time I'd trust that instinct sooner, push back harder on requests from design and direction, and argue for the design I think works best."
       ]
     }
   ],
   "results": [
-    { "title": "Full UI shipped", "detail": "Menus, metagame, matchmaking and HUD at launch, with a two-person design team." },
+    { "title": "Full UI at launch", "detail": "Menus, metagame, matchmaking and HUD, designed by a team of two." },
     { "title": "First 3D main menu at Remedy", "detail": "My technical approach, built with art direction and UI programming." },
-    { "title": "A HUD that holds back", "detail": "Diegetic or no feedback where it didn't matter, and one clear next goal." }
+    { "title": "Teammate visibility", "detail": "72% of players found it easy and intuitive, up from 11%." },
+    { "title": "Objectives understood", "detail": "Up from 17% to 63% after the mission flow and text pass." }
   ],
   "todo": [
     "Add any UI-related review quotes or player feedback, if shareable."
