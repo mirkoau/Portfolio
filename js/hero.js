@@ -195,7 +195,13 @@ function glyphLefts(title) {
 async function revealHeadline(title) {
   const { gsap, SplitText } = window;
   if (reduceMotion.matches || !gsap || !SplitText) return title.classList.add('is-ready');
+  // JS arrived after the CSS fallback already showed the headline: leave it at rest
+  if (getComputedStyle(title).opacity !== '0') return title.classList.add('is-ready');
+  // Take over from the CSS fallback: stay hidden until the headline font is in, however long
+  title.classList.add('is-waiting');
   gsap.registerPlugin(SplitText);
+  // Quoted: unquoted Serif is the generic family and would resolve instantly
+  await document.fonts.load('1em "Serif"', title.textContent).catch(() => {});
   await document.fonts.ready;
 
   const plain = glyphLefts(title);

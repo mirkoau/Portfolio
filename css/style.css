@@ -122,6 +122,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   outline-offset: 3px;
   border-radius: 2px;
 }
+/* Anchor targets (main, sections) take focus so Tab continues from them; no ring on a whole section */
+[tabindex="-1"]:focus-visible { outline: none; }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
@@ -391,8 +393,10 @@ body.is-project .nav__links { visibility: hidden; }
 /* Load: headline words unscramble (hero.js, GSAP SplitText); dateline is static */
 @media (prefers-reduced-motion: no-preference) {
 
-  /* Hidden until the split is set up; 1.5s fallback if JS fails */
-  .hero__title { opacity: 0; animation: fade-in 1ms linear 1.5s forwards; }
+  /* Hidden until fonts are in and the split is set up. 3s fallback only if JS never runs:
+     once hero.js starts it adds .is-waiting, which cancels the timer, and waits for fonts */
+  .hero__title { opacity: 0; animation: fade-in 1ms linear 3s forwards; }
+  .hero__title.is-waiting { animation: none; }
   .hero__title.is-ready { opacity: 1; animation: none; }
 }
 
@@ -574,10 +578,10 @@ div.project-card .frame__media img { filter: saturate(0.85); }
 .toolkit__logos {
   display: inline-flex;
   gap: 0.15em;
-  margin-left: 0.3em;
+  margin-left: 0.2em;
   vertical-align: -0.02em; /* sit on the cap height of the serif */
 }
-.toolkit__logo { width: 0.62em; height: 0.62em; }
+.toolkit__logo { width: 0.55em; height: 0.55em; }
 .toolkit__skills {
   display: flex; /* same flow as the tools, at body size */
   flex-wrap: wrap;

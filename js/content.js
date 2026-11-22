@@ -37,6 +37,8 @@ export function dragScroll(el, { glide = false } = {}) {
     let lastT = e.timeStamp;
 
     on('pointermove', (ev) => {
+      // Released outside el before capture started: pointerup never reached el
+      if (!(ev.buttons & 1)) return end(ev);
       if (!moved) {
         if (Math.abs(ev.clientX - x0) < 4) return; // still a click
         moved = true;
@@ -118,8 +120,9 @@ export async function initContent() {
   return data;
 }
 
+// Empty if data.json failed: the case study still renders, just without a next link
 export const caseStudies = () =>
-  data.work.flatMap(c => c.projects.filter(p => !p.comingSoon));
+  data?.work.flatMap(c => c.projects.filter(p => !p.comingSoon)) ?? [];
 
 export const frameMedia = (m) => `<span class="frame__media" data-vt="media">${img(m)}</span>`;
 

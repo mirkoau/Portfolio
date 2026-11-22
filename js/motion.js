@@ -45,17 +45,22 @@ export function initMotion() {
 }
 
 // ── Scroll helpers (work with or without the smoother) ──
+// Native fallback runs exactly when reduced motion is on, and an explicit JS 'smooth'
+// beats CSS scroll-behavior, so jump instantly then.
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const behavior = (smooth) => (smooth && !reduceMotion.matches ? 'smooth' : 'instant');
+
 export const getScrollY = () => (smoother ? smoother.scrollTop() : window.scrollY);
 
 export const scrollToY = (y, smooth = false) => {
   if (smoother) smoother.scrollTo(y, smooth);
-  else window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' });
+  else window.scrollTo({ top: y, behavior: behavior(smooth) });
 };
 
 export const scrollToEl = (el, { smooth = true, center = false } = {}) => {
   if (!el) return;
   if (smoother) smoother.scrollTo(el, smooth, center ? 'center center' : `top ${NAV_OFFSET}px`);
-  else el.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: center ? 'center' : 'start' });
+  else el.scrollIntoView({ behavior: behavior(smooth), block: center ? 'center' : 'start' });
 };
 
 // Layout changed (route switch, content rendered): recompute heights + trigger positions

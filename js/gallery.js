@@ -134,6 +134,11 @@ function closeLightbox() {
   morph(sourceOf(index), 'new', () => dialog.close());
 }
 
+// Instant close, no morph: the view under it is being swapped (route change)
+export function dismissLightbox() {
+  if (dialog.open) dialog.close();
+}
+
 export function initGallery() {
   dialog.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-lightbox-step]');

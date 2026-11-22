@@ -1,6 +1,6 @@
 import { initContent, dragScroll } from './content.js';
 import { initHero } from './hero.js';
-import { initGallery, openLightbox } from './gallery.js';
+import { initGallery, openLightbox, dismissLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
 import { initMotion, reveal, refresh, prune, settleVisible, dockBack, getScrollY, scrollToY, scrollToEl } from './motion.js';
@@ -179,8 +179,10 @@ document.querySelector('[data-home]').addEventListener('click', (e) => {
   scrollToY(0, true);
 });
 
-// In-page anchors (#work, #about, skip link) scroll through the eased scroller.
-// Route links (#/work/…) are left to the router.
+// In-page anchors (#work, #about, skip link, case TOC) scroll through the eased scroller
+// without touching location.hash (it holds the route). Route links (#/work/…) are left to
+// the router. preventDefault also cancels the browser's focus move, so do it by hand:
+// keyboard users land on the target (skip link must actually skip).
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#"]:not([href^="#/"])');
   if (!a || a.matches('[data-to-contact]')) return;
@@ -188,6 +190,8 @@ document.addEventListener('click', (e) => {
   if (!target) return;
   e.preventDefault();
   scrollToEl(target);
+  if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+  target.focus({ preventScroll: true });
 });
 
 // #contact would be parsed as a route change; scroll instead, from any view
@@ -231,12 +235,20 @@ function transition(update) {
   return vt.updateCallbackDone;
 }
 
-function toProject(id, sourceEl) {
+// Fetch first, then transition: a view transition freezes rendering until its update
+// callback finishes, so no network wait may happen inside it.
+async function toProject(id, sourceEl) {
   const fromProject = document.body.classList.contains('is-project');
+  // Before the fetch: Back during a slow load must still return to this spot
+  if (!fromProject) indexScroll = getScrollY();
+  const p = await loadProject(id).catch((err) => {
+    console.warn('[case]', err.message);
+    return null;
+  });
+  if (location.hash !== `#/work/${id}`) return; // route changed mid-fetch
   setMorph(sourceEl);
-  return transition(async () => {
-    if (!(await showProject(id))) return; // route changed mid-fetch
-    if (!fromProject) indexScroll = getScrollY();
+  return transition(() => {
+    showProject(p);
     document.body.classList.add('is-project');
     prune();
     undock();
@@ -277,6 +289,7 @@ document.addEventListener('click', (e) => {
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 initRouter((route, prev) => {
+  dismissLightbox(); // history nav (Back, Alt+Left) doesn't close a modal; it belongs to the old view
   if (route.view === 'project') {
     toProject(route.projectId, pendingSource);
     pendingSource = null;

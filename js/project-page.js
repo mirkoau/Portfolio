@@ -2,7 +2,7 @@
 
 import { caseStudies, frameMedia, img, media, observeVideos, unobserveVideos, dragScroll } from './content.js';
 import { openLightbox } from './gallery.js';
-import { scrollToEl, pin, refresh } from './motion.js';
+import { pin, refresh } from './motion.js';
 
 const view = document.getElementById('project-view');
 const baseTitle = document.title;
@@ -168,15 +168,8 @@ function wire(zoomables) {
 
   view.querySelectorAll('[data-pan]').forEach((el) => dragScroll(el));
 
-  // Scroll without touching location.hash (it holds the route)
+  // TOC clicks: main.js's in-page anchor handler scrolls + moves focus
   const toc = view.querySelector('.case__toc');
-  toc.addEventListener('click', (e) => {
-    const a = e.target.closest('[data-toc]');
-    if (!a) return;
-    e.preventDefault();
-    scrollToEl(document.getElementById(a.dataset.toc));
-  });
-
   cleanup.push(pin(toc, view.querySelector('.case__content')));
 
   const links = new Map([...toc.querySelectorAll('[data-toc]')].map(a => [a.dataset.toc, a]));
@@ -198,20 +191,20 @@ const NOT_FOUND = `
     <a class="btn btn--primary" href="#/">Back to all work</a>
   </div>`;
 
-// Resolves false if the route changed while the JSON was loading (caller should bail)
-export async function showProject(id) {
-  let p = null;
-  try {
-    p = await loadProject(id);
-  } catch (err) {
-    console.warn('[case]', err.message);
-  }
-  if (location.hash !== `#/work/${id}`) return false;
+// Synchronous: the caller fetches (loadProject) first. p = null → not found.
+// Malformed JSON (missing fields, or #/work/data hitting the index data) → not found too.
+export function showProject(p) {
   hideProject();
   view.hidden = false;
-  if (p) render(p);
-  else view.innerHTML = NOT_FOUND;
-  return true;
+  if (!p) return void (view.innerHTML = NOT_FOUND);
+  try {
+    render(p);
+  } catch (err) {
+    console.warn('[case]', err.message);
+    hideProject();
+    view.hidden = false;
+    view.innerHTML = NOT_FOUND;
+  }
 }
 
 export function hideProject() {

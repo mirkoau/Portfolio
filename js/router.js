@@ -16,8 +16,9 @@ export function initRouter(onRoute) {
     const prev = current;
     current = route;
     onRoute(route, prev);
-    // Umami auto-tracks pushState only; hash routes need a manual hit
-    if (prev) window.umami?.track();
+    // Umami auto-tracks pushState only; hash routes need a manual hit. Its cached URL
+    // never sees hash changes, so pass the real one.
+    if (prev) window.umami?.track((p) => ({ ...p, url: location.pathname + location.hash }));
   };
   addEventListener('hashchange', handle);
   handle();
