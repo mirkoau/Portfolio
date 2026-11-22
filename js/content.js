@@ -170,10 +170,13 @@ function renderApproach(items) {
     </div>`).join('');
 }
 
-// Tools as big serif words; skills flow the same way, small
+// Tools as big serif words, brand logo(s) after the name; skills flow the same way, small
 function renderToolkit({ tools, skills }) {
+  const logo = id => `<img class="toolkit__logo" src="assets/logos/${id}.svg" alt="" width="24" height="24">`;
+  const item = t => typeof t === 'string' ? t
+    : `${t.name}<span class="toolkit__logos">${t.logos.map(logo).join('')}</span>`;
   const list = (cls, label, items) =>
-    `<ul class="${cls}" aria-label="${label}">${items.map(t => `<li>${t}</li>`).join('')}</ul>`;
+    `<ul class="${cls}" aria-label="${label}">${items.map(t => `<li>${item(t)}</li>`).join('')}</ul>`;
   $('[data-toolkit]').innerHTML = list('toolkit__tools', 'Tools', tools) + list('toolkit__skills', 'Skills', skills);
 }
 

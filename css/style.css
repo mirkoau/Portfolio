@@ -571,6 +571,13 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
+.toolkit__logos {
+  display: inline-flex;
+  gap: 0.15em;
+  margin-left: 0.3em;
+  vertical-align: -0.02em; /* sit on the cap height of the serif */
+}
+.toolkit__logo { width: 0.62em; height: 0.62em; }
 .toolkit__skills {
   display: flex; /* same flow as the tools, at body size */
   flex-wrap: wrap;

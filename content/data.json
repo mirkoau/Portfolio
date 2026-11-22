@@ -162,14 +162,14 @@
   ],
   "toolkit": {
     "tools": [
-      "Figma",
-      "Claude AI",
-      "Photoshop",
-      "After Effects",
-      "Lottie",
-      "HTML/CSS/JS",
-      "Jira",
-      "Confluence",
+      { "name": "Figma", "logos": ["figma"] },
+      { "name": "Claude AI", "logos": ["claude"] },
+      { "name": "Photoshop", "logos": ["adobephotoshop"] },
+      { "name": "After Effects", "logos": ["adobeaftereffects"] },
+      { "name": "Lottie", "logos": ["lottiefiles"] },
+      { "name": "HTML/CSS/JS", "logos": ["html5", "css", "javascript"] },
+      { "name": "Jira", "logos": ["jira"] },
+      { "name": "Confluence", "logos": ["confluence"] },
       "Pen and paper"
     ],
     "skills": [
