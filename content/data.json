@@ -37,7 +37,7 @@
             "Production planning"
           ],
           "cover": {
-            "src": "assets/images/fbc-cover.webp",
+            "src": "assets/images/fbc-cover-1920.webp",
             "alt": "FBC: Firebreak main menu inside a 3D environment"
           }
         },
@@ -46,7 +46,7 @@
           "title": "Alan Wake 2",
           "role": "UX Designer",
           "period": "2022–2023",
-          "summary": "Designed core systems for a narrative survival-horror game: maps, case board, inventory, weapon quick-select and an award-winning photo mode.",
+          "summary": "Designed the maps, case board, inventory, weapon quick-select and photo mode for a narrative survival-horror game. Photo mode won Best Photo Mode at the Virtual Photography Awards 2024.",
           "did": [
             "Interaction design",
             "UI design",
@@ -96,7 +96,7 @@
           "title": "Production analytics",
           "role": "UI/UX and Visual Designer",
           "period": "2019–2020",
-          "summary": "Turned factory data into clear answers for managers, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
+          "summary": "Designed views that show managers what is holding production back, kept the shop-floor tablet app down to a few taps, and led the company rebrand.",
           "did": [
             "Data UX",
             "UI design",
@@ -112,49 +112,86 @@
   ],
   "approach": [
     {
-      "title": "Structure before pixels",
-      "body": "I map flows, states and edge cases first. Most complex products get simple once the structure is right, not once the screens are pretty.",
+      "title": "Too much on screen",
+      "body": "On FBC: Firebreak, every new feature asked for its own HUD feedback. I argued against what players didn't need and looked for ways to show the rest in the game world.",
       "proof": [
         {
-          "label": "Alan Wake 2 maps",
-          "href": "#/work/alan-wake-2"
-        },
-        {
-          "label": "Cleveron back office",
-          "href": "#/work/cleveron-main"
-        }
-      ]
-    },
-    {
-      "title": "Design that survives the build",
-      "body": "Component libraries, clear specs and daily contact with engineers. I plan the work with the team so what ships matches what was designed.",
-      "proof": [
-        {
-          "label": "Cleveron component library",
-          "href": "#/work/cleveron-main"
-        },
-        {
-          "label": "FBC: Firebreak production plan",
+          "label": "FBC: Firebreak HUD",
+          "note": "Teammate visibility easy for 72% of players, up from 11%",
           "href": "#/work/fbc-firebreak"
-        }
-      ]
-    },
-    {
-      "title": "Test on the real thing",
-      "body": "I prototype in code and use AI tools daily. When a working build answers the question faster than a mockup, I skip the mockup.",
-      "proof": [
+        },
         {
           "label": "Alan Wake 2 case board",
+          "note": "Evidence players arrange by hand, inside the game world",
           "href": "#/work/alan-wake-2"
+        }
+      ]
+    },
+    {
+      "title": "Hard to follow",
+      "body": "Players missed FBC's mission objectives, and Cleveron's office software came with a 40-page manual. Both got shorter text and a structure built around the task.",
+      "proof": [
+        {
+          "label": "FBC: Firebreak missions",
+          "note": "Objectives understood by 63% of players, up from 17%",
+          "href": "#/work/fbc-firebreak"
         },
         {
-          "label": "This site, designed in code"
+          "label": "Cleveron office software",
+          "note": "Rebuilt around slot allocation and other daily tasks",
+          "href": "#/work/cleveron-main"
+        }
+      ]
+    },
+    {
+      "title": "A lot of UI, a small team",
+      "body": "Two of us designed FBC's whole UI, and I planned the build with the UI programming lead around shared components. At Cleveron I set up the team's first component library.",
+      "proof": [
+        {
+          "label": "FBC: Firebreak production plan",
+          "note": "UI shipped complete at launch",
+          "href": "#/work/fbc-firebreak"
+        },
+        {
+          "label": "Cleveron component library",
+          "note": "Hundreds of components, built from scratch in Figma",
+          "href": "#/work/cleveron-main"
         }
       ]
     }
   ],
+  "toolkit": {
+    "tools": [
+      "Figma",
+      "Claude AI",
+      "Photoshop",
+      "After Effects",
+      "Lottie",
+      "HTML/CSS/JS",
+      "Jira",
+      "Confluence",
+      "Pen and paper"
+    ],
+    "skills": [
+      "Product design",
+      "UX design",
+      "Interaction design",
+      "UI design",
+      "Information architecture",
+      "Prototyping",
+      "User research",
+      "Design systems",
+      "Data UX",
+      "Game design",
+      "Design leadership",
+      "Production planning",
+      "Branding",
+      "Illustration",
+      "Motion design"
+    ]
+  },
   "freelance": {
-    "intro": "Branding and marketing for up-and-coming Estonian music festivals, plus digital painting and vector art from roughly eight years of art school.",
+    "intro": "Branding and marketing for the Estonian music festivals Indiefest and Funkfest, plus digital painting and vector art from roughly eight years of art school.",
     "items": [
       {
         "src": "assets/images/personal-3.webp",
@@ -211,8 +248,8 @@
   },
   "about": {
     "body": [
-      "I'm a designer based in Helsinki, Finland. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI. I care about making complex things feel simple and intuitive, without losing the personality.",
-      "I work across UX, UI, interaction and visual design, and I like understanding the full stack, from wireframes to motion to front-end, so my designs hold up against real constraints.",
+      "I'm a designer based in Helsinki, Finland. My work has moved from manufacturing SaaS and robotic logistics to AAA game UI.",
+      "I work across UX, UI, interaction and visual design. I also animate and write front-end code, which helps me design things engineers can build.",
       "I do my best work in-house, close to a product and the people building it, and I'm open to the right freelance collaboration. Outside work: playing and making video games, trading card games, museums, travel and cooking."
     ],
     "portrait": {

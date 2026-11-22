@@ -3,7 +3,7 @@
   "title": "Production analytics",
   "company": "Evocon",
   "period": "2019–2020",
-  "summary": "A manufacturing SaaS for two opposite users: managers reading large volumes of data, and operators on the shop floor with no time for screens.",
+  "summary": "Manufacturing analytics SaaS with two groups of users: managers working through production data, and operators logging what happens on the shop floor.",
   "meta": [
     {
       "label": "Role",
@@ -29,33 +29,50 @@
   "sections": [
     {
       "stage": "Context",
-      "heading": "Helping factories waste less",
+      "heading": "Evocon",
       "body": [
-        "Evocon is a startup that helps manufacturers improve production performance and waste less time and material. I designed for both sides of the product: office software for managers, and tablet software for operators on the line."
-      ],
-      "media": [
-        {
-          "src": "assets/images/evocon-6.webp",
-          "alt": "Office dashboard with OEE, scrap, quantity and downtime charts",
-          "caption": "Office dashboard"
-        }
+        "Evocon is a startup whose software tracks factory production, so manufacturers can waste less time and material. I was its in-house designer and worked on both the product and the brand."
       ]
     },
     {
       "stage": "Challenge",
       "heading": "Two users, opposite needs",
       "body": [
-        "Managers work with large volumes of data in tables and charts on PC and mobile. Operators need to report what's happening on the line in as few taps as possible. One product had to serve both."
-      ],
-      "pull": "Mountains of factory data turned into one clear answer, and a shop-floor screen that asks for almost nothing."
+        "Managers work through large volumes of data in tables and charts, on PC and mobile. Operators stand at the line and need to report what's happening in as few taps as possible.",
+        "Evocon also wanted to teach its customers the ideas behind the numbers, like OEE or the difference between slow speed and a microstop."
+      ]
     },
     {
       "stage": "Approach",
-      "heading": "Data that answers a question",
+      "heading": "Operator tablet app",
       "body": [
-        "For managers, the aim was to make the data easy to act on: pinpoint the exact problem holding production back, see whether things are improving over time, and read the real-time state of every line."
+        "The tablet sits next to the line. Its bottom bar has a button for each event an operator reports, like downtime, a product changeover or scrap. Station states are color-coded, so a stop or slowdown stands out."
       ],
       "media": [
+        {
+          "src": "assets/images/evocon-operator.webp",
+          "alt": "Operator view of a production line during a live shift, with an hourly timeline of run, slow and stop states and buttons to log downtime and scrap",
+          "caption": "Operator view, live shift"
+        },
+        {
+          "src": "assets/images/evocon-5.webp",
+          "alt": "Tablet overview of every station, color-coded by status",
+          "caption": "Operator view, all shifts"
+        }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Manager dashboards",
+      "body": [
+        "Everything operators log feeds the manager dashboards. They show the live state of every line and where production loses time. The improvement view tracks whether a change, like a shorter machine reset, holds up over the following weeks."
+      ],
+      "media": [
+        {
+          "src": "assets/images/evocon-6-1920.webp",
+          "alt": "Office dashboard with OEE, scrap, quantity and downtime charts",
+          "caption": "Manager dashboard"
+        },
         {
           "src": "assets/images/evocon-4.webp",
           "alt": "Improvement view for reducing machine reset time",
@@ -65,41 +82,9 @@
     },
     {
       "stage": "Approach",
-      "heading": "A shop floor screen you can read from across the room",
+      "heading": "Rebrand",
       "body": [
-        "For operators, I kept the tablet app minimal, with as few presses as possible to get information from the floor to management. Slowdowns had to be impossible to miss, so speed states are animated and color-coded."
-      ],
-      "media": [
-        {
-          "src": "assets/images/evocon-5.webp",
-          "alt": "Shop-floor tablet factory view with live station status",
-          "caption": "Operator tablet"
-        },
-        {
-          "alt": "Speed indicator, good",
-          "caption": "Good speed",
-          "video": "assets/images/evocon-good-speed-animation.mp4",
-          "poster": "assets/images/evocon-good-speed-animation-poster.webp"
-        },
-        {
-          "alt": "Speed indicator, slow",
-          "caption": "Slow speed",
-          "video": "assets/images/evocon-slow-speed-animation.mp4",
-          "poster": "assets/images/evocon-slow-speed-animation-poster.webp"
-        },
-        {
-          "alt": "Speed indicator, microstop",
-          "caption": "Microstop",
-          "video": "assets/images/evocon-microstop-speed-animation.mp4",
-          "poster": "assets/images/evocon-microstop-speed-animation-poster.webp"
-        }
-      ]
-    },
-    {
-      "stage": "Approach",
-      "heading": "A friendlier brand for a teaching product",
-      "body": [
-        "I led Evocon's rebrand. Part of Evocon's mission is teaching users about efficient production, so the brand needed to feel more contemporary and approachable. Drag the slider to compare the old and new site."
+        "I led Evocon's rebrand together with a UX designer and researcher. The new brand is built on illustration and motion, which the site uses to explain production concepts. Drag the slider to compare the old and new site."
       ],
       "compare": {
         "before": {
@@ -114,18 +99,13 @@
     },
     {
       "stage": "Approach",
-      "heading": "Illustration and motion in the product",
+      "heading": "Mascot and icons",
       "body": [
-        "A friendly character, simple illustrations and animated icons explain production concepts at a glance. Icons animate on hover, or on press on tablets, and were exported with Lottie so they could be reused across the product."
+        "Evocon's mascot also appears in the operator view, where it reacts to what's happening on the line. I animated its states and idle loops in After Effects. Product icons animate on hover, or on press on tablets. I exported both with Lottie so the web app could play them."
       ],
       "media": [
         {
-          "src": "assets/images/evocon-article_image_2.webp",
-          "alt": "Brand illustration of a character on the factory floor",
-          "caption": "Brand illustration"
-        },
-        {
-          "alt": "Animated icon set",
+          "alt": "Animated product icons for production, operators, speed comments and scrap",
           "caption": "Animated icons",
           "video": "assets/images/evocon_iconset-1.mp4",
           "poster": "assets/images/evocon_iconset-1-poster.webp"
@@ -139,10 +119,35 @@
       ]
     },
     {
-      "stage": "Outcome",
-      "heading": "Recognized for design",
+      "stage": "Approach",
+      "heading": "Content marketing",
       "body": [
-        "In 2019, Evocon won the EAS award for Best Design Implementation."
+        "For content marketing, I made article illustrations and short animations about how a production line runs and where Evocon helps a factory improve."
+      ],
+      "media": [
+        {
+          "src": "assets/images/evocon-article_image_2.webp",
+          "alt": "Article illustration of an operator, a manager and the Evocon mascot holding a tablet in a bottling plant",
+          "caption": "Article illustration"
+        },
+        {
+          "alt": "Animation of the Evocon character on a line running at good speed",
+          "caption": "Good speed",
+          "video": "assets/images/evocon-good-speed-animation.mp4",
+          "poster": "assets/images/evocon-good-speed-animation-poster.webp"
+        },
+        {
+          "alt": "Animation of the Evocon character on a line running slow",
+          "caption": "Slow speed",
+          "video": "assets/images/evocon-slow-speed-animation.mp4",
+          "poster": "assets/images/evocon-slow-speed-animation-poster.webp"
+        },
+        {
+          "alt": "Animation of the Evocon character on a line with a microstop",
+          "caption": "Microstop",
+          "video": "assets/images/evocon-microstop-speed-animation.mp4",
+          "poster": "assets/images/evocon-microstop-speed-animation-poster.webp"
+        }
       ]
     }
   ],
@@ -152,12 +157,8 @@
       "detail": "Awarded to Evocon in 2019."
     },
     {
-      "title": "One product, two audiences",
-      "detail": "Analytics for managers, a few-tap tablet app for operators."
-    },
-    {
-      "title": "Rebrand shipped",
-      "detail": "Identity, illustration and Lottie motion system."
+      "title": "Rebrand",
+      "detail": "Identity and website, with illustration and Lottie animation."
     }
   ],
   "todo": [

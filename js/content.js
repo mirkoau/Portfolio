@@ -112,6 +112,7 @@ export async function initContent() {
   data = await res.json();
   renderWork(data.work);
   renderApproach(data.approach);
+  renderToolkit(data.toolkit);
   renderFreelance(data.freelance);
   renderAbout(data.about);
   return data;
@@ -126,7 +127,7 @@ function projectCard(p) {
   const tag = p.comingSoon ? 'div' : 'a';
   const href = p.comingSoon ? '' : ` href="#/work/${p.id}" data-project="${p.id}" aria-label="${p.title} case study"`;
   const cta = p.comingSoon
-    ? '<span class="project-card__cta project-card__cta--soon">Case study after launch</span>'
+    ? '<span class="project-card__cta project-card__cta--soon">Case study coming soon</span>'
     : `<span class="project-card__cta"><span class="project-card__cta-label" data-draw-line>Read case study</span> ${arrow()}</span>`;
   return `
     <${tag} class="project-card"${href}${p.comingSoon ? '' : ' data-draw-trigger'}>
@@ -163,9 +164,17 @@ function renderApproach(items) {
         <p class="approach__proof-label">Seen in</p>
         <ul>${i.proof.map(pr => `<li>${pr.href
           ? `<a class="approach__link" href="${pr.href}">${pr.label}</a>`
-          : `<span>${pr.label}</span>`}</li>`).join('')}</ul>
+          : `<span>${pr.label}</span>`}${pr.note
+          ? `<span class="approach__note">${pr.note}</span>` : ''}</li>`).join('')}</ul>
       </div>
     </div>`).join('');
+}
+
+// Tools as big serif words; skills flow the same way, small
+function renderToolkit({ tools, skills }) {
+  const list = (cls, label, items) =>
+    `<ul class="${cls}" aria-label="${label}">${items.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  $('[data-toolkit]').innerHTML = list('toolkit__tools', 'Tools', tools) + list('toolkit__skills', 'Skills', skills);
 }
 
 function renderFreelance({ intro, items }) {

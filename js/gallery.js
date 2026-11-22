@@ -11,38 +11,47 @@ const SWIPE_PX = 50;
 let list = [];
 let index = 0;
 
-const SLIDE_PX = 20;
-const SLIDE_MS = 320;
-const SLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const GHOST_MS = 320; // old image out
+const GHOST_EASE = 'cubic-bezier(0.5, 0, 0.1, 1)'; // brief wind-up, fast sweep, long soft landing
 
-// Micro hand-off: the old image drifts SLIDE_PX out and fades while the new one, already on
-// top, drifts in from the other side. dir: 1 = next (moves left), -1 = previous (moves right)
+const clearGhosts = () => dialog.querySelectorAll('.lightbox__ghost').forEach((g) => g.remove());
+
+// Old picture = ghost ON TOP, new picture already in place underneath at full opacity. The ghost
+// is swept away by a gradient mask; nothing moves, so the veil never shows through.
+// No waiting: everything starts on the click. dir: 1 = next (sweep runs right to left), -1 = previous
 function step(dir) {
   if (list.length < 2) return;
+  clearGhosts();
   const animate = !reduceMotion.matches;
-  // Old image is cloned as a ghost (images only; a playing video can't be cloned mid-frame)
+  let ghost = null;
   if (animate && !img.hidden && img.getAttribute('src')) {
-    const figure = img.parentElement;
-    const f = figure.getBoundingClientRect();
+    const f = img.parentElement.getBoundingClientRect();
     const r = img.getBoundingClientRect();
-    const ghost = img.cloneNode();
+    ghost = img.cloneNode();
     ghost.className = 'lightbox__ghost';
     ghost.removeAttribute('data-lightbox-img');
     ghost.setAttribute('aria-hidden', 'true');
     ghost.alt = '';
     Object.assign(ghost.style, { left: `${r.left - f.left}px`, top: `${r.top - f.top}px`, width: `${r.width}px`, height: `${r.height}px` });
-    figure.append(ghost);
-    ghost.animate(
-      [{ transform: 'none', opacity: 1 }, { transform: `translateX(${-dir * SLIDE_PX}px)`, opacity: 0 }],
-      { duration: SLIDE_MS, easing: SLIDE_EASE, fill: 'forwards' },
-    ).finished.then(() => ghost.remove(), () => ghost.remove());
+    img.parentElement.append(ghost);
   }
   show(index + dir);
-  if (animate) {
-    (img.hidden ? video : img).animate(
-      [{ transform: `translateX(${dir * SLIDE_PX}px)`, opacity: 0 }, { transform: 'none', opacity: 1 }],
-      { duration: SLIDE_MS, delay: 50, easing: SLIDE_EASE, fill: 'backwards' },
-    );
+  if (!animate) return;
+  if (ghost) {
+    // A soft-edged mask sweeps across the old picture in the direction of travel, erasing it
+    // (no opacity fade): the mask is 3x the picture wide, its feathered edge travels over it.
+    const edge = dir > 0 ? 'to left' : 'to right';
+    const [from, to] = dir > 0 ? ['0% 0', '100% 0'] : ['100% 0', '0% 0'];
+    ghost.style.maskImage = `linear-gradient(${edge}, transparent 33%, #000 67%)`;
+    ghost.style.maskSize = '300% 100%';
+    ghost.style.maskRepeat = 'no-repeat';
+    ghost.animate(
+      [
+        { maskPosition: from },
+        { maskPosition: to },
+      ],
+      { duration: GHOST_MS, easing: GHOST_EASE, fill: 'forwards' },
+    ).finished.then(() => ghost.remove(), () => {});
   }
 }
 
@@ -101,8 +110,17 @@ function morph(source, named, update) {
 }
 
 // sourceFor(i): thumbnail element of item i (may scroll its strip into view), or null
+// Kept referenced so the browser holds the decoded pictures (a dropped Image can cancel its load)
+let warm = [];
+
 export function openLightbox(items, start = 0, sourceFor = () => null) {
   list = items;
+  warm = items.filter((it) => it.src && !it.video).map((it) => {
+    const im = new Image();
+    im.src = it.src;
+    im.decode().catch(() => {});
+    return im;
+  });
   sourceOf = sourceFor;
   dialog.classList.toggle('is-single', items.length < 2);
   morph(sourceFor(start), 'old', () => {
@@ -143,7 +161,7 @@ export function initGallery() {
   }, { passive: true });
 
   dialog.addEventListener('close', () => {
-    dialog.querySelectorAll('.lightbox__ghost').forEach((g) => g.remove());
+    clearGhosts();
     img.removeAttribute('src');
     video.pause();
     video.removeAttribute('src');

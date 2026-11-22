@@ -1,8 +1,8 @@
 // Case study view: fetch content/{id}.json, render, wire interactions.
 
-import { caseStudies, todoNote, frameMedia, img, media, observeVideos, unobserveVideos, dragScroll } from './content.js';
+import { caseStudies, frameMedia, img, media, observeVideos, unobserveVideos, dragScroll } from './content.js';
 import { openLightbox } from './gallery.js';
-import { scrollToEl, pin } from './motion.js';
+import { scrollToEl, pin, refresh } from './motion.js';
 
 const view = document.getElementById('project-view');
 const baseTitle = document.title;
@@ -53,8 +53,10 @@ function render(p) {
   const zoomables = [];
   let figNum = 0;
   const ids = new Map(p.sections.map(s => [s, slug(s.heading)]));
-  const sections = p.sections.map(s => {
+  const sections = p.sections.map((s, i) => {
     const id = ids.get(s);
+    // Stage label only on the first section of a run sharing that stage
+    const stage = s.stage !== p.sections[i - 1]?.stage;
     const media = (s.media || []).map(m => {
       figNum++;
       if (m.wide) return figure(m, null, figNum);
@@ -63,7 +65,7 @@ function render(p) {
     });
     return `
       <section class="case__section" id="${id}" aria-labelledby="${id}-h">
-        <p class="case__stage">${s.stage}</p>
+        ${stage ? `<p class="case__stage">${s.stage}</p>` : ''}
         <h2 class="case__heading" id="${id}-h">${s.heading}</h2>
         <div class="case__text">${s.body.map(b => `<p>${b}</p>`).join('')}</div>
         ${s.pull ? `<p class="case__pull">${s.pull}</p>` : ''}
@@ -112,7 +114,6 @@ function render(p) {
             <ul class="case__results-list">
               ${p.results.map(r => `<li class="case__result"><strong>${r.title}</strong><span>${r.detail}</span></li>`).join('')}
             </ul>
-            ${(p.todo || []).map(todoNote).join('')}
           </section>
         </div>
       </div>
@@ -130,9 +131,28 @@ function render(p) {
   wire(zoomables);
 }
 
+// Load every image of the project top to bottom, one after another (overrides loading="lazy"),
+// so the page fills in reading order and the lightbox has everything ready.
+// Images reserve 16:9 until loaded; a taller one grows the page, so re-measure scroll
+// triggers after each, or every reveal below it fires at stale positions.
+function loadInOrder() {
+  let alive = true;
+  cleanup.push(() => { alive = false; });
+  (async () => {
+    for (const im of view.querySelectorAll('.case__content img')) {
+      if (!alive) return;
+      const h = im.offsetHeight;
+      im.loading = 'eager';
+      await im.decode().catch(() => {});
+      if (alive && im.offsetHeight !== h) refresh();
+    }
+  })();
+}
+
 function wire(zoomables) {
   observeVideos(view);
   cleanup.push(() => unobserveVideos(view));
+  loadInOrder();
 
   // Thumbnail of image i, for the lightbox morph
   const thumbOf = (i) => view.querySelector(`[data-zoom="${i}"] :is(img, video)`);

@@ -18,7 +18,7 @@ const REVEAL = [
   // cards: each part moves on its own; the card frame stays put
   '.project-card .frame', '.project-card__meta', '.project-card__title', '.project-card__summary',
   '.project-card__cta',
-  '.approach__row', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
+  '.approach__row', '.toolkit__tools', '.toolkit__skills', '.freelance__strip', '.freelance__bar', '.about__frame', '.about__text > *',
   '.footer__pitch', '.footer__email', '.footer__links', '.footer__copy',
   // case study (.case__hero arrives via the morph)
   '.case__head > *', '.case__inspect > div',
@@ -37,7 +37,7 @@ export function initMotion() {
   smoother = ScrollSmoother.create({
     wrapper: '#smooth-wrapper',
     content: '#smooth-content',
-    smooth: 0.8,        // seconds to catch up: eased, but still feels direct
+    smooth: 0.35,       // seconds to catch up: snappier, more direct
     smoothTouch: false, // touch keeps native momentum
     effects: false,
     wholePixels: true,  // round the content's translate: no sub-pixel text shimmer while it eases to rest

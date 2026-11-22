@@ -25,3 +25,8 @@ desktop.ini
 # Loose font files dropped in the project root
 /*.woff
 /*.woff2
+
+# Dev tooling (Playwright)
+node_modules/
+test-results/
+playwright-report/

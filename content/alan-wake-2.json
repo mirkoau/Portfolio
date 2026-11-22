@@ -3,82 +3,96 @@
   "title": "Alan Wake 2",
   "company": "Remedy Entertainment",
   "period": "2022–2023",
-  "summary": "Diegetic, minimal UX for the core systems of a narrative survival-horror game, where the interface lives inside the fiction.",
+  "summary": "Diegetic, minimal UX for the case board, maps, inventory and photo mode of a narrative survival-horror game.",
   "meta": [
     { "label": "Role", "value": "UX Designer" },
     { "label": "Team", "value": "Game and narrative design, UI and game programmers" },
     { "label": "Timeline", "value": "2022–2023, shipped October 2023" },
-    { "label": "Scope", "value": "Maps, menus, case board, inventory, weapon quick-select, photo mode, lore browsers" }
+    { "label": "Scope", "value": "Maps, menus, case board, dioramas, inventory, weapon quick-select, photo mode, lore browsers" }
   ],
   "hero": { "src": "assets/images/alanwake-cover.webp", "alt": "Alan Wake 2 case board" },
   "sections": [
     {
       "stage": "Context",
-      "heading": "UI that lives inside the story",
+      "heading": "Diegetic, minimal UI",
       "body": [
-        "I supported the game and narrative design teams and worked closely with UI and game programmers. The direction was diegetic and minimal: interfaces should feel like part of the world, not a layer on top of it."
+        "I supported the game and narrative design teams and worked closely with UI and game programmers. The direction was diegetic and minimal: interfaces should feel like part of the game world."
       ],
       "media": [
-        { "src": "assets/images/aw2-intro.webp", "alt": "Alan Wake 2 in-game UI", "caption": "In-game UI" }
+        { "src": "assets/images/aw2-intro-1920.webp", "alt": "Alan Wake 2 in-game UI", "caption": "In-game UI" }
       ]
     },
     {
       "stage": "Challenge",
-      "heading": "No templates for a diegetic deduction tool",
+      "heading": "Case board",
       "body": [
-        "The case board lets players physically arrange evidence to piece the plot together. Because it lives inside the fiction, there was no standard pattern to lean on. Layout, connection and reading of evidence all had to be found through iteration."
+        "The case board lets players physically arrange evidence to piece the plot together. It's an object in the game world, so no standard UI pattern applied."
       ],
-      "pull": "The case board lives inside the fiction, so almost everything about it had to be discovered by hand.",
+      "pull": "Almost everything about the case board had to be found by hand, through iteration.",
       "media": [
-        { "src": "assets/images/aw2-caseboard.webp", "alt": "Case board", "caption": "Case board" }
+        { "src": "assets/images/aw2-caseboard-wide-1920.webp", "alt": "Saga picks up a manuscript page in the general store", "caption": "New evidence found in the world, which then goes on the case board" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Prototype and test the case board until it worked like a thinking space",
+      "heading": "Case board prototypes",
       "body": [
-        "I tried many setups and interactions, testing how players laid out, connected and read their evidence, until the board felt like a real space for thinking rather than a menu pretending to be one."
+        "I tried many setups and interactions, testing how players laid out, connected and read their evidence, until the board felt like a real space for thinking and following a narrative."
       ],
       "media": [
-        { "src": "assets/images/aw2-caseboard-wide.webp", "alt": "Case board, full view", "caption": "Every feature here was built in close collaboration, inside the craft team and across the project." }
+        { "src": "assets/images/aw2-caseboard-clue-1920.webp", "alt": "Case board with a clue pinned to a question and Saga's thought beside it", "caption": "Case board. Built with the craft team and other teams on the project." }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Maps that read at any scale",
+      "heading": "Dioramas",
       "body": [
-        "A forest and a single house need to communicate equally clearly. I designed map navigation and camera controls, and worked through everything the map shows, from item pickups to mission markers."
+        "Dioramas are camera close-ups of spaces that hold clues and evidence. I worked out simple iconography, how players interact with the clues and a non-intrusive way to show text.",
+        "The UI had to stay a complementary layer to the player's fantasy of being an investigator who figures everything out.",
+        "Some dioramas have PCs the player can use to read emails, look through images or type in passwords that unlock new paths. The fictional UI looks like a 90s PC, but I designed the controls controller first, so it feels natural to use with a gamepad."
       ],
       "media": [
-        { "src": "assets/images/aw2-maps.webp", "alt": "Map screen", "caption": "Map" }
+        { "src": "assets/images/aw2-diorama-1920.webp", "alt": "Diorama close-up of a heart with a clue icon and a line of text", "caption": "Diorama" },
+        { "src": "assets/images/aw2-pc-mail-1920.webp", "alt": "In-game PC showing a 90s-style mail app", "caption": "PC mail" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "Inventory where space is the rule",
+      "heading": "Maps",
+      "body": [
+        "The same map has to work for a whole forest and a single house. I designed map navigation and camera controls, and worked through everything the map shows, from item pickups to mission markers."
+      ],
+      "media": [
+        { "src": "assets/images/aw2-maps-1920.webp", "alt": "Map screen", "caption": "Map" }
+      ]
+    },
+    {
+      "stage": "Approach",
+      "heading": "Inventory",
       "body": [
         "Items take up physical space in the inventory, and that one rule drove every interaction: drop bullets on a matching stack and they combine, place a different item and the grid rearranges itself.",
         "I also designed the weapon quick-select, a customizable HUD element where players arrange weapons and tools however they like, and the lore browsers for text, audio and video."
       ],
       "media": [
-        { "src": "assets/images/aw2-inventory.webp", "alt": "Inventory and weapon quick-select", "caption": "Inventory and quick-select" }
+        { "src": "assets/images/aw2-inventory-grid-1920.webp", "alt": "Inventory grid over gameplay", "caption": "Inventory" },
+        { "src": "assets/images/aw2-inventory-1920.webp", "alt": "Weapon quick-select", "caption": "Weapon quick-select" },
+        { "src": "assets/images/aw2-manuscript-1920.webp", "alt": "Lore browser showing a manuscript page", "caption": "Lore browser" }
       ]
     },
     {
       "stage": "Approach",
-      "heading": "A photo mode for real photographers",
+      "heading": "Photo mode",
       "body": [
-        "We set out to build the best photo mode in any game. It's grounded in real photography, with camera terms and values a photographer would recognize, plus tools only a game can offer, like an orbital camera free of any physical lens position.",
-        "The goal was twofold: a proper instrument for virtual photographers, and images that would carry the game across social media."
+        "The photo mode uses camera terms and values a photographer would recognize, plus tools only a game can offer, like an orbital camera that isn't tied to a physical lens position.",
+        "We built it for virtual photographers, and to get their shots of the game onto social media."
       ],
       "media": [
-        { "src": "assets/images/aw2-photomode.webp", "alt": "Photo mode controls", "caption": "Photo mode" },
-        { "src": "assets/images/aw2-photomode-wide.webp", "alt": "Photo mode, full view", "caption": "Photo mode, full view" }
+        { "src": "assets/images/aw2-photomode-1920.webp", "alt": "Photo mode controls", "caption": "Photo mode" }
       ]
     },
     {
       "stage": "Outcome",
-      "heading": "Award-winning photo mode",
+      "heading": "Awards",
       "body": [
         "In 2024, Alan Wake 2 won Best Photo Mode at The Virtual Photography Awards and placed second for Photo Mode UX."
       ]
@@ -86,8 +100,7 @@
   ],
   "results": [
     { "title": "Best Photo Mode", "detail": "The Virtual Photography Awards 2024." },
-    { "title": "2nd place, Photo Mode UX", "detail": "The Virtual Photography Awards 2024." },
-    { "title": "Diegetic case board", "detail": "A core narrative system with no existing pattern to copy." }
+    { "title": "2nd place, Photo Mode UX", "detail": "The Virtual Photography Awards 2024." }
   ],
   "todo": [
     "Add playtest findings that shaped the case board or inventory, if shareable."

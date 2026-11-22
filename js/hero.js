@@ -164,14 +164,14 @@ const MESH = false; // ember mesh fill (startMesh): parked for now, flip to brin
 // x in em, y in line heights; first: axis resolved in step 1 ('x' | 'y')
 // at: start (s); d1/d2: step durations; gap: pause between steps
 const SCRIPT = [
-  { word: 'complex', to: 5, x: 0.06, y: -0.12, first: 'y', at: 0.0, d1: 0.42, d2: 0.5, gap: 0.04 },        // "compl"
-  { word: 'complex', from: 5, x: 0, y: -0.6, first: 'y', at: 0.06, d1: 0.38, d2: 0.62, gap: 0.06 },    // "ex"
+  { word: 'complex', to: 5, x: -0.35, y: -1.2, first: 'y', at: 0.0, d1: 0.5, d2: 0.52, gap: 0.0 },        // "compl": drops in from above, then slides right to meet "ex"
+  { word: 'complex', from: 5, x: 0, y: -0.6, first: 'y', at: 0.3, d1: 0.72, d2: 0.01, gap: 0.0 },    // "ex": own drop timing, lands exactly when compl's slide ends (t = 1.02)
   { word: 'products', x: 0, y: -1.6, first: 'y', at: 0.2, d1: 0.5, d2: 0.6, gap: 0.03 },
   { word: 'people', edge: 'left', x: 0, y: 0, first: 'x', at: 0.17, d1: 0.55, d2: 0.5, gap: 0.04 },  // slides in from the left, on screen
   { word: 'design', x: 0.1, y: -2.4, first: 'x', at: 0.22, d1: 0.4, d2: 0.66, gap: 0.03 },  // left first, then swoops down
   { word: 'understand', to: 5, edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.27, d1: 0.8, d2: 0.5, gap: 0.04 },    // "under"
-  { word: 'understand', from: 5, x: 0.13, y: -0.1, first: 'y', at: 0.32, d1: 0.4, d2: 0.54, gap: 0.05 }, // "stand"
-  { word: 'and', x: -0.1, y: 0.14, first: 'y', at: 0.36, d1: 0.36, d2: 0.48, gap: 0.08 },
+  { word: 'understand', from: 5, x: 0.13, y: -0.2, first: 'y', at: 0.32, d1: 0.4, d2: 0.54, gap: 0.05 }, // "stand"
+  { word: 'and', x: -0.1, y: 0.28, first: 'y', at: 0.36, d1: 0.36, d2: 0.48, gap: 0.08 },
   { word: 'enjoy.', edge: 'bottom', x: 0, y: 0, first: 'y', at: 0.41, d1: 0.8, d2: 0.5, gap: 0.04 },
 ];
 

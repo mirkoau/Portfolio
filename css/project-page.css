@@ -62,7 +62,7 @@
 /* Body: sticky index left, content right */
 .case__body {
   display: grid;
-  grid-template-columns: 3fr 9fr;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
   gap: var(--space-lg);
   margin-top: var(--space-2xl);
 }
@@ -100,14 +100,13 @@
 
 @media (max-width: 1024px) {
   .case__pull::before { position: static; margin-right: 0.04em; }
-  .case__body { grid-template-columns: 1fr; }
+  .case__body { grid-template-columns: minmax(0, 1fr); }
   .case__toc { display: none; }
 }
 
 .case__section + .case__section { margin-top: var(--space-2xl); }
-.case__stage { font-size: var(--text-sm); color: var(--accent-ink); }
+.case__stage { margin-bottom: 6px; font-size: var(--text-sm); color: var(--accent-ink); }
 .case__heading {
-  margin-top: 6px;
   max-width: 28ch;
   font-size: clamp(1.75rem, 1.1rem + 1.9vw, 2.75rem);
   font-weight: 500;
@@ -137,17 +136,19 @@
 /* Media grid: count-aware */
 .case__media {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* min 0: a wide pan strip must not widen the column */
   gap: var(--space-sm);
   margin-top: var(--space-lg);
 }
-.case__media--n2 { grid-template-columns: 1fr 1fr; }
-.case__media--n3 { grid-template-columns: 1fr 1fr; }
+.case__media--n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.case__media--n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .case__media--n3 > :first-child { grid-column: 1 / -1; }
-.case__media--n4 { grid-template-columns: repeat(3, 1fr); }
+.case__media--n4 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .case__media--n4 > :first-child { grid-column: 1 / -1; }
+.case__media:has(.case__pan) { grid-template-columns: minmax(0, 1fr); } /* pan strip needs full width: stack */
 
 @media (max-width: 640px) {
-  .case__media--n2, .case__media--n3, .case__media--n4 { grid-template-columns: 1fr; }
+  .case__media--n2, .case__media--n3, .case__media--n4 { grid-template-columns: minmax(0, 1fr); }
 }
 
 .case__figure figcaption {
