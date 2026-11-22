@@ -379,6 +379,15 @@ body.is-project .nav__links { visibility: hidden; }
   color: var(--ink-2);
 }
 
+/* Mobile: one gap from every section title (or title + intro) to the content below it.
+   Was 64 (work, freelance, tools) / 40 (approach) / 24 (about) */
+@media (max-width: 899px) {
+  .section-head { margin-bottom: var(--space-lg); }
+  .approach .approach__rows { margin-top: var(--space-lg); }
+  .toolkit .toolkit__body { padding-top: var(--space-lg); }
+  .about .about__text p:first-of-type { margin-top: var(--space-lg); }
+}
+
 /* ── Hero: dateline + headline, whitespace does the rest ── */
 .hero {
   position: relative;
