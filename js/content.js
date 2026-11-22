@@ -175,7 +175,8 @@ function renderApproach(items) {
 
 // Tools as big serif words, brand logo(s) after the name; skills flow the same way, small
 function renderToolkit({ tools, skills }) {
-  const logo = id => `<img class="toolkit__logo" src="assets/logos/${id}.svg" alt="" width="24" height="24">`;
+  // Inline <svg><use>: drawn as vector like text, so no bitmap edge seams at fractional sizes
+  const logo = id => `<svg class="toolkit__logo" aria-hidden="true" focusable="false"><use href="assets/logos/logos.svg#${id}"/></svg>`;
   const item = t => typeof t === 'string' ? t
     : `${t.name}<span class="toolkit__logos">${t.logos.map(logo).join('')}</span>`;
   const list = (cls, label, items) =>

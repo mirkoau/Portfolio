@@ -581,7 +581,7 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   margin-left: 0.2em;
   vertical-align: -0.02em; /* sit on the cap height of the serif */
 }
-.toolkit__logo { width: 0.55em; height: 0.55em; }
+.toolkit__logo { width: 0.55em; height: 0.55em; fill: #000; }
 .toolkit__skills {
   display: flex; /* same flow as the tools, at body size */
   flex-wrap: wrap;
