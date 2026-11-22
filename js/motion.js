@@ -103,7 +103,7 @@ export function reveal(root = document) {
       // Big image blocks need longer than text: a whole-width picture fading in 240ms flashes
       const big = el.matches(MEDIA);
       gsap.fromTo(el, { y: SHIFT, autoAlpha: 0 }, {
-        y: 0, autoAlpha: 1, duration: big ? 0.5 : 0.24, ease: big ? 'sine.out' : 'power2.out',
+        y: 0, autoAlpha: 1, duration: big ? 0.36 : 0.24, ease: big ? 'sine.out' : 'power2.out',
         scrollTrigger: { trigger: el, start: `top ${(1 + MOBILE_LEAD) * 100}%`, toggleActions: 'play none none reverse' },
       });
       return;
