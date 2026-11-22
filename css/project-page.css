@@ -221,7 +221,7 @@
   margin: -18px 0 0 -18px;
   border-radius: 50%;
   background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23e2452b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 5L2 9l4 4M12 5l4 4-4 4'/%3E%3C/svg%3E") no-repeat center / 18px;
-  box-shadow: 0 0 0 2px var(--accent), 0 6px 20px -6px rgba(22, 24, 29, 0.4);
+  box-shadow: 0 0 0 2px var(--accent), 0 6px 20px -6px var(--shadow);
   transition: transform var(--duration-base) var(--ease-spring);
 }
 .compare:active .compare__divider::after { transform: scale(1.1); }
@@ -231,7 +231,7 @@
   padding: 3px 10px;
   font-size: var(--text-2xs);
   border-radius: var(--radius-tag);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--tag-bg);
   pointer-events: none;
 }
 .compare__tag--before { left: var(--space-sm); }
