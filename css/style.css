@@ -702,7 +702,7 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   max-width: 100%;
   margin: var(--space-lg) 0 0 -12px;
   padding: 2px 12px 10px;
-  font-size: clamp(2rem, 0.6rem + 6vw, 6.5rem);
+  font-size: min(clamp(2rem, 0.6rem + 6vw, 6.5rem), 7.4vw); /* 7.4vw: address fits one line on phones */
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.045em;
