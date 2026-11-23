@@ -8,23 +8,6 @@
       "about": "Finnish AAA studio behind Alan Wake and Control.",
       "projects": [
         {
-          "id": "control-resonant",
-          "title": "Control Resonant",
-          "role": "Senior UX Designer",
-          "period": "2026",
-          "comingSoon": true,
-          "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
-          "did": [
-            "Interaction design",
-            "UI design",
-            "Game design"
-          ],
-          "cover": {
-            "src": "assets/images/control-resonant_cover.webp",
-            "alt": "Control Resonant key art"
-          }
-        },
-        {
           "id": "fbc-firebreak",
           "title": "FBC: Firebreak",
           "role": "Lead UI/UX Designer",
@@ -55,6 +38,23 @@
           "cover": {
             "src": "assets/images/alanwake-cover.webp",
             "alt": "Alan Wake 2 case board"
+          }
+        },
+        {
+          "id": "control-resonant",
+          "title": "Control Resonant",
+          "role": "Senior UX Designer",
+          "period": "2026",
+          "comingSoon": true,
+          "summary": "Joined late in production to fix problem interactions and get features to shipping quality: character customization, HUD notifications, upgrade trees and crafting.",
+          "did": [
+            "Interaction design",
+            "UI design",
+            "Game design"
+          ],
+          "cover": {
+            "src": "assets/images/control-resonant_cover.webp",
+            "alt": "Control Resonant key art"
           }
         }
       ]

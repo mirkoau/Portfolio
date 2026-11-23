@@ -562,8 +562,19 @@ a.project-card:hover .project-card__summary { color: var(--ink); }
 .frame__media img { transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-base) ease; }
 .project-card__cta--soon { color: var(--ink-3); font-weight: 400; }
 
-/* Coming-soon cards aren't links; muted cover signals that */
-div.project-card .frame__media img { filter: saturate(0.85); }
+/* Coming-soon (WIP) cards aren't links: dashed draft frame, no fill, narrower greyed
+   cover, so they read as unfinished and sit quieter than shipped work */
+.project-card--wip {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  background: transparent;
+  border: 1px dashed var(--line-strong);
+}
+.project-card--wip .project-card__text { border-left: 1px dashed var(--line-strong); }
+.project-card--wip .frame__media img { filter: grayscale(1) contrast(0.9) opacity(0.75); } /* opacity in filter: the load fade-in animates `opacity` */
+@media (max-width: 900px) {
+  .project-card--wip { grid-template-columns: 1fr; }
+  .project-card--wip .project-card__text { border-left: 0; border-top: 1px dashed var(--line-strong); }
+}
 
 
 /* ── Approach: recurring problem → what I do → where, with the result ── */

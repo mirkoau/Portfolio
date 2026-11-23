@@ -152,7 +152,7 @@ function projectCard(p) {
     ? '<span class="project-card__cta project-card__cta--soon">Case study coming soon</span>'
     : `<span class="project-card__cta"><span class="project-card__cta-label" data-draw-line>Read case study</span> ${arrow()}</span>`;
   return `
-    <${tag} class="project-card"${href}${p.comingSoon ? '' : ' data-draw-trigger'}>
+    <${tag} class="project-card${p.comingSoon ? ' project-card--wip' : ''}"${href}${p.comingSoon ? '' : ' data-draw-trigger'}>
       <div class="frame">${frameMedia(p.cover)}</div>
       <div class="project-card__text">
         <p class="project-card__meta">${p.role}, ${p.period}</p>
