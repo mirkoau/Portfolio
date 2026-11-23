@@ -40,6 +40,7 @@
   --ink-3: #6b7180;
   --line: #dfe2e7;
   --line-strong: #c9cdd5;
+  --track: var(--line); /* freelance scrollbar track */
   --canvas: #ffffff; /* page background around the container */
   /* Ember: accent for fills/rules/large text; accent-ink for small text (AA on paper) */
   --accent: #e2452b;
@@ -113,6 +114,7 @@
     --ink-3: #8d93a0;
     --line: #2c3038;
     --line-strong: #3d424c;
+    --track: #3d424c; /* --line nearly vanishes on dark paper: thumb read as a stray line */
     --accent: #e8513a;
     --accent-ink: #f37a63; /* AA on dark paper */
     --ink-hover: #ffffff;
@@ -668,7 +670,7 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   position: relative;
   height: 3px;
   margin-top: var(--space-md);
-  background: var(--line);
+  background: var(--track);
   cursor: grab;
   isolation: isolate;
   touch-action: none;
