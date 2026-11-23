@@ -37,7 +37,7 @@
       "stage": "Approach",
       "heading": "Case board prototypes",
       "body": [
-        "Together with lead UI/UX designer we tried many setups and interactions, testing how players laid out, connected and read their evidence, until the board felt like a real space for thinking and following a narrative."
+        "Together with the lead UI/UX designer we tried many setups and interactions, testing how players laid out, connected and read their evidence, until the board felt like a real space for thinking and following a narrative."
       ],
       "media": [
         { "src": "assets/images/aw2-caseboard-clue-1920.webp", "alt": "Case board with a clue pinned to a question and Saga's thought beside it", "caption": "Case board. Built with the craft team and other teams on the project." }
@@ -84,7 +84,7 @@
       "heading": "Photo mode",
       "body": [
         "The photo mode uses camera terms and values a photographer would recognize, plus tools only a game can offer, like an orbital camera that isn't tied to a physical lens position.",
-        "Together with lead UI/UX designer we built it for virtual photographers, and to get their shots of the game onto social media. The core of my work was benchmarking, prototyping, analyzing feedback on the previous photo mode in another title, and distilling feedback from virtual photographers."
+        "Together with the lead UI/UX designer we built it for virtual photographers, and to get their shots of the game onto social media. The core of my work was benchmarking, prototyping, analyzing feedback on the previous photo mode in another title, and distilling feedback from virtual photographers."
       ],
       "media": [
         { "src": "assets/images/aw2-photomode-1920.webp", "alt": "Photo mode controls", "caption": "Photo mode" }
