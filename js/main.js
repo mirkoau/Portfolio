@@ -3,7 +3,7 @@ import { initHero } from './hero.js';
 import { initGallery, openLightbox, dismissLightbox } from './gallery.js';
 import { initRouter, parseHash } from './router.js';
 import { showProject, hideProject, loadProject, heroEl } from './project-page.js';
-import { initMotion, reveal, refresh, prune, settleVisible, dockBack, getScrollY, scrollToY, scrollToEl } from './motion.js';
+import { initMotion, reveal, refresh, prune, settleVisible, dockBack, getScrollY, scrollToY, scrollToEl, focusQuietly } from './motion.js';
 import { initDrawLines } from './drawline.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -192,14 +192,14 @@ document.addEventListener('click', (e) => {
   // Sections land on their title, not the padding above it
   scrollToEl(target.querySelector(':scope > .section-head') ?? target);
   if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-  target.focus({ preventScroll: true });
+  focusQuietly(target);
 });
 
 // #contact would be parsed as a route change; scroll instead, from any view
 document.querySelector('[data-to-contact]').addEventListener('click', (e) => {
   e.preventDefault();
   scrollToEl(document.getElementById('contact'));
-  document.querySelector('[data-copy-email]').focus({ preventScroll: true });
+  focusQuietly(document.querySelector('[data-copy-email]'));
 });
 
 document.addEventListener('pointerover', (e) => {
