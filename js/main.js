@@ -55,16 +55,34 @@ function initCopyEmail() {
   if (!btn || !email) return;
   btn.querySelector('[data-email-text]').textContent = email;
   let timer;
+  let hovering = false; // mouse/pen only: touch :hover sticks after a tap and would hold 'Copied' forever
+  const reset = () => { clearTimeout(timer); btn.classList.remove('is-copied'); };
   btn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(email);
     } catch {
       return; // clipboard blocked: mailto button remains
     }
+    btn.classList.remove('is-leaving');
     btn.classList.add('is-copied');
     live.textContent = `Copied ${email}`;
     clearTimeout(timer);
-    timer = setTimeout(() => btn.classList.remove('is-copied'), 1800);
+    // 'Copied' holds while the pointer stays on the email; the timer only resets it when
+    // nothing is hovering (keyboard, touch), and pointerleave resets it otherwise
+    timer = setTimeout(() => { if (!hovering) reset(); }, 1800);
+  });
+  btn.addEventListener('pointerenter', (e) => {
+    hovering = e.pointerType !== 'touch';
+    if (btn.classList.contains('is-leaving')) { clearTimeout(timer); btn.classList.remove('is-leaving'); } // back before it reset: keep 'Copied'
+  });
+  // Fade the tag out first, then swap back to 'Copy' unseen (else 'Copy' flashes mid-fade)
+  btn.addEventListener('pointerleave', () => {
+    if (hovering && btn.classList.contains('is-copied')) {
+      clearTimeout(timer);
+      btn.classList.add('is-leaving');
+      timer = setTimeout(() => { btn.classList.remove('is-copied', 'is-leaving'); }, 200);
+    }
+    hovering = false;
   });
 }
 

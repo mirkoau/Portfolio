@@ -798,6 +798,7 @@ a.project-card:hover .project-card__summary { color: var(--ink); }
 .footer__email:hover .footer__tag,
 .footer__email:focus-visible .footer__tag,
 .footer__email.is-copied .footer__tag { opacity: 1; transform: none; }
+.footer__email.is-leaving .footer__tag { opacity: 0; } /* main.js: hide before 'Copied' resets */
 
 .footer__links { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xl); }
 .footer__link {
