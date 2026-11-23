@@ -65,10 +65,20 @@ export const scrollToY = (y, smooth = false) => {
   else window.scrollTo({ top: y, behavior: behavior(smooth) });
 };
 
+// Layout position from offsetTop, which ignores transforms: rect-based measuring (smoother's
+// own scrollTo(el)) picks up the content's mid-ease lag and reveal drift, and lands off target
+const layoutTop = (el) => {
+  let y = 0;
+  for (let n = el; n; n = n.offsetParent) y += n.offsetTop;
+  return y;
+};
+
 export const scrollToEl = (el, { smooth = true, center = false } = {}) => {
   if (!el) return;
-  if (smoother) smoother.scrollTo(el, smooth, center ? 'center center' : `top ${NAV_OFFSET}px`);
-  else el.scrollIntoView({ behavior: behavior(smooth), block: center ? 'center' : 'start' });
+  if (smoother) {
+    const top = layoutTop(el);
+    smoother.scrollTo(center ? top + el.offsetHeight / 2 - innerHeight / 2 : top - NAV_OFFSET, smooth);
+  } else el.scrollIntoView({ behavior: behavior(smooth), block: center ? 'center' : 'start' });
 };
 
 // Layout changed (route switch, content rendered): recompute heights + trigger positions

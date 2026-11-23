@@ -189,7 +189,8 @@ document.addEventListener('click', (e) => {
   const target = document.getElementById(a.getAttribute('href').slice(1));
   if (!target) return;
   e.preventDefault();
-  scrollToEl(target);
+  // Sections land on their title, not the padding above it
+  scrollToEl(target.querySelector(':scope > .section-head') ?? target);
   if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
   target.focus({ preventScroll: true });
 });
