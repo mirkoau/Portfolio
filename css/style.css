@@ -569,6 +569,9 @@ a.project-card:hover .project-card__summary { color: var(--ink); }
   border: 1px dashed var(--line-strong);
 }
 .project-card--wip .project-card__text { border-left: 1px dashed var(--line-strong); }
+/* Same image width as other cards, shorter: 16/10 scaled by 7/5. Grows if the text needs more */
+.project-card--wip .frame { display: flex; flex-direction: column; }
+.project-card--wip .frame__media { flex: 1; aspect-ratio: 56 / 25; }
 .project-card--wip .frame__media img { filter: grayscale(1) contrast(0.9) opacity(0.75); } /* opacity in filter: the load fade-in animates `opacity` */
 @media (max-width: 900px) {
   .project-card--wip .project-card__text { border-left: 0; border-top: 1px dashed var(--line-strong); }
