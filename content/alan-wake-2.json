@@ -84,7 +84,7 @@
       "heading": "Photo mode",
       "body": [
         "The photo mode uses camera terms and values a photographer would recognize, plus tools only a game can offer, like an orbital camera that isn't tied to a physical lens position.",
-        "We built it for virtual photographers, and to get their shots of the game onto social media."
+        "Together with lead UI/UX designer we built it for virtual photographers, and to get their shots of the game onto social media. The core of my work was benchmarking, prototyping, analyzing feedback on the previous photo mode, and distilling feedback from virtual photographers."
       ],
       "media": [
         { "src": "assets/images/aw2-photomode-1920.webp", "alt": "Photo mode controls", "caption": "Photo mode" }
