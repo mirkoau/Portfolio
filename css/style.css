@@ -124,8 +124,6 @@
     --tag-bg: rgba(23, 25, 30, 0.88);
   }
   .todo { color: #f3d27a; background: #2b2410; border-color: #8a6d12; }
-  .lightbox__nav--prev { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23eceef2' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9H4M8 5L4 9l4 4'/%3E%3C/svg%3E"); }
-  .lightbox__nav--next { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23eceef2' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h10M10 5l4 4-4 4'/%3E%3C/svg%3E"); }
 }
 
 /* ── Base ──────────────────────────────────────────── */
@@ -852,13 +850,24 @@ div.project-card .frame__media img { filter: saturate(0.85); }
   width: 44px; height: 44px;
   border-radius: 0;
   border: 1px solid var(--line-strong);
-  background: var(--surface) no-repeat center / 18px;
+  background: var(--surface);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
   transition: border-color var(--duration-fast) ease, background-color var(--duration-fast) ease;
+}
+/* Arrow = currentColor through an SVG mask, so it follows --ink in both themes */
+.lightbox__nav::before {
+  content: '';
+  width: 18px; height: 18px;
+  background: currentColor;
+  -webkit-mask: var(--arrow) no-repeat center / contain;
+  mask: var(--arrow) no-repeat center / contain;
 }
 .lightbox__nav:hover,
 .lightbox__close:hover { border-color: var(--ink); background-color: var(--hover-wash); }
-.lightbox__nav--prev { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9H4M8 5L4 9l4 4'/%3E%3C/svg%3E"); }
-.lightbox__nav--next { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%2316181d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h10M10 5l4 4-4 4'/%3E%3C/svg%3E"); }
+.lightbox__nav--prev { --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9H4M8 5L4 9l4 4'/%3E%3C/svg%3E"); }
+.lightbox__nav--next { --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h10M10 5l4 4-4 4'/%3E%3C/svg%3E"); }
 .lightbox__close { position: absolute; top: var(--space-sm); right: var(--space-sm); display: inline-flex; align-items: center; gap: 8px; }
 .lightbox.is-single .lightbox__nav { visibility: hidden; }
 
